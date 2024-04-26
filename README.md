@@ -20,7 +20,7 @@
 <div>
 
 # What is Mossy
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmattholy%2Fmossy.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmattholy%2Fmossy?ref=badge_shield)
+
 
 
 Mossy is a interplanetary microblogging platform of fediverse, just like [Mastodon](https://github.com/mastodon/mastodon) or [Misskey](https://github.com/misskey-dev/misskey).
@@ -47,8 +47,6 @@ We lovingly provide:
 </div>
 
 # Getting Start
-
-<a href="https://app.fossa.com/projects/git%2Bgithub.com%2Fmattholy%2Fmossy?ref=badge_large&issueType=license" alt="FOSSA Status"><img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmattholy%2Fmossy.svg?type=large&issueType=license" align="right"/></a>
 
 A typical deployment involves placing your Mossy web services behind a load balancer (also a SSL-terminate proxy). You can deploy Mossy nodes worldwide, connecting them via a shared storage. By configuring your load balancer carefully, users can access your Mossy through the nearest access point.
 
@@ -109,6 +107,8 @@ In the event of a physical breach, you can quickly destroy the decryption key to
 
 ## Dev & Tests
 
+<a href="https://app.fossa.com/projects/git%2Bgithub.com%2Fmattholy%2Fmossy?ref=badge_large&issueType=license" alt="FOSSA Status"><img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmattholy%2Fmossy.svg?type=large&issueType=license" align="right"/></a>
+
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) first.
 
 Before start, you need to install:
@@ -154,6 +154,9 @@ The production image will update database automatically.
 
 Run `docker compose --profile dev up --build`,then navigate to [http://localhost:8000](http://localhost:8000)
 
+# License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmattholy%2Fmossy.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmattholy%2Fmossy?ref=badge_large)
+
 ----
 
 <div align="center">
@@ -161,5 +164,3 @@ Run `docker compose --profile dev up --build`,then navigate to [http://localhost
 </div>
 
 
-## License
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmattholy%2Fmossy.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmattholy%2Fmossy?ref=badge_large)
