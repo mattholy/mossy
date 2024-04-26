@@ -1,0 +1,39 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '21'
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+
+    - name: Install Poetry
+      run: pip install poetry
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run tests
+      run: npm run test
+
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v4.0.1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
