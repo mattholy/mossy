@@ -5,6 +5,8 @@
 
 
 # What is Mossy
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmattholy%2Fmossy.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmattholy%2Fmossy?ref=badge_shield)
+
 
 Mossy is a interplanetary microblogging platform of fediverse, just like [Mastodon](https://github.com/mastodon/mastodon) or [Misskey](https://github.com/misskey-dev/misskey).
 
@@ -108,3 +110,7 @@ Run `docker compose --profile dev up --build`,then navigate to [http://localhost
 <div align="center">
   <img src="./docs/fedi.png" alt="Fediverse Logo" width="300"/>
 </div>
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmattholy%2Fmossy.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmattholy%2Fmossy?ref=badge_large)
