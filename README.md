@@ -93,7 +93,7 @@ If you have clusters for databases and Redis, you can probably use different dat
 
 You may want to use CDN to accelerate access. The frontend of Mossy is a SPA, so you can deploy it separately.
 
-Navigate to `frontend`, edit `.env.production`, set the correct `VITE_BASE_URL` the same as `CLUSTER_ID`. Then run `npm run build`. After that you can find everything you need in `frontend/dist`.
+Navigate to `frontend`, edit `.env.production`, set the correct `VITE_BASE_URL` to point to your backend server, load balancer or proxy. Then run `npm run build`. After that you can find everything you need in `frontend/dist`.
 
 ## Data Security
 
