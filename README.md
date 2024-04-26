@@ -1,6 +1,6 @@
 <div align="center">
   <h1>Mossy</h1>
-  <h2>Yet another interplanetary microblogging platform with python ❤</h2>
+  <h2>❤ Yet another interplanetary microblogging platform with python</h2>
 
   ![GitHub License](https://img.shields.io/github/license/mattholy/mossy)
   ![GitHub Release](https://img.shields.io/github/v/release/mattholy/mossy)
