@@ -5,9 +5,6 @@ services:
       - dev
     ports:
       - "8000:8000"
-    depends_on:
-      - postgres
-      - redis
     environment:
       DATABASE_URL: postgresql://username:password@postgres:5432/dbname
       REDIS_URL: redis://:password@redis:6379/0
@@ -30,10 +27,23 @@ services:
     ports:
       - "5432:5432"
 
+  # Garnet is a Redis-compatible in-memory key-value store. Not support all commands.
+  # garnet:
+  #   image: ghcr.io/microsoft/garnet
+  #   command: --auth Password --password password
+  #   container_name: mossy-garnet
+  #   hostname: mossy-garnet
+  #   ulimits:
+  #     memlock: -1
+  #   ports:
+  #     - "6379:6379"
+
   redis:
     image: redis
     command: ["redis-server", "--requirepass", "password"]
     container_name: mossy-redis
     hostname: mossy-redis
+    ulimits:
+      memlock: -1
     ports:
       - "6379:6379"
