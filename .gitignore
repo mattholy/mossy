@@ -59,3 +59,4 @@ ehthumbs.db
 backend/.coverage
 backend/private_key.pem
 backend/public_key.pem
+package-lock.json

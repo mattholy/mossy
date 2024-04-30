@@ -20,11 +20,12 @@ from env import NODE_ID, IPV6S, IPV4S
 import multiprocessing
 import platform
 import psutil
+from functools import cache
 
 
 def init_node(public_key: str, type: NodeType, remark: str = None, status: bool = True):
     with SessionLocal() as db:
-        node = db.query(NodeInfo).filter_by(
+        node: NodeInfo | None = db.query(NodeInfo).filter_by(
             node_id=NODE_ID, node_type=type).first()
         if not node:
             node = NodeInfo(
@@ -50,15 +51,18 @@ def init_node(public_key: str, type: NodeType, remark: str = None, status: bool 
         db.commit()
 
 
-def get_cpu_cores():
+@cache
+def get_cpu_cores() -> int:
     return multiprocessing.cpu_count()
 
 
-def get_memory_gb():
+@cache
+def get_memory_gb() -> float:
     mem_info = psutil.virtual_memory()
     mem_total_gb = mem_info.total / 1024 / 1024 / 1024
     return mem_total_gb
 
 
-def get_hostname():
+@cache
+def get_hostname() -> str:
     return platform.node()

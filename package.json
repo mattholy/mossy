@@ -14,7 +14,7 @@
     "test:frontend": "cd ./frontend && npm run test",
     "test:backend": "cd ./backend && poetry run alembic upgrade head && poetry run pytest --cov",
     "test": "concurrently \"npm run test:backend\" \"npm run test:frontend\"",
-    "structure": "python scripts/list_directory_tree.py"
+    "tool": "poetry run python scripts/list_directory_tree.py && cd ./backend && poetry run poetry export -f requirements.txt --output ../requirements.txt"
   },
   "keywords": [],
   "author": "",
