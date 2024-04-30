@@ -11,7 +11,7 @@ db.py
 @Contact :   smile.used@hotmail.com
 @License :   MIT License
 '''
-
+from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -54,6 +54,6 @@ AsyncSessionLocal = sessionmaker(
 # 提供一个依赖注入用的会话获取器函数
 
 
-async def get_db():
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
     async with AsyncSessionLocal() as session:
         yield session

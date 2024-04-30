@@ -47,7 +47,7 @@ worker_info_dict = {
 async def lifespan(app: FastAPI):
     worker_id = str(uuid.uuid4())
     worker_info_dict['worker_id'] = worker_id
-    private_key, public_key = await load_key_pair()
+    private_key, public_key = await async_load_key_pair()
     worker_info_dict['private_key'] = private_key
     worker_info_dict['public_key'] = public_key
     init_node(public_key, NodeType.fastapi)
