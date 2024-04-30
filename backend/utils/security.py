@@ -19,6 +19,8 @@ from datetime import datetime, timedelta, timezone
 from fastapi import Depends, Header, HTTPException, Security
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 
 from utils.db import get_db
 from env import RP_ID
@@ -29,9 +31,13 @@ from cryptography.hazmat.primitives.asymmetric import ec
 security = HTTPBearer()
 
 
-def get_current_user(authentication: HTTPAuthorizationCredentials = Security(security), user_agent: str = Header(...), db: Session = Depends(get_db)) -> str:
-    user = verify_jwt(authentication.credentials,
-                      user_agent, db, return_user=True)
+async def get_current_user(
+    authentication: HTTPAuthorizationCredentials = Security(security),
+    user_agent: str = Header(...),
+    db: AsyncSession = Depends(get_db)
+) -> str:
+    user = await verify_jwt(authentication.credentials,
+                            user_agent, db, return_user=True)
     if not user:
         raise HTTPException(status_code=401)
     return user
@@ -49,23 +55,25 @@ def generate_jwt(secrets: str, user_id: str) -> tuple[str, dict]:
     return token, payload
 
 
-def verify_jwt(jwt_str: str, ua: str, db: Session, return_user=False) -> bool | str:
+async def verify_jwt(jwt_str: str, ua: str, db: AsyncSession, return_user=False) -> bool | str:
     try:
-        res = jwt.decode(jwt_str, algorithms=[
-            'HS256'], options={'verify_signature': False})
+        res = jwt.decode(jwt_str, algorithms=['HS256'], options={
+                         'verify_signature': False})
     except Exception:
         return False
+
     find_key = False
     try:
-        current_session = db.query(
-            AuthSession).filter_by(id=res['jti']).first()
+        result = await db.execute(select(AuthSession).filter_by(id=res['jti']))
+        current_session = result.scalars().first()
         if current_session is None:
             return False
-        passkeys = db.query(Passkeys).filter_by(user=res['sub']).all()
-    except Exception as e:
+
+        result = await db.execute(select(Passkeys).filter_by(user=res['sub']))
+        passkeys = result.scalars().all()
+    except Exception:
         return False
-    finally:
-        db.close()
+
     for pkey in passkeys:
         try:
             res = jwt.decode(jwt_str, algorithms=['HS256'], key=str(pkey.id))
@@ -74,6 +82,7 @@ def verify_jwt(jwt_str: str, ua: str, db: Session, return_user=False) -> bool | 
                 break
         except:
             continue
+
     if not find_key:
         return False
     return res['sub'] if return_user else True

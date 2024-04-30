@@ -12,15 +12,25 @@ db.py
 @License :   MIT License
 '''
 
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from env import DATABASE_URL
+from env import DATABASE_URL, RUNTIME
 
 
 # 创建 SQLAlchemy 引擎，针对 PostgreSQL 的配置
 engine = create_engine(
     DATABASE_URL,
-    # echo=True,  # 设置为True以便在开发中查看SQL输出
+    echo=True if RUNTIME == 'DEV' else False,
+    pool_size=20,  # 连接池大小
+    max_overflow=10,  # 超过连接池大小外最多创建的连接数
+    pool_timeout=30,  # 池中没有线程可用时，连接的最大等待时间，单位秒
+    pool_recycle=1800,  # 连接最大复用时间，单位秒
+)
+
+async_engine = create_async_engine(
+    DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://"),  # 注意驱动名更改
+    echo=True if RUNTIME == 'DEV' else False,
     pool_size=20,  # 连接池大小
     max_overflow=10,  # 超过连接池大小外最多创建的连接数
     pool_timeout=30,  # 池中没有线程可用时，连接的最大等待时间，单位秒
@@ -34,12 +44,16 @@ SessionLocal = sessionmaker(
     bind=engine
 )
 
+AsyncSessionLocal = sessionmaker(
+    async_engine,
+    class_=AsyncSession,
+    autocommit=False,
+    autoflush=False
+)
+
 # 提供一个依赖注入用的会话获取器函数
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+async def get_db():
+    async with AsyncSessionLocal() as session:
+        yield session

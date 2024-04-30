@@ -30,7 +30,8 @@ from webauthn import (
 )
 from webauthn.helpers.structs import RegistrationCredential
 from webauthn.helpers.exceptions import InvalidRegistrationResponse, InvalidAuthenticationResponse
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 
 from utils.db import get_db
 from utils.model.api_schemas import WebauthnReg
@@ -51,13 +52,15 @@ class User(BaseModel):
 
 
 @router.post('/generate-registration-options', response_class=JSONResponse, response_model=WebauthnReg)
-def start_registration(user: User, request: Request, db: Session = Depends(get_db)):
+async def start_registration(user: User, request: Request, db: AsyncSession = Depends(get_db)):
     user_agent = request.headers.get('user-agent', 'unknown')
     access_address = request.client.host
-    go_find_user = db.query(UserRegProcess).filter_by(
-        username=user.username).first()
+    result = await db.execute(select(UserRegProcess).filter_by(username=user.username))
+    go_find_user = result.scalars().first()
+
     if go_find_user and go_find_user.finished_register:
         return WebauthnReg(status='CLIENT_ERROR', msg='UserAlreadyExist', payload=None)
+
     simple_registration_options = generate_registration_options(
         rp_id=RP_ID,
         rp_name=RP_NAME,
@@ -65,6 +68,7 @@ def start_registration(user: User, request: Request, db: Session = Depends(get_d
         user_display_name=user.username,
         user_id=user.username.encode('utf-8')
     )
+
     new_attempt = RegistrationAttempt(
         user=user.username,
         challenge=simple_registration_options.challenge,
@@ -72,23 +76,28 @@ def start_registration(user: User, request: Request, db: Session = Depends(get_d
         access_address=access_address
     )
     db.add(new_attempt)
-    db.commit()
+    await db.commit()
+
     return WebauthnReg(status='OK', msg='AllDone', payload=json.loads(options_to_json(simple_registration_options)))
 
 
 @router.post('/verify-registration', response_class=JSONResponse, response_model=WebauthnReg)
-def after_registration(response: dict, db: Session = Depends(get_db)):
+async def after_registration(response: dict, db: AsyncSession = Depends(get_db)):
     try:
         challenge = base64url_to_bytes(response["challenge"])
     except KeyError:
         return WebauthnReg(status='CLIENT_ERROR', msg='RequestNotUnderstandable', payload=None)
-    att = db.query(RegistrationAttempt).filter_by(challenge=challenge).first()
+
+    result = await db.execute(select(RegistrationAttempt).filter_by(challenge=challenge))
+    att = result.scalars().first()
+
     if att is None or att.created_at < datetime.now(timezone.utc) - timedelta(minutes=3):
-        go_find_user = db.query(UserRegProcess).filter_by(
-            username=att.user).first()
-        db.delete(go_find_user)
-        db.commit()
+        user_result = await db.execute(select(UserRegProcess).filter_by(username=att.user))
+        go_find_user = user_result.scalars().first()
+        await db.delete(go_find_user)
+        await db.commit()
         return WebauthnReg(status='CLIENT_ERROR', msg='RegistrationTimeOut', payload=None)
+
     try:
         registration_verification = verify_registration_response(
             credential=response['payload'],
@@ -110,29 +119,32 @@ def after_registration(response: dict, db: Session = Depends(get_db)):
         )
         db.add(new_key)
         go_find_user.finished_register = True
+        await db.commit()
     except InvalidRegistrationResponse as e:
         return WebauthnReg(status='CLIENT_ERROR', msg=str(e), payload=None)
     except Exception as e:
         raise e
     finally:
         db.delete(att)
-        db.commit()
+        await db.commit()
+
     return WebauthnReg(status='OK', msg='AllDone', payload=None)
 
 
 @router.post('/generate-authentication-options', response_class=JSONResponse, response_model=WebauthnReg)
-def start_authentication(db: Session = Depends(get_db)):
+async def start_authentication(db: AsyncSession = Depends(get_db)):
     simple_authentication_options = generate_authentication_options(
         rp_id=RP_ID)
     return WebauthnReg(status='OK', msg='AllDone', payload=json.loads(options_to_json(simple_authentication_options)))
 
 
 @router.post('/verify-authentication', response_class=JSONResponse, response_model=WebauthnReg)
-def after_authentication(response: dict, request: Request, db: Session = Depends(get_db)):
-    passkey = db.query(Passkeys).filter_by(
-        raw_id=response['payload']['rawId']).first()
+async def after_authentication(response: dict, request: Request, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(Passkeys).filter_by(raw_id=response['payload']['rawId']))
+    passkey = result.scalars().first()
     if passkey is None:
         return WebauthnReg(status='CLIENT_ERROR', msg='NoPublicKey', payload=None)
+
     try:
         authentication_verification = verify_authentication_response(
             credential=response['payload'],
@@ -155,7 +167,7 @@ def after_authentication(response: dict, request: Request, db: Session = Depends
             related_passkey=passkey.id
         )
         db.add(new_session)
-        db.commit()
+        await db.commit()
         return WebauthnReg(status='OK', msg='AllDone', payload={'token': token})
     except InvalidAuthenticationResponse as e:
         return WebauthnReg(status='CLIENT_ERROR', msg=str(e), payload=None)
@@ -168,13 +180,12 @@ class AuthJWT(BaseModel):
 
 
 @router.post('/verify-jwt', response_class=JSONResponse, response_model=WebauthnReg)
-def check_jwt(auth_jwt: AuthJWT, request: Request, db: Session = Depends(get_db)):
-    res = verify_jwt(
+async def check_jwt(auth_jwt: AuthJWT, request: Request, db: AsyncSession = Depends(get_db)):
+    res = await verify_jwt(
         auth_jwt.token,
         request.headers.get('user-agent', 'unknown'),
         db=db
     )
-    # TODO New token when expired
     if res:
         return WebauthnReg(status='OK', msg='AllDone', payload=None)
     else:
