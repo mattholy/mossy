@@ -50,9 +50,15 @@ We lovingly provide:
 
 # Getting Start
 
+> [!IMPORTANT]
+> After your server starts, any frontend page will direct you to the setup interface to register and create admin details. Ensure no external access until setup is complete to avoid unauthorized use. 
+> 
+> If issues arise, clear the entire database.
+
 A typical deployment involves placing your Mossy web services behind a load balancer (also a SSL-terminate proxy). You can deploy Mossy nodes worldwide, connecting them via a shared storage. By configuring your load balancer carefully, users can access your Mossy through the nearest access point.
 
-Communication between Mossy and end users is secured with HTTPS. However, connections from Mossy to databases, message queue or load balancer may be unsafe without protective measures like TLS or VPN.
+> [!NOTE]
+> Communication between Mossy and end users is secured with HTTPS. However, connections from Mossy to databases, message queue or load balancer may be unsafe without protective measures like TLS or VPN.
 
 After considered things above, use the `docker-compose.yml` to deploy a single production-ready server:
 
@@ -64,7 +70,7 @@ This deployment has:
 
 - One single Mossy all-in-one node
 - Database using PostgresSQL
-- Message queue using Garnet
+- Message queue using ~~Garnet~~ Redis
 - Object storage using MinIO
 
 And you need a reverse proxy or a load balancer in front of it. (Don't know how? Ask Cloudflare.)
@@ -73,9 +79,11 @@ For cluster deployment and other deploy information, please refer to [Deployment
 
 ## Environment
 
-**Do make sure every Mossy node has the same `CLUSTER_ID`, and DO NOT change it after.**
+> [!CAUTION]
+> **Do make sure every Mossy node has the same `CLUSTER_ID`, and DO NOT change it after.**
 
-If you have clusters for databases and Redis, you can probably use different database and Redis URLs for every node. Otherwise make them the same.
+> [!NOTE]
+> If you have clusters for databases and Redis, you can probably use different database and Redis URLs for every node. Otherwise make them the same.
 
 | Name          | Instruction                                                                                                                                                                                                                                                                                      | Default value                                                                                                     |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
@@ -112,7 +120,8 @@ In the event of a physical breach, you can quickly destroy the decryption key to
 
 <a href="https://app.fossa.com/projects/git%2Bgithub.com%2Fmattholy%2Fmossy?ref=badge_large&issueType=license" alt="FOSSA Status"><img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmattholy%2Fmossy.svg?type=large&issueType=license" align="right"/></a>
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) first.
+> [!TIP]
+> Please read [CONTRIBUTING.md](CONTRIBUTING.md) first.
 
 Before start, you need to install:
 
