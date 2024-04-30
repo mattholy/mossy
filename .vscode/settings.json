@@ -1,5 +1,8 @@
 {
   "python.analysis.extraPaths": ["./backend"],
   "python.languageServer": "Pylance",
+  "python.analysis.inlayHints.variableTypes": true,
+  "python.analysis.inlayHints.pytestParameters": true,
+  "python.analysis.inlayHints.functionReturnTypes": true,
 
 }

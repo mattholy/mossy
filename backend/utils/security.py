@@ -16,6 +16,7 @@ import jwt
 import aiofiles
 from pathlib import Path
 import uuid
+from typing import Tuple
 from datetime import datetime, timedelta, timezone
 from fastapi import Depends, Header, HTTPException, Security
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -89,7 +90,7 @@ async def verify_jwt(jwt_str: str, ua: str, db: AsyncSession, return_user=False)
     return res['sub'] if return_user else True
 
 
-def generate_ecc_key_pair() -> tuple[str, str]:
+def generate_ecc_key_pair() -> Tuple[str, str]:
     private_key = ec.generate_private_key(ec.SECP256R1())
     public_key = private_key.public_key()
     private_key_pem = private_key.private_bytes(
@@ -104,7 +105,7 @@ def generate_ecc_key_pair() -> tuple[str, str]:
     return private_key_pem, public_key_pem
 
 
-async def load_key_pair() -> tuple[str, str]:
+async def async_load_key_pair() -> Tuple[str, str]:
     private_key_path = Path('private_key.pem')
     public_key_path = Path('public_key.pem')
     if not private_key_path.is_file() or not public_key_path.is_file():
@@ -118,4 +119,21 @@ async def load_key_pair() -> tuple[str, str]:
             private_key = await f.read()
         async with aiofiles.open(public_key_path, 'r') as f:
             public_key = await f.read()
+    return private_key, public_key
+
+
+def sync_load_key_pair() -> Tuple[str, str]:
+    private_key_path = Path('private_key.pem')
+    public_key_path = Path('public_key.pem')
+    if not private_key_path.is_file() or not public_key_path.is_file():
+        private_key, public_key = generate_ecc_key_pair()
+        with open(private_key_path, 'w') as f:
+            f.write(private_key)
+        with open(public_key_path, 'w') as f:
+            f.write(public_key)
+    else:
+        with open(private_key_path, 'r') as f:
+            private_key = f.read()
+        with open(public_key_path, 'r') as f:
+            public_key = f.read()
     return private_key, public_key

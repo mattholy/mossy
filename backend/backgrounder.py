@@ -19,7 +19,7 @@ from celery.signals import worker_init
 
 # 本项目
 from env import REDIS_URL, NODE_ID
-from utils.security import laod_key_pair
+from utils.security import sync_load_key_pair
 from utils.init import init_node
 from utils.model.orm import NodeType
 from utils.logger import logger
@@ -44,7 +44,7 @@ def configure_worker(sender, **kwargs):
     worker_id = str(uuid.uuid4())
     logger.info(f"Starting Celery worker: {worker_id}@{NODE_ID}")
     worker_info_dict['worker_id'] = worker_id
-    private_key, public_key = laod_key_pair()
+    private_key, public_key = sync_load_key_pair()
     worker_info_dict['private_key'] = private_key
     worker_info_dict['public_key'] = public_key
     init_node(
@@ -55,6 +55,6 @@ def configure_worker(sender, **kwargs):
 
 
 @app.task
-def add(x, y):
+def add(x: int, y: int) -> int:
     time.sleep(5)
     return x + y

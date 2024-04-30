@@ -30,7 +30,7 @@ from routers.wellknown.router import router as wellknown_router
 from routers.nodeinfo.router import router as nodeinfo_router
 from utils.logger import log_error_to_db, logger
 from env import NODE_ID
-from utils.security import load_key_pair
+from utils.security import async_load_key_pair
 from utils.init import init_node
 from utils.model.orm import NodeType
 
