@@ -13,6 +13,7 @@ security.py
 '''
 
 import jwt
+import aiofiles
 from pathlib import Path
 import uuid
 from datetime import datetime, timedelta, timezone
@@ -103,18 +104,18 @@ def generate_ecc_key_pair() -> tuple[str, str]:
     return private_key_pem, public_key_pem
 
 
-def laod_key_pair() -> tuple[str, str]:
+async def load_key_pair() -> tuple[str, str]:
     private_key_path = Path('private_key.pem')
     public_key_path = Path('public_key.pem')
     if not private_key_path.is_file() or not public_key_path.is_file():
         private_key, public_key = generate_ecc_key_pair()
-        with open(private_key_path, 'w') as f:
-            f.write(private_key)
-        with open(public_key_path, 'w') as f:
-            f.write(public_key)
+        async with aiofiles.open(private_key_path, 'w') as f:
+            await f.write(private_key)
+        async with aiofiles.open(public_key_path, 'w') as f:
+            await f.write(public_key)
     else:
-        with open(private_key_path, 'r') as f:
-            private_key = f.read()
-        with open(public_key_path, 'r') as f:
-            public_key = f.read()
+        async with aiofiles.open(private_key_path, 'r') as f:
+            private_key = await f.read()
+        async with aiofiles.open(public_key_path, 'r') as f:
+            public_key = await f.read()
     return private_key, public_key

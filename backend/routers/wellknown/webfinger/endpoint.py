@@ -18,7 +18,7 @@ router = APIRouter(prefix='/webfinger', tags=['Webfinger'])
 
 
 @router.get('/')
-def webfinger(resource: str):
+async def webfinger(resource: str):
     print(resource)
     assert resource.startswith('acct:'), 'Invalid resource'
     return 'webfinger'

@@ -31,7 +31,7 @@ class NodeinfoLinks(BaseModel):
 
 
 @router.get('/', response_model=NodeInfo)
-def nodeinfo():
+async def nodeinfo():
     return NodeInfo(links=[
         NodeinfoLinks(
             rel='http://nodeinfo.diaspora.software/ns/schema/2.1', href=f'{BACKEND_URL}/nodeinfo/2.1'),

@@ -30,7 +30,7 @@ from routers.wellknown.router import router as wellknown_router
 from routers.nodeinfo.router import router as nodeinfo_router
 from utils.logger import log_error_to_db, logger
 from env import NODE_ID
-from utils.security import laod_key_pair
+from utils.security import load_key_pair
 from utils.init import init_node
 from utils.model.orm import NodeType
 
@@ -47,7 +47,7 @@ worker_info_dict = {
 async def lifespan(app: FastAPI):
     worker_id = str(uuid.uuid4())
     worker_info_dict['worker_id'] = worker_id
-    private_key, public_key = laod_key_pair()
+    private_key, public_key = await load_key_pair()
     worker_info_dict['private_key'] = private_key
     worker_info_dict['public_key'] = public_key
     init_node(public_key, NodeType.fastapi)
