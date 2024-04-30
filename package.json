@@ -1,0 +1,25 @@
+{
+  "name": "mossy-zero",
+  "version": "1.0.0",
+  "description": "Mossy's frontend",
+  "main": "index.js",
+  "scripts": {
+    "install:frontend": "cd frontend && npm install",
+    "install:backend": "cd backend && poetry install",
+    "install": "npm run install:frontend && npm run install:backend",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && poetry run alembic upgrade head && poetry run uvicorn main:app --reload",
+    "dev:backend:pack": "export LOG_LEVEL=debug && export WORKERS=2 && cd backend && poetry run alembic upgrade head && poetry run supervisord -c ./supervisord.conf",
+    "dev": "docker compose --profile dev up --build",
+    "test:frontend": "cd frontend && npm run test",
+    "test:backend": "cd backend && poetry run alembic upgrade head && poetry run pytest --cov",
+    "test": "concurrently \"npm run test:backend\" \"npm run test:frontend\"",
+    "structure": "python scripts/list_directory_tree.py"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

@@ -1,0 +1,61 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn-debug.log
+/.pnp
+.pnp.js
+
+# Node build artifacts
+/dist
+/build
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Poetry
+backend/.venv
+backend/.python-version
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE specific files
+.idea/
+*.swp
+*~
+.DS_Store
+
+# Log files
+*.log
+*.csv
+
+# Operating System
+Thumbs.db
+ehthumbs.db
+backend/.coverage
+backend/private_key.pem
+backend/public_key.pem

@@ -1,0 +1,39 @@
+services:
+  mossy:
+    build: .
+    profiles:
+      - dev
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      DATABASE_URL: postgresql://username:password@postgres:5432/dbname
+      REDIS_URL: redis://:password@redis:6379/0
+      WEBAUTHN_RP_SOURCE: http://localhost:8000
+      WEBAUTHN_RP_ID: localhost
+      LOG_LEVEL: debug
+      SERVICE_MODE: all
+      WORKERS: 2
+    container_name: mossy-app
+    hostname: mossy-app
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: dbname
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+    container_name: mossy-postgres
+    hostname: mossy-postgres
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis
+    command: ["redis-server", "--requirepass", "password"]
+    container_name: mossy-redis
+    hostname: mossy-redis
+    ports:
+      - "6379:6379"

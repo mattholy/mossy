@@ -1,0 +1,22 @@
+FROM node:20 as vue-builder
+WORKDIR /app/frontend
+COPY frontend/package*.json ./
+RUN npm install
+COPY frontend/ .
+ENV VITE_RUN_ENV=container
+RUN npm run build
+
+
+FROM python:3.12
+WORKDIR /app
+RUN pip install poetry
+COPY backend/pyproject.toml backend/poetry.lock* ./
+RUN poetry config virtualenvs.create false && poetry install --only main
+COPY --from=vue-builder /app/frontend/dist /app/static
+COPY backend /app
+
+COPY backend/entrypoint.sh ./entrypoint.sh
+RUN chmod +x ./entrypoint.sh
+ENV RUNTIME="PRO"
+CMD ["bash", "./entrypoint.sh"]
+EXPOSE 8000
