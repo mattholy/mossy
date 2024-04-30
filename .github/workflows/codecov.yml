@@ -27,6 +27,8 @@ jobs:
       - name: Install Poetry
         run: pip install poetry
 
+      - name: Make sure we have everthing
+        run: ls -la
       - name: Install dependencies
         run: npm install
 
