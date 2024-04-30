@@ -28,7 +28,7 @@ from contextlib import asynccontextmanager
 from routers.api.router import router as api_router
 from routers.wellknown.router import router as wellknown_router
 from routers.nodeinfo.router import router as nodeinfo_router
-from utils.logger import log_error_to_db, logger
+from utils.logger import async_log_error_to_db, logger
 from env import NODE_ID
 from utils.security import async_load_key_pair
 from utils.init import init_node
@@ -88,25 +88,41 @@ except RuntimeError:
 async def http_exception_handler(request, exc):
     if (not isinstance(exc, HTTPException)):
         raise exc
-    handle_dict = {
+    handle_dict: dict[int, JSONResponse] = {
         401: JSONResponse(
             content={
                 "status": "CLIENT_ERROR",
                 "msg": "InvalidToken",
-                "payload": None
+                "payload": exc.detail
             },
-            status_code=200,
+            status_code=401,
+        ),
+        403: JSONResponse(
+            content={
+                "status": "CLIENT_ERROR",
+                "msg": "PermissionDenied",
+                "payload": exc.detail
+            },
+            status_code=403
         ),
         404: JSONResponse(
             content={
-                "status": "NOT_FOUND",
-                "msg": "EndpointNotExist.",
-                "payload": None
+                "status": "CLIENT_ERROR",
+                "msg": "EndpointNotExists",
+                "payload": exc.detail
             },
-            status_code=200,
+            status_code=404,
+        ),
+        406: JSONResponse(
+            content={
+                "status": "CLIENT_ERROR",
+                "msg": "RequestNotUnderstandable",
+                "payload": exc.detail
+            },
+            status_code=404,
         ),
     }
-    res = handle_dict.get(exc.status_code)
+    res: JSONResponse | None = handle_dict.get(exc.status_code)
     if res:
         return res
     else:
@@ -116,13 +132,13 @@ async def http_exception_handler(request, exc):
 
 
 @app.middleware("http")
-async def db_error_handler(request: Request, call_next):
+async def internal_error_handler(request: Request, call_next):
     try:
         response = await call_next(request)
         return response
     except Exception as exc:
         logger.error(f"An error occurred: ", exc_info=True)
-        exception_id = log_error_to_db(
+        exception_id = await async_log_error_to_db(
             exc, worker_info_dict['node_id'], worker_info_dict['worker_id'])
         return JSONResponse(
             content={
