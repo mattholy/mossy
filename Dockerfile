@@ -9,6 +9,8 @@ RUN npm run build
 
 FROM python:3.12
 WORKDIR /app
+ARG RELEASE_TAG
+ENV RELEASE_TAG=${RELEASE_TAG}
 RUN pip install poetry
 COPY backend/pyproject.toml backend/poetry.lock* ./
 RUN poetry config virtualenvs.create false && poetry install --only main

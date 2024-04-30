@@ -38,8 +38,8 @@ class UserStats2dot0(BaseModel):
 
 class UsageStats2dot0(BaseModel):
     users: UserStats2dot0
-    localPosts: int = Field(..., ge=0)
-    localComments: int = Field(..., ge=0)
+    local_posts: int = Field(..., ge=0, alias='localPosts')
+    local_comments: int = Field(..., ge=0, alias='localComments')
 
 
 class NodeInfo2dot0(BaseModel):
@@ -47,7 +47,7 @@ class NodeInfo2dot0(BaseModel):
     software: Software2dot0
     protocols: List[str]
     services: ServiceLists2dot0
-    openRegistrations: bool = Field(..., alias="open_registrations")
+    openRegistrations: bool = Field(alias="open_registrations")
     usage: UsageStats2dot0
     metadata: dict
 
@@ -58,7 +58,7 @@ class NodeInfo2dot0(BaseModel):
 
 
 class Software2dot1(BaseModel):
-    name: str = Field(..., pattern=r'^[a-z0-9-]+$')
+    name: str = Field(pattern=r'^[a-z0-9-]+$')
     version: str
     repository: str = Field(...,
                             description="URL of the source code repository")
@@ -85,7 +85,7 @@ class UsageStats2dot1(BaseModel):
 
 
 class NodeInfo2dot1(BaseModel):
-    version: str = Field(..., pattern=r'^2\.1$')
+    version: str = '2.1'
     software: Software2dot1
     protocols: List[str]
     services: ServiceLists2dot1

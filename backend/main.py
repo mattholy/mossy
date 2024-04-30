@@ -27,6 +27,7 @@ from contextlib import asynccontextmanager
 # mossy
 from routers.api.router import router as api_router
 from routers.wellknown.router import router as wellknown_router
+from routers.nodeinfo.router import router as nodeinfo_router
 from utils.logger import log_error_to_db, logger
 from env import NODE_ID
 from utils.security import laod_key_pair
@@ -72,6 +73,7 @@ async def read_index():
 # 导入路由
 app.include_router(api_router)
 app.include_router(wellknown_router)
+app.include_router(nodeinfo_router)
 
 # 静态文件服务
 try:

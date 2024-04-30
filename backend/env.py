@@ -60,6 +60,7 @@ def generate_uuid_from_ip():
 
 
 BACKEND_URL = os.environ.get('CLUSTER_ID', 'http://localhost:8000')
+RELEASE_VERSION = os.environ.get('RELEASE_TAG', 'dev')
 API_BASE_URL = '/api'
 
 RP_SOURCE = os.environ.get('CLUSTER_ID', 'http://localhost:5173')
