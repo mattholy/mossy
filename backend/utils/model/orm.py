@@ -85,10 +85,11 @@ class OperationLog(Base):
     __tablename__ = 'log_operations'
 
     id = Column(BigInteger, primary_key=True, autoincrement=True)
-    user = Column(String, nullable=False, index=True)
+    user = Column(String, nullable=False, index=True, default='**MOSSY_ROOT**')
     operation_time = Column(DateTime(timezone=True),
                             index=True, default=func.now())
-    related_session = Column(UUID, nullable=False, index=True)
+    related_session = Column(UUID, nullable=False, index=True,
+                             default='00000000-0000-0000-0000-000000000000')
     module = Column(String, nullable=False, index=True)
     operation = Column(JSONB, nullable=False, index=True)
 

@@ -20,7 +20,7 @@ from colorlog import ColoredFormatter
 from sqlalchemy.orm import Session
 from env import RUNTIME
 from utils.db import SessionLocal
-from utils.model.orm import ErrorLog
+from utils.model.orm import ErrorLog, OperationLog
 
 
 logger = logging.getLogger()
@@ -78,3 +78,8 @@ def log_error_to_db(exception, node_id: str, worker_id: str):
     finally:
         db_session.close()
         return error_uuid
+
+
+def operation_log_to_db():
+    db_session = SessionLocal()
+    pass

@@ -19,7 +19,7 @@ from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Depends
 from fastapi import Request
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from webauthn import (
     generate_registration_options,
     verify_registration_response,
@@ -43,7 +43,11 @@ router = APIRouter(prefix='/auth', tags=['Authentication'])
 
 
 class User(BaseModel):
-    username: str
+    username: str = Field(
+        pattern=r'^[a-zA-Z0-9_-]+$',
+        min_length=3,
+        max_length=16
+    )
 
 
 @router.post('/generate-registration-options', response_class=JSONResponse, response_model=WebauthnReg)
