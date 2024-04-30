@@ -51,9 +51,9 @@ We lovingly provide:
 # Getting Start
 
 > [!IMPORTANT]
-> After your server starts, any frontend page will direct you to the setup interface to register and create admin details. Ensure no external access until setup is complete to avoid unauthorized use. 
+> After your server's first starts, any frontend page will redirect you to the setup interface to register and create admin details. Ensure no external access until setup is complete to avoid unauthorized use. 
 > 
-> If issues arise, clear the entire database.
+> **If issues arise, clear the entire database.**
 
 A typical deployment involves placing your Mossy web services behind a load balancer (also a SSL-terminate proxy). You can deploy Mossy nodes worldwide, connecting them via a shared storage. By configuring your load balancer carefully, users can access your Mossy through the nearest access point.
 
