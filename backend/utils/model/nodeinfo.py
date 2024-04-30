@@ -32,14 +32,14 @@ class ServiceLists2dot0(BaseModel):
 
 class UserStats2dot0(BaseModel):
     total: int = Field(..., ge=0)
-    activeHalfyear: int = Field(..., ge=0)
-    activeMonth: int = Field(..., ge=0)
+    active_halfyear: Optional[int] = Field(..., ge=0, alias='activeHalfyear')
+    active_month: Optional[int] = Field(..., ge=0, alias='activeMonth')
 
 
 class UsageStats2dot0(BaseModel):
     users: UserStats2dot0
-    local_posts: int = Field(..., ge=0, alias='localPosts')
-    local_comments: int = Field(..., ge=0, alias='localComments')
+    local_posts: Optional[int] = Field(..., ge=0, alias='localPosts')
+    local_comments: Optional[int] = Field(..., ge=0, alias='localComments')
 
 
 class NodeInfo2dot0(BaseModel):
@@ -49,7 +49,7 @@ class NodeInfo2dot0(BaseModel):
     services: ServiceLists2dot0
     openRegistrations: bool = Field(alias="open_registrations")
     usage: UsageStats2dot0
-    metadata: dict
+    metadata: Dict[str, Optional[str]] = Field(default_factory=dict)
 
     class Config:
         populate_by_name = True
@@ -74,14 +74,14 @@ class ServiceLists2dot1(BaseModel):
 
 class UserStats2dot1(BaseModel):
     total: int = Field(..., ge=0)
-    activeHalfyear: int = Field(..., ge=0)
-    activeMonth: int = Field(..., ge=0)
+    active_halfyear: Optional[int] = Field(..., ge=0, alias='activeHalfyear')
+    active_month: Optional[int] = Field(..., ge=0, alias='activeMonth')
 
 
 class UsageStats2dot1(BaseModel):
     users: UserStats2dot1
-    localPosts: int = Field(..., ge=0)
-    localComments: int = Field(..., ge=0)
+    local_posts: Optional[int] = Field(..., ge=0, alias='localPosts')
+    local_comments: Optional[int] = Field(..., ge=0, alias='localComments')
 
 
 class NodeInfo2dot1(BaseModel):

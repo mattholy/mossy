@@ -106,7 +106,7 @@ class ErrorLog(Base):
 
 
 class UserRegProcess(Base):
-    __tablename__ = 'user_register_process'
+    __tablename__ = 'auth_user_register_process'
 
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     username = Column(String(50), unique=True, nullable=False)

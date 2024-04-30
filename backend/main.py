@@ -118,9 +118,7 @@ async def http_exception_handler(request, exc):
 @app.middleware("http")
 async def db_error_handler(request: Request, call_next):
     try:
-        print("middleware 1 start")
         response = await call_next(request)
-        print("middleware 1 end")
         return response
     except Exception as exc:
         logger.error(f"An error occurred: ", exc_info=True)
@@ -142,9 +140,7 @@ async def db_error_handler(request: Request, call_next):
 
 @app.middleware("http")
 async def add_worker_info(request: Request, call_next):
-    print("middleware 2 start")
     response = await call_next(request)
-    print("middleware 2 end")
     response.headers["X-Worker-ID"] = worker_info_dict['worker_id']
     response.headers["X-Node-ID"] = worker_info_dict['node_id']
     return response

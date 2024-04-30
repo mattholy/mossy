@@ -17,8 +17,10 @@ import uuid
 import socket
 import netifaces
 from urllib.parse import urlparse
+from functools import cache
 
 
+@cache
 def is_physical_interface(interface_name):
     # 这里列出一些常见的虚拟接口前缀，根据实际情况可能需要调整
     virtual_prefixes = ('lo', 'docker', 'vmnet',
@@ -26,6 +28,7 @@ def is_physical_interface(interface_name):
     return not any(interface_name.startswith(prefix) for prefix in virtual_prefixes)
 
 
+@cache
 def get_physical_ips():
     ipv4_addresses = []
     ipv6_addresses = []
@@ -49,6 +52,7 @@ def get_physical_ips():
 IPV4S, IPV6S = get_physical_ips()
 
 
+@cache
 def generate_uuid_from_ip():
     try:
         IPV4S, IPV6S = get_physical_ips()

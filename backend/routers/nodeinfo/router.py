@@ -38,8 +38,8 @@ async def fetch_nodeinfo_v2_1(response: Response):
         usage={
             'users': {
                 'total': 0,
-                'activeHalfyear': 0,
-                'activeMonth': 0
+                'activeHalfyear': None,
+                'activeMonth': None
             },
             'localPosts': 0,
             'localComments': 0
@@ -65,8 +65,8 @@ async def fetch_nodeinfo_v2_0(response: Response):
         usage={
             'users': {
                 'total': 0,
-                'activeHalfyear': 0,
-                'activeMonth': 0
+                'activeHalfyear': None,
+                'activeMonth': None
             },
             'localPosts': 0,
             'localComments': 0
