@@ -1,6 +1,6 @@
 <div align="center">
   <h1>Mossy</h1>
-  <h2>❤ Yet another interplanetary microblogging platform with python</h2>
+  <h2>❤️ Yet another interplanetary microblogging platform with python</h2>
 
   ![GitHub License](https://img.shields.io/github/license/mattholy/mossy)
   ![GitHub Release](https://img.shields.io/github/v/release/mattholy/mossy)
@@ -24,6 +24,8 @@
 
 
 Mossy is a interplanetary microblogging platform of fediverse, just like [Mastodon](https://github.com/mastodon/mastodon) or [Misskey](https://github.com/misskey-dev/misskey).
+
+Although it sounds like a joke, it's actually very fast. Thanks to its fully asynchronous structure, it can fully utilize all your CPU resources (and memory as well ❤️).
 
 ![Static Badge](https://img.shields.io/badge/Try%20it%20out-blue?style=for-the-badge)
 
