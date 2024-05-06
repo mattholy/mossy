@@ -1,7 +1,7 @@
 {
-  "name": "mossy-zero",
+  "name": "mossy",
   "version": "1.0.0",
-  "description": "Mossy's frontend",
+  "description": "Mossy",
   "main": "index.js",
   "scripts": {
     "install:frontend": "cd ./frontend && npm install",
