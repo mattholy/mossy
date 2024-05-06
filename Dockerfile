@@ -1,5 +1,5 @@
 FROM node:20 as vue-builder
-WORKDIR /app/frontend
+WORKDIR /app/frontend/mossy-zero
 COPY frontend/package*.json ./
 RUN npm install
 COPY frontend/ .
@@ -14,7 +14,7 @@ ENV RELEASE_TAG=${RELEASE_TAG}
 RUN pip install poetry
 COPY backend/pyproject.toml backend/poetry.lock* ./
 RUN poetry config virtualenvs.create false && poetry install --only main
-COPY --from=vue-builder /app/frontend/dist /app/static
+COPY --from=vue-builder /app/frontend/mossy-zero/dist /app/static
 COPY backend /app
 
 COPY backend/entrypoint.sh ./entrypoint.sh
