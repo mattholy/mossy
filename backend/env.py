@@ -14,15 +14,24 @@ env.py
 
 import os
 import uuid
-import socket
+import subprocess
 import netifaces
 from urllib.parse import urlparse
 from functools import cache
 
 
 @cache
+def get_git_commit_id():
+    try:
+        commit_id = subprocess.check_output(
+            ['git', 'rev-parse', '--short', 'HEAD']).decode('utf-8').strip()
+        return f'dev+{commit_id}'
+    except subprocess.CalledProcessError:
+        return 'dev'
+
+
+@cache
 def is_physical_interface(interface_name):
-    # 这里列出一些常见的虚拟接口前缀，根据实际情况可能需要调整
     virtual_prefixes = ('lo', 'docker', 'vmnet',
                         'vboxnet', 'tun', 'tap', 'virbr')
     return not any(interface_name.startswith(prefix) for prefix in virtual_prefixes)
@@ -64,7 +73,7 @@ def generate_uuid_from_ip():
 
 
 BACKEND_URL = os.environ.get('CLUSTER_ID', 'http://localhost:8000')
-RELEASE_VERSION = os.environ.get('RELEASE_TAG', 'dev')
+RELEASE_VERSION = os.environ.get('RELEASE_TAG', get_git_commit_id())
 API_BASE_URL = '/api'
 
 RP_SOURCE = os.environ.get('CLUSTER_ID', 'http://localhost:5173')
