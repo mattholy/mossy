@@ -86,7 +86,7 @@ except RuntimeError:
 
 @app.exception_handler(StarletteHTTPException)
 async def http_exception_handler(request, exc):
-    if (not isinstance(exc, HTTPException)):
+    if (not isinstance(exc, (HTTPException, StarletteHTTPException))):
         raise exc
     handle_dict: dict[int, JSONResponse] = {
         401: JSONResponse(
@@ -137,7 +137,8 @@ async def internal_error_handler(request: Request, call_next):
         response = await call_next(request)
         return response
     except Exception as exc:
-        logger.error(f"An error occurred: ", exc_info=True)
+        logger.error(f"An error occurred when access {
+                     request.url}: ", exc_info=True)
         exception_id = await async_log_error_to_db(
             exc, worker_info_dict['node_id'], worker_info_dict['worker_id'])
         return JSONResponse(

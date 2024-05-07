@@ -13,9 +13,14 @@ router.py
 '''
 
 from fastapi import APIRouter
-from routers.api.authentication.endpoint import router as authentication_router
+from routers.api.m1 import router as api_m1_router
+from routers.api.v1 import router as api_v1_router
+from routers.api.v2 import router as api_v2_router
+
 from env import API_BASE_URL
 
 router = APIRouter(prefix=API_BASE_URL, tags=['API'])
 
-router.include_router(authentication_router)
+router.include_router(api_m1_router)
+router.include_router(api_v1_router)
+router.include_router(api_v2_router)

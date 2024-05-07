@@ -17,7 +17,7 @@ from fastapi import APIRouter
 router = APIRouter(prefix='/webfinger', tags=['Webfinger'])
 
 
-@router.get('/')
+@router.get('')
 async def webfinger(resource: str):
     print(resource)
     assert resource.startswith('acct:'), 'Invalid resource'

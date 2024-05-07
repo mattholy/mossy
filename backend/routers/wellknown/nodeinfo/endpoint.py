@@ -30,7 +30,7 @@ class NodeinfoLinks(BaseModel):
     href: str
 
 
-@router.get('/', response_model=NodeInfo)
+@router.get('', response_model=NodeInfo)
 async def nodeinfo():
     return NodeInfo(links=[
         NodeinfoLinks(
