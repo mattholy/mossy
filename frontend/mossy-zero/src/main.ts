@@ -1,14 +1,19 @@
-import './assets/main.css'
-
 import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-
 import App from './App.vue'
+import i18n, { setI18nLanguage } from './i18n'
 import router from './router'
+import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
-const app = createApp(App)
+async function init() {
+    await setI18nLanguage('zh-CN')
+    const app = createApp(App)
+    const pinia = createPinia()
+    pinia.use(piniaPluginPersistedstate)
+    app.use(i18n)
+    app.use(router)
+    app.use(pinia)
+    app.mount('#app')
+}
 
-app.use(createPinia())
-app.use(router)
-
-app.mount('#app')
+init()

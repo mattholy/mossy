@@ -13,7 +13,7 @@ put some words here
 '''
 
 from utils.db import SessionLocal
-from utils.model.orm import NodeInfo
+from utils.model.orm import NodeInfo, SystemConfig
 from utils.model.orm import NodeType
 from env import NODE_ID, IPV6S, IPV4S
 
@@ -21,6 +21,22 @@ import multiprocessing
 import platform
 import psutil
 from functools import cache
+from sqlalchemy import text
+from sqlalchemy.exc import OperationalError
+
+
+def ready() -> bool:
+    try:
+        with SessionLocal() as db:
+            init_flag = db.query(SystemConfig).filter_by(
+                key='init_flag').first()
+            if init_flag and init_flag.value == 'All-Done':
+                return True
+            else:
+                return False
+    except OperationalError as e:
+        return False
+    return True
 
 
 def init_node(public_key: str, type: NodeType, remark: str = None, status: bool = True):

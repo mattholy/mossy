@@ -29,9 +29,9 @@ from routers.api.router import router as api_router
 from routers.wellknown.router import router as wellknown_router
 from routers.nodeinfo.router import router as nodeinfo_router
 from utils.logger import async_log_error_to_db, logger
-from env import NODE_ID
+from env import NODE_ID, BACKEND_URL
 from utils.security import async_load_key_pair
-from utils.init import init_node
+from utils.init import init_node, ready
 from utils.model.orm import NodeType
 
 # 其它
@@ -50,13 +50,15 @@ async def lifespan(app: FastAPI):
     private_key, public_key = await async_load_key_pair()
     worker_info_dict['private_key'] = private_key
     worker_info_dict['public_key'] = public_key
-    init_node(public_key, NodeType.fastapi)
+    if ready():
+        init_node(public_key, NodeType.fastapi)
     logger.info(f"Starting FastAPI worker: {
-                worker_info_dict['node_id']}:{worker_id}")
+        worker_info_dict['node_id']}:{worker_id}")
     yield
+    if ready():
+        init_node(public_key, NodeType.fastapi, status=False)
     logger.error(f"Stopping FastAPI worker: {
         worker_info_dict['node_id']}:{worker_id}")
-    init_node(public_key, NodeType.fastapi, status=False)
 
 
 # 创建FastAPI实例
@@ -69,6 +71,11 @@ async def read_index():
     if not index_path.is_file():
         return PlainTextResponse(content=f"Backend server is running. Response from node {worker_info_dict['node_id']} worker {worker_info_dict['worker_id']}")
     return FileResponse(index_path)
+
+
+@app.get("/test", name="Frontend Pages")
+async def read_index():
+    return PlainTextResponse('test_page')
 
 # 导入路由
 app.include_router(api_router)
@@ -121,6 +128,14 @@ async def http_exception_handler(request, exc):
             },
             status_code=404,
         ),
+        503: JSONResponse(
+            content={
+                "status": "SERVER_ERROR",
+                "msg": "ServiceUnavailable",
+                "payload": exc.detail
+            },
+            status_code=503,
+        ),
     }
     res: JSONResponse | None = handle_dict.get(exc.status_code)
     if res:
@@ -150,9 +165,30 @@ async def internal_error_handler(request: Request, call_next):
                     "instruction": 'Please contact the administrator with the exception_id.'
                 }
             },
-            status_code=200,
+            status_code=500,
             headers={"X-Error": exception_id},
         )
+
+
+@app.middleware("http")
+async def check_server_ready(request: Request, call_next):
+    if request.url.path in ['/', '/setup/status', '/setup/init']:
+        return await call_next(request)
+    else:
+        if ready():
+            return await call_next(request)
+        else:
+            return JSONResponse(
+                content={
+                    "status": "SERVER_ERROR",
+                    "msg": "ServiceUnavailable",
+                    "payload": {
+                        "instruction": f'This endpoint is not available now. The Server is not ready. Please finish setuppp.',
+                        'setup_url': f'{BACKEND_URL}'
+                    }
+                },
+                status_code=503,
+            )
 
 
 @app.middleware("http")

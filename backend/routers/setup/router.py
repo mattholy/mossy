@@ -21,18 +21,15 @@ from pydantic import BaseModel
 from utils.model.api_schemas import BaseResponse
 from utils.db import get_db
 from utils.model.orm import SystemConfig
+from utils.init import init_node, ready
 
 router = APIRouter(prefix='/setup', tags=['Mossy Setup'])
 
 
 @router.post('/status', response_model=BaseResponse)
 async def setup_status(db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(SystemConfig).filter_by(key='init_flag'))
-    init_flag = result.scalars().first()
-    # if init
-    if init_flag and init_flag.value == 'All-Done':
+    if ready():
         raise HTTPException(status_code=403, detail='AlreadyInit')
-    # if not init
     return BaseResponse(status='OK', msg='AllDone')
 
 
@@ -46,10 +43,7 @@ class BasicInfo(BaseModel):
 
 @router.post('/init', response_model=BaseResponse)
 async def setup_status(basic_info: BasicInfo, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(SystemConfig).filter_by(key='init_flag'))
-    init_flag = result.scalars().first()
-    # if init
-    if init_flag and init_flag.value == 'All-Done':
+    if ready():
         raise HTTPException(status_code=403, detail='AlreadyInit')
     try:
         conf_planet_name = SystemConfig(
