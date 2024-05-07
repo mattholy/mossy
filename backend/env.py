@@ -92,3 +92,5 @@ NODE_ID = os.environ.get(
     'NODE_ID', generate_uuid_from_ip())
 
 ACTIVITYPUB_ID = os.environ.get('CLUSTER_ID', 'http://localhost:5173')
+
+USER_AGENT = f'Mossy/{RELEASE_VERSION}'
