@@ -45,16 +45,17 @@ async def get_current_user(
     return user
 
 
-def permission_check(user: str, permission_node: str, db: Session = Depends(get_db)) -> bool:
-    if db.query(Permission).filter_by(user=user, permission=permission_node).first():
+async def permission_check(user: str, permission_node: str, db: AsyncSession = Depends(get_db)) -> bool:
+    res = await db.execute(select(Passkeys).filter_by(user=user, permission=permission_node))
+    if res.scalars().one_or_none():
         return True
     else:
         return False
 
 
-def require_permission(permission_node: str, user=Depends(get_current_user)) -> None:
-    if not permission_check(user=user, permission_node=permission_node):
-        raise HTTPException(status_code=401)
+async def require_permission(permission_node: str, user=Depends(get_current_user)) -> None:
+    if not await permission_check(user=user, permission_node=permission_node):
+        raise HTTPException(status_code=401, detail='PermissionDenied')
 
 
 def generate_jwt(secrets: str, user_id: str) -> tuple[str, dict]:
