@@ -26,7 +26,7 @@ from sqlalchemy.future import select
 
 from utils.db import get_db
 from env import RP_ID
-from utils.model.orm import Passkeys, RegistrationAttempt, AuthSession
+from utils.model.orm import Passkeys, RegistrationAttempt, AuthSession, Permission
 import cryptography
 from cryptography.hazmat.primitives.asymmetric import ec
 
@@ -43,6 +43,18 @@ async def get_current_user(
     if not user:
         raise HTTPException(status_code=401)
     return user
+
+
+def permission_check(user: str, permission_node: str, db: Session = Depends(get_db)) -> bool:
+    if db.query(Permission).filter_by(user=user, permission=permission_node).first():
+        return True
+    else:
+        return False
+
+
+def require_permission(permission_node: str, user=Depends(get_current_user)) -> None:
+    if not permission_check(user=user, permission_node=permission_node):
+        raise HTTPException(status_code=401)
 
 
 def generate_jwt(secrets: str, user_id: str) -> tuple[str, dict]:
