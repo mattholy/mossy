@@ -75,7 +75,7 @@ class Permission(Base):
     id = Column(UUID, primary_key=True, default=uuid.uuid4)
     user = Column(String, nullable=False, index=True)
     permission = Column(String, nullable=False, index=True)
-    operation_log_recored_id = Column(BigInteger, default=False, index=True)
+    operation_log_id = Column(BigInteger, default=False, index=True)
     created_at = Column(DateTime(timezone=True), default=func.now())
     updated_at = Column(DateTime(timezone=True),
                         default=func.now(), onupdate=func.now())
