@@ -14,7 +14,8 @@
     "test:frontend": "cd ./frontend/mossy-zero && npm run test:unit",
     "test:backend": "cd ./backend && poetry run alembic upgrade head && poetry run pytest --cov",
     "test": "concurrently \"npm run test:backend\" \"npm run test:frontend\"",
-    "tool": "poetry run python scripts/list_directory_tree.py && cd ./backend && poetry run poetry export -f requirements.txt --output ../requirements.txt"
+    "tool": "poetry run python scripts/list_directory_tree.py && cd ./backend && poetry run poetry export -f requirements.txt --output ../requirements.txt",
+    "openapi-ts": "cd frontend && npm run openapi-ts"
   },
   "keywords": [],
   "author": "",
