@@ -1,11 +1,11 @@
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore } from '@/stores/AuthStore';
 
 interface FetchOptions {
     endpoint: string;
     data: any;
 }
 
-const baseUrl = import.meta.env.VITE_BASE_URL || ''
+const baseUrl = process.env.VITE_BASE_URL || ''
 
 export async function callApi({ endpoint, data }: FetchOptions): Promise<any> {
     if (!endpoint.startsWith('/')) {

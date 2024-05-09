@@ -10,11 +10,9 @@ export const usePermissionsStore = defineStore({
         permissions: []
     }),
     getters: {
-        // Getter来检查用户是否具有特定权限
         hasPermission: (state) => (permission: string) => state.permissions.includes(permission)
     },
     actions: {
-        // Action来设置用户权限
         setPermissions(permissions: string[]) {
             this.permissions = permissions;
         }

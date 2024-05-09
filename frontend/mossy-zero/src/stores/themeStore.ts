@@ -16,5 +16,6 @@ export const useThemeStore = defineStore('theme', {
         setDarkMode(isDarkMode: boolean) {
             this.isDarkMode = isDarkMode;
         }
-    }
+    },
+    persist: true
 });
