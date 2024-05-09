@@ -49,7 +49,7 @@ class EncryptedType(TypeDecorator):
             return ciphertext
         ciphertext = ciphertext[len(ENC_PREFIX):]
         if not self.key:
-            return 'ERROR: DECRYPTION KEY NOT FOUND'
+            return 'ERROR:DecryptionKeyNotFound'
         try:
             decoded_data = urlsafe_b64decode(ciphertext)
             iv = decoded_data[:12]
@@ -60,7 +60,7 @@ class EncryptedType(TypeDecorator):
             decryptor = cipher.decryptor()
             return decryptor.update(ct) + decryptor.finalize()
         except Exception as e:
-            return 'ERROR: DECRYPTION FAILED'
+            return 'ERROR:DecryptionFailed'
 
     def process_bind_param(self, value, dialect):
         if value is not None:
