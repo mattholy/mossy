@@ -82,7 +82,7 @@ async def async_log_error_to_db(exception, node_id: str, worker_id: str) -> str:
             return error_uuid
 
 
-def sync_log_error_to_db(exception, node_id: str, worker_id: str):
+def log_error_to_db(exception, node_id: str, worker_id: str):
     db_session: Session = SessionLocal()
     try:
         error_uuid = str(uuid.uuid4())

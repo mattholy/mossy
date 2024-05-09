@@ -37,7 +37,7 @@ from sqlalchemy.future import select
 from utils.db import get_db
 from utils.model.api_schemas import WebauthnReg
 from utils.model.orm import Passkeys, RegistrationAttempt, AuthSession, UserRegProcess
-from utils.security import generate_jwt, verify_jwt, get_current_user
+from utils.system.security import generate_jwt, verify_jwt, get_current_user
 
 from env import RP_ID, RP_NAME, RP_SOURCE, DATABASE_URL
 

@@ -19,7 +19,7 @@ from celery.signals import celeryd_init
 
 # 本项目
 from env import REDIS_URL, NODE_ID, DATABASE_URL
-from utils.security import sync_load_key_pair
+from utils.system.security import sync_load_key_pair
 from utils.init import init_node
 from utils.model.orm import NodeType
 from utils.logger import logger
