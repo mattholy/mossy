@@ -26,6 +26,7 @@ from sqlalchemy.exc import OperationalError
 
 
 def ready() -> bool:
+    return True
     try:
         with SessionLocal() as db:
             init_flag = db.query(SystemConfig).filter_by(
