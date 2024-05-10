@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { useThemeStore } from '@/stores/ThemeStore'
 
 const { t } = useI18n()
-const themeStore = useThemeStore();
+const themeStore = useThemeStore()
 </script>
 
 <template>

@@ -5,8 +5,10 @@ import LocalizationBtn from './LocalizationBtn.vue';
 </script>
 
 <template>
-    <n-space class="px-2">
-        <Theme />
-        <LocalizationBtn />
-    </n-space>
+    <div class="px-2">
+        <n-space size="small">
+            <Theme />
+            <LocalizationBtn />
+        </n-space>
+    </div>
 </template>

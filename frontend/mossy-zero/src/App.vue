@@ -24,7 +24,7 @@ watchEffect(() => {
 <template>
   <n-config-provider :theme="theme">
     <n-global-style />
-    <NScrollbar class="h-screen" trigger="hover">
+    <NScrollbar content-class="h-screen" trigger="hover">
       <MossyHeader />
       我们在田野上面找猪<br>
       想象中已找到了三只<br>
@@ -43,8 +43,8 @@ watchEffect(() => {
       我们在想象中度过了许多年<br>
       许多年之后我们又开始想象<br>
       啦啦啦啦啦啦啦啦咧
-      <setupSever style="height: 1000px;" />
-      <RouterView style="height: 1000px;" />
+      <setupSever />
+      <RouterView />
     </NScrollbar>
   </n-config-provider>
 </template>
