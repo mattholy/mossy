@@ -4,6 +4,7 @@ import i18n, { setI18nLanguage } from './i18n'
 import router from './router'
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+import '@/assets/main.css'
 
 async function init() {
     await setI18nLanguage('zh-CN')

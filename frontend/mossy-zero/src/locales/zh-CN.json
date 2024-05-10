@@ -1,1 +1,10 @@
-{}
+{
+    "ui": {
+        "header": {
+            "actions": {
+                "localization": "切换语言",
+                "darkmode": "暗色模式"
+            }
+        }
+    }
+}

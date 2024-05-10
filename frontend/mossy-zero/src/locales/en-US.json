@@ -1,0 +1,9 @@
+{
+    "ui": {
+        "header": {
+            "actions": {
+                "darkmode": "Dark Mode"
+            }
+        }
+    }
+}
