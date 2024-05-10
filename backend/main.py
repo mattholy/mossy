@@ -53,12 +53,12 @@ async def lifespan(app: FastAPI):
     if ready():
         init_node(public_key, NodeType.fastapi)
     logger.info(f"Starting FastAPI worker: {
-        worker_info_dict['node_id']}:{worker_id}")
+        worker_info_dict['node_id']}: {worker_id}")
     yield
     if ready():
         init_node(public_key, NodeType.fastapi, status=False)
     logger.error(f"Stopping FastAPI worker: {
-        worker_info_dict['node_id']}:{worker_id}")
+        worker_info_dict['node_id']}: {worker_id}")
 
 
 # 创建FastAPI实例
@@ -193,6 +193,7 @@ async def check_server_ready(request: Request, call_next):
 
 @app.middleware("http")
 async def add_worker_info(request: Request, call_next):
+    logger.debug('Incoming request with header: ' + str({key: value for key, value in request.headers.items()}) + ' body: ' + str(await request.body()))
     response = await call_next(request)
     response.headers["X-Worker-ID"] = worker_info_dict['worker_id']
     response.headers["X-Node-ID"] = worker_info_dict['node_id']
