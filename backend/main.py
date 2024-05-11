@@ -28,6 +28,7 @@ from contextlib import asynccontextmanager
 from routers.api.router import router as api_router
 from routers.wellknown.router import router as wellknown_router
 from routers.nodeinfo.router import router as nodeinfo_router
+from routers.setup.router import router as setup_router
 from utils.logger import async_log_error_to_db, logger
 from env import NODE_ID, BACKEND_URL
 from utils.system.security import async_load_key_pair
@@ -81,6 +82,7 @@ async def read_index():
 app.include_router(api_router)
 app.include_router(wellknown_router)
 app.include_router(nodeinfo_router)
+app.include_router(setup_router)
 
 # 静态文件服务
 try:
@@ -172,7 +174,7 @@ async def internal_error_handler(request: Request, call_next):
 
 @app.middleware("http")
 async def check_server_ready(request: Request, call_next):
-    if request.url.path in ['/', '/setup/status', '/setup/init']:
+    if request.url.path in ['/', '/setup/status', '/setup/init', '/docs', '/openapi.json']:
         return await call_next(request)
     else:
         if ready():

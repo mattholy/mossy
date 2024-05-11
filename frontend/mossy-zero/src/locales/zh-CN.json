@@ -1,9 +1,26 @@
 {
     "ui": {
+        "common_desc": {
+            "go_home": "回到梦开始的地方",
+            "go_back": "返回"
+        },
         "header": {
             "actions": {
+                "more": "快捷功能",
                 "localization": "切换语言",
                 "darkmode": "暗色模式"
+            }
+        }
+    },
+    "api": {
+        "statusmsg": {
+            "PermissionDenied": {
+                "title": "权限不足",
+                "content": "很抱歉，但是你没有权限到这里来"
+            },
+            "Load failed": {
+                "title": "网络错误",
+                "content": "加载失败，兴许你断网了，或者服务器离线"
             }
         }
     }

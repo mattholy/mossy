@@ -22,3 +22,15 @@ class BaseResponse(BaseModel):
 
 class WebauthnReg(BaseResponse):
     payload: Optional[dict]
+
+
+class BaseApiResp(BaseResponse):
+    payload: Optional[dict]
+
+
+class ServiceSetupStatus(BaseModel):
+    status: str
+
+
+class ApiServiceSetupStatus(BaseApiResp):
+    payload: ServiceSetupStatus

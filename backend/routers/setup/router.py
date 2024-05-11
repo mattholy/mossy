@@ -18,7 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from pydantic import BaseModel
 
-from utils.model.api_schemas import BaseResponse
+from utils.model.api_schemas import ApiServiceSetupStatus, BaseApiResp
 from utils.db import get_db
 from utils.model.orm import SystemConfig
 from utils.init import init_node, ready
@@ -26,11 +26,9 @@ from utils.init import init_node, ready
 router = APIRouter(prefix='/setup', tags=['Mossy Setup'])
 
 
-@router.post('/status', response_model=BaseResponse)
+@router.post('/status', response_model=ApiServiceSetupStatus)
 async def setup_status(db: AsyncSession = Depends(get_db)):
-    if ready():
-        raise HTTPException(status_code=403, detail='AlreadyInit')
-    return BaseResponse(status='OK', msg='AllDone')
+    return ApiServiceSetupStatus(status='OK', msg='AllDone', payload={'status': ready(return_stage=True)})
 
 
 class BasicInfo(BaseModel):
@@ -41,7 +39,7 @@ class BasicInfo(BaseModel):
     mossy_network: bool
 
 
-@router.post('/init', response_model=BaseResponse)
+@router.post('/init', response_model=BaseApiResp)
 async def setup_status(basic_info: BasicInfo, db: AsyncSession = Depends(get_db)):
     if ready():
         raise HTTPException(status_code=403, detail='AlreadyInit')

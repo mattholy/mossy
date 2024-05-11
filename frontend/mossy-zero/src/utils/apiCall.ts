@@ -5,7 +5,7 @@ interface FetchOptions {
     data: any;
 }
 
-const baseUrl = process.env.VITE_BASE_URL || ''
+const baseUrl = import.meta.env.VITE_BASE_URL || ''
 
 export async function callApi({ endpoint, data }: FetchOptions): Promise<any> {
     if (!endpoint.startsWith('/')) {

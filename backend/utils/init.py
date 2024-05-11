@@ -25,19 +25,20 @@ from sqlalchemy import text
 from sqlalchemy.exc import OperationalError
 
 
-def ready() -> bool:
-    return True
+def ready(return_stage=False) -> bool | str:
     try:
         with SessionLocal() as db:
             init_flag = db.query(SystemConfig).filter_by(
-                key='init_flag').first()
-            if init_flag and init_flag.value == 'All-Done':
-                return True
+                key='init_flag').one_or_none()
+            if init_flag:
+                if return_stage:
+                    return init_flag.value
+                else:
+                    return init_flag.value == 'AllDone'
             else:
-                return False
+                return 'NotInit' if return_stage else False
     except OperationalError as e:
         return False
-    return True
 
 
 def init_node(public_key: str, type: NodeType, remark: str = None, status: bool = True):
