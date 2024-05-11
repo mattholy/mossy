@@ -15,7 +15,7 @@ logger.py
 import logging
 import traceback
 import uuid
-from colorlog import ColoredFormatter
+from rich.logging import RichHandler
 
 from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -27,30 +27,11 @@ from utils.model.orm import ErrorLog, OperationLog
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG if RUNTIME == 'DEV' else logging.INFO)
 
-
-handler = logging.StreamHandler()
-formatter = ColoredFormatter(
-    "%(asctime)s - %(log_color)s%(levelname)s%(reset)s - [%(pathname)s:%(lineno)d] : "
-    "%(message_log_color)s%(message)s",
-    datefmt='%Y-%m-%d %H:%M:%S',
-    reset=True,
-    log_colors={
-        'DEBUG':    'cyan',
-        'INFO':     'green',
-        'WARNING':  'yellow',
-        'ERROR':    'bold_red',
-        'CRITICAL': 'bold_red',
-    },
-    secondary_log_colors={
-        'message': {
-            'CRITICAL': 'bold'
-        }
-    },
-    style='%'
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(message)s",
+    handlers=[RichHandler(rich_tracebacks=True)]
 )
-
-handler.setFormatter(formatter)
-logger.addHandler(handler)
 
 
 async def async_log_error_to_db(exception, node_id: str, worker_id: str) -> str:

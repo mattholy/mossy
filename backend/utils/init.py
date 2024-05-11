@@ -26,6 +26,7 @@ from sqlalchemy.exc import OperationalError
 
 
 def ready(return_stage=False) -> bool | str:
+    return 'NotInit' if return_stage else True
     try:
         with SessionLocal() as db:
             init_flag = db.query(SystemConfig).filter_by(

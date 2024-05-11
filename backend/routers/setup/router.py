@@ -16,12 +16,14 @@ from fastapi import APIRouter, Depends
 from fastapi.exceptions import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from typing import Optional
 
-from utils.model.api_schemas import ApiServiceSetupStatus, BaseApiResp
+from utils.model.api_schemas import ApiServiceSetupStatus, BaseApiResp, WebauthnReg
 from utils.db import get_db
 from utils.model.orm import SystemConfig
 from utils.init import init_node, ready
+from routers.api.m1.authentication.endpoint import start_registration
 
 router = APIRouter(prefix='/setup', tags=['Mossy Setup'])
 
@@ -31,52 +33,34 @@ async def setup_status(db: AsyncSession = Depends(get_db)):
     return ApiServiceSetupStatus(status='OK', msg='AllDone', payload={'status': ready(return_stage=True)})
 
 
-class BasicInfo(BaseModel):
-    planet_name: str
-    planet_desc: str
-    planet_owner_username: str
-    offline_mode: bool
-    mossy_network: bool
+class ServerBanner(BaseModel):
+    file_name: str = ''
+    file_count: int = 0
+    file_size: int = 0
+    file_type: str = ''
+    file_content: str = ''
+    isTwoToOne: bool = False
+
+
+class SetupForm(BaseModel):
+    server_name: str = ''
+    server_desc: str = ''
+    server_admin: str = ''
+    server_service: str = ''
+    server_about: str = ''
+    server_banner: ServerBanner = Field(default_factory=ServerBanner)
+    server_status: str = ''
+    server_isolated: bool = False
+    server_telemetry: bool = True
+    server_union: bool = True
 
 
 @router.post('/init', response_model=BaseApiResp)
-async def setup_status(basic_info: BasicInfo, db: AsyncSession = Depends(get_db)):
-    if ready():
-        raise HTTPException(status_code=403, detail='AlreadyInit')
+async def setup_status(basic_info: SetupForm, db: AsyncSession = Depends(get_db)):
+    # if ready():
+    #     raise HTTPException(status_code=403, detail='AlreadyInit')
     try:
-        conf_planet_name = SystemConfig(
-            key='planet_name',
-            value=basic_info.planet_name
-        )
-        conf_planet_desc = SystemConfig(
-            key='planet_desc',
-            value=basic_info.planet_desc
-        )
-        conf_planet_owner = SystemConfig(
-            key='planet_owner_username',
-            value=basic_info.planet_owner_username
-        )
-        conf_offline_mode = SystemConfig(
-            key='offline_mode',
-            value='OFFLINE' if basic_info.offline_mode else 'ONLINE'
-        )
-        conf_mossy_network = SystemConfig(
-            key='mossy_network',
-            value='ENABLE' if basic_info.mossy_network else 'DISABLE'
-        )
-        conf_finished = SystemConfig(
-            key='init_flag',
-            value='All-Done'
-        )
-        db.add_all([
-            conf_planet_name,
-            conf_planet_desc,
-            conf_planet_owner,
-            conf_offline_mode,
-            conf_mossy_network,
-            conf_finished
-        ])
-        await db.commit()
-        return BaseResponse(status='OK', msg='AllDone')
+        pass
     except Exception as e:
         raise e
+    return BaseApiResp(status='OK', msg='AllDone', payload={})

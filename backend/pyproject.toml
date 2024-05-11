@@ -26,6 +26,7 @@ asyncpg = "^0.29.0"
 aiofiles = "^23.2.1"
 greenlet = "^3.0.3"
 idna = "^3.7"
+rich = "^13.7.1"
 
 
 [tool.poetry.group.dev.dependencies]

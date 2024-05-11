@@ -58,40 +58,6 @@ export const $BaseApiResp = {
   title: 'BaseApiResp'
 } as const
 
-export const $BasicInfo = {
-  properties: {
-    planet_name: {
-      type: 'string',
-      title: 'Planet Name'
-    },
-    planet_desc: {
-      type: 'string',
-      title: 'Planet Desc'
-    },
-    planet_owner_username: {
-      type: 'string',
-      title: 'Planet Owner Username'
-    },
-    offline_mode: {
-      type: 'boolean',
-      title: 'Offline Mode'
-    },
-    mossy_network: {
-      type: 'boolean',
-      title: 'Mossy Network'
-    }
-  },
-  type: 'object',
-  required: [
-    'planet_name',
-    'planet_desc',
-    'planet_owner_username',
-    'offline_mode',
-    'mossy_network'
-  ],
-  title: 'BasicInfo'
-} as const
-
 export const $Configuration = {
   properties: {
     statuses: {
@@ -435,6 +401,43 @@ export const $Rule = {
   title: 'Rule'
 } as const
 
+export const $ServerBanner = {
+  properties: {
+    file_name: {
+      type: 'string',
+      title: 'File Name',
+      default: ''
+    },
+    file_count: {
+      type: 'integer',
+      title: 'File Count',
+      default: 0
+    },
+    file_size: {
+      type: 'integer',
+      title: 'File Size',
+      default: 0
+    },
+    file_type: {
+      type: 'string',
+      title: 'File Type',
+      default: ''
+    },
+    file_content: {
+      type: 'string',
+      title: 'File Content',
+      default: ''
+    },
+    isTwoToOne: {
+      type: 'boolean',
+      title: 'Istwotoone',
+      default: false
+    }
+  },
+  type: 'object',
+  title: 'ServerBanner'
+} as const
+
 export const $ServiceLists2dot0 = {
   properties: {
     inbound: {
@@ -491,6 +494,61 @@ export const $ServiceSetupStatus = {
   type: 'object',
   required: ['status'],
   title: 'ServiceSetupStatus'
+} as const
+
+export const $SetupForm = {
+  properties: {
+    server_name: {
+      type: 'string',
+      title: 'Server Name',
+      default: ''
+    },
+    server_desc: {
+      type: 'string',
+      title: 'Server Desc',
+      default: ''
+    },
+    server_admin: {
+      type: 'string',
+      title: 'Server Admin',
+      default: ''
+    },
+    server_service: {
+      type: 'string',
+      title: 'Server Service',
+      default: ''
+    },
+    server_about: {
+      type: 'string',
+      title: 'Server About',
+      default: ''
+    },
+    server_banner: {
+      $ref: '#/components/schemas/ServerBanner'
+    },
+    server_status: {
+      type: 'string',
+      title: 'Server Status',
+      default: ''
+    },
+    server_isolated: {
+      type: 'boolean',
+      title: 'Server Isolated',
+      default: false
+    },
+    server_telemetry: {
+      type: 'boolean',
+      title: 'Server Telemetry',
+      default: true
+    },
+    server_union: {
+      type: 'boolean',
+      title: 'Server Union',
+      default: true
+    }
+  },
+  type: 'object',
+  title: 'SetupForm'
 } as const
 
 export const $Software2dot0 = {
@@ -687,7 +745,7 @@ export const $User = {
   properties: {
     username: {
       type: 'string',
-      maxLength: 16,
+      maxLength: 64,
       minLength: 3,
       pattern: '^[a-zA-Z0-9_-]+$',
       title: 'Username'

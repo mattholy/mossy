@@ -10,6 +10,64 @@
                 "localization": "切换语言",
                 "darkmode": "暗色模式"
             }
+        },
+        "setup_page": {
+            "title": "初始化设置",
+            "title-extra": "这些设置亦可在稍后更改",
+            "server_name": {
+                "label": "站点名称",
+                "placeholder": "输入服务器名称。除了域名，人们还可以如何指代你的服务器。",
+                "requiredError": "服务器名称是一定需要提供的啦"
+            },
+            "server_desc": {
+                "label": "本站简介",
+                "placeholder": "本站简介，有助于区分你的服务器独特性的简短描述。谁在管理？供谁使用？"
+            },
+            "server_admin": {
+                "label": "管理员账号",
+                "placeholder": "输入任意用户名来创建管理员账号，是他人在联邦宇宙上联系你的方式。",
+                "requiredError": "服务器管理员账号是一定需要提供的啦"
+            },
+            "server_service": {
+                "label": "联系方式",
+                "placeholder": "他人需要询恰法务或支持信息时的联络方式。支持多种协议，如mailto:、dingtalk:、tel:、http:等。",
+                "urlError": "请输入正确的地址"
+            },
+            "server_about": {
+                "label": "关于本服务器",
+                "placeholder": "请提供任何可能对访客和用户有用的额外信息，例如愿景，运营方式，捐赠等。可以使用Markdown语法。"
+            },
+            "server_banner": {
+                "label": "服务器横幅",
+                "instruction": "请点击或者拖拽文件到此处来上传",
+                "placeholder": "支持任意格式长宽比为2:1的图片文件，建议宽度大于1000px",
+                "fileCountError": "只能上传一张图片",
+                "aspectRatioError": "图片长宽比必须为2:1"
+            },
+            "server_status": {
+                "label": "服务器状态页面",
+                "placeholder": "请提供一个网址，好让你的用户了解服务器状态",
+                "urlError": "请输入正确的网页地址"
+            },
+            "server_isolated": {
+                "label": "隔离模式",
+                "placeholder": "启用此选项来进行隔离部署，此种情况下Mossy不会发送信息到联邦宇宙，也不会从联邦宇宙接受信息。"
+            },
+            "server_telemetry": {
+                "label": "参与匿名的数据收集",
+                "placeholder": "启用此选项，系统将会发送匿名遥测数据到Mossy Hub，帮助我们改进产品。本功能不会上传任何用户数据。"
+            },
+            "server_union": {
+                "label": "Mossy Union",
+                "placeholder": "启用此选项，将会不定期上传匿名数据，帮助Mossy来改进产品，例如反垃圾内容的机器学习模型。"
+            },
+            "submit": "完成初始化设置",
+            "footer": "完成初始化，代表您同意Mossy的最终用户协议和隐私政策：",
+            "ua": "《最终用户协议》",
+            "privacy": "《隐私政策》",
+            "formError": "请检查表单是否填写正确",
+            "NotAllowedError": "您取消了认证或者认证超时",
+            "UserAlreadyExist": "用户已存在"
         }
     },
     "api": {
@@ -21,6 +79,14 @@
             "Load failed": {
                 "title": "网络错误",
                 "content": "加载失败，兴许你断网了，或者服务器离线"
+            },
+            "ServiceUnavailable": {
+                "title": "服务不可用",
+                "content": "加载失败，服务不可用，请稍后再试"
+            },
+            "RequestNotUnderstandable": {
+                "title": "服务器不能理解我们发送的数据",
+                "content": "请求内容不可理解，请检查请求是否正确"
             }
         }
     }

@@ -18,14 +18,6 @@ export type BaseApiResp = {
   } | null
 }
 
-export type BasicInfo = {
-  planet_name: string
-  planet_desc: string
-  planet_owner_username: string
-  offline_mode: boolean
-  mossy_network: boolean
-}
-
 export type Configuration = {
   statuses: StatusesConfig
   media_attachments: MediaAttachmentsConfig
@@ -109,6 +101,15 @@ export type Rule = {
   text: string
 }
 
+export type ServerBanner = {
+  file_name?: string
+  file_count?: number
+  file_size?: number
+  file_type?: string
+  file_content?: string
+  isTwoToOne?: boolean
+}
+
 export type ServiceLists2dot0 = {
   /**
    * Sites for inbound service connections
@@ -133,6 +134,19 @@ export type ServiceLists2dot1 = {
 
 export type ServiceSetupStatus = {
   status: string
+}
+
+export type SetupForm = {
+  server_name?: string
+  server_desc?: string
+  server_admin?: string
+  server_service?: string
+  server_about?: string
+  server_banner?: ServerBanner
+  server_status?: string
+  server_isolated?: boolean
+  server_telemetry?: boolean
+  server_union?: boolean
 }
 
 export type Software2dot0 = {
@@ -266,7 +280,7 @@ export type FetchNodeinfoV20Nodeinfo20GetResponse = NodeInfo2dot0
 export type SetupStatusSetupStatusPostResponse = ApiServiceSetupStatus
 
 export type SetupStatusSetupInitPostData = {
-  requestBody: BasicInfo
+  requestBody: SetupForm
 }
 
 export type SetupStatusSetupInitPostResponse = BaseApiResp
@@ -444,7 +458,7 @@ export type $OpenApiTs = {
   '/setup/init': {
     post: {
       req: {
-        requestBody: BasicInfo
+        requestBody: SetupForm
       }
       res: {
         /**

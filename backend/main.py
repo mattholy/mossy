@@ -128,7 +128,7 @@ async def http_exception_handler(request, exc):
                 "msg": "RequestNotUnderstandable",
                 "payload": exc.detail
             },
-            status_code=404,
+            status_code=406,
         ),
         503: JSONResponse(
             content={

@@ -13,6 +13,7 @@ import { darkTheme, useOsTheme, useThemeVars, NConfigProvider, NGlobalStyle } fr
 import { MossySetupService } from '@/client/services.gen'
 import { $ApiServiceSetupStatus } from '@/client/schemas.gen'
 import { OpenAPI } from '@/client/core/OpenAPI'
+import { notyf } from '@/utils/notyf'
 
 const style = reactive({
   height: '100px'
@@ -38,17 +39,6 @@ watchEffect(() => {
 onMounted(async () => {
 
   OpenAPI.BASE = import.meta.env.VITE_BASE_URL || ''
-  OpenAPI.interceptors.response.use(async (response) => {
-    if (response.headers.get('Content-Type') !== 'application/json') {
-      throw new Error('UnkownError');
-    }
-    if (response.status !== 200) {
-      const data = await response.json()
-      throw new Error(data.msg || 'UnkownError');
-
-    }
-    return response;
-  });
   MossySetupService.setupStatusSetupStatusPost()
     .then(
       (res) => {

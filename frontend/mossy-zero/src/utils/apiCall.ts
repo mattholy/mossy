@@ -7,7 +7,7 @@ interface FetchOptions {
 
 const baseUrl = import.meta.env.VITE_BASE_URL || ''
 
-export async function callApi({ endpoint, data }: FetchOptions): Promise<any> {
+export async function callMossyApi({ endpoint, data }: FetchOptions): Promise<any> {
     if (!endpoint.startsWith('/')) {
         throw new Error('Endpoint must start with /');
     }
@@ -17,9 +17,8 @@ export async function callApi({ endpoint, data }: FetchOptions): Promise<any> {
     const store = useAuthStore();
     const headers = new Headers({
         'Content-Type': 'application/json',
-        'X-EDGE-API': 'api/v1',
+        'X-Mossy-API': 'api/m1',
     });
-
 
     if (store.token) {
         headers.append('Authorization', `Bearer ${store.token}`);
@@ -30,25 +29,15 @@ export async function callApi({ endpoint, data }: FetchOptions): Promise<any> {
         headers: headers,
         body: JSON.stringify(data)
     };
+    const response = await fetch(`${baseUrl}/api${endpoint}`, fetchOptions);
 
-    try {
-        const response = await fetch(`${baseUrl}/api${endpoint}`, fetchOptions);
+    const responseData = await response.json()
 
-        if (!response.ok) {
-            throw new Error(`HTTP error, status = ${response.status}`);
-        }
-
-        const responseData = await response.json();
-
-        if (responseData.status === 'OK') {
-            return responseData.payload;
-        } else {
-            console.error(responseData.msg);
-            throw new Error(responseData.status || 'Unknown error');
-        }
-    } catch (error) {
-        console.error('Error making api fetch call', error);
-        throw error;
+    if (responseData.status === 'OK') {
+        return responseData.payload
+    } else {
+        console.log(responseData.payload)
+        throw new Error(responseData.payload || 'UnknownError');
     }
 }
 

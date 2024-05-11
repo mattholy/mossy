@@ -33,6 +33,7 @@ from webauthn import (
 from webauthn.helpers.exceptions import InvalidRegistrationResponse, InvalidAuthenticationResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from webauthn.helpers.structs import PublicKeyCredentialCreationOptions
 
 from utils.db import get_db
 from utils.model.api_schemas import WebauthnReg
@@ -48,7 +49,7 @@ class User(BaseModel):
     username: str = Field(
         pattern=r'^[a-zA-Z0-9_-]+$',
         min_length=3,
-        max_length=16
+        max_length=64
     )
 
 
@@ -60,9 +61,9 @@ async def start_registration(user: User, request: Request, db: AsyncSession = De
     go_find_user = result.scalars().first()
 
     if go_find_user and go_find_user.finished_register:
-        raise HTTPException(status_code=406, detail='UserAlreadyExist')
+        raise HTTPException(status_code=403, detail='UserAlreadyExist')
 
-    simple_registration_options = generate_registration_options(
+    simple_registration_options: PublicKeyCredentialCreationOptions = generate_registration_options(
         rp_id=RP_ID,
         rp_name=RP_NAME,
         user_name=user.username,
@@ -76,6 +77,11 @@ async def start_registration(user: User, request: Request, db: AsyncSession = De
         user_agent=user_agent,
         access_address=access_address
     )
+    new_user = UserRegProcess(
+        username=user.username,
+        finished_register=False
+    )
+    db.add(new_user)
     db.add(new_attempt)
     await db.commit()
 
@@ -91,10 +97,10 @@ async def after_registration(response: dict, db: AsyncSession = Depends(get_db))
 
     result = await db.execute(select(RegistrationAttempt).filter_by(challenge=challenge))
     att = result.scalars().first()
+    user_result = await db.execute(select(UserRegProcess).filter_by(username=att.user))
+    go_find_user = user_result.scalars().first()
 
     if att is None or att.created_at < datetime.now(timezone.utc) - timedelta(minutes=3):
-        user_result = await db.execute(select(UserRegProcess).filter_by(username=att.user))
-        go_find_user = user_result.scalars().first()
         await db.delete(go_find_user)
         await db.commit()
         raise HTTPException(status_code=406, detail='RegistrationTimeOut')

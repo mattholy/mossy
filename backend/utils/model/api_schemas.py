@@ -11,8 +11,10 @@ api.py
 @Contact :   smile.used@hotmail.com
 @License :   MIT License
 '''
-from typing import Optional
-from pydantic import BaseModel
+from typing import List, Optional
+from pydantic import BaseModel, Field
+
+from webauthn.helpers.structs import PublicKeyCredentialCreationOptions, PublicKeyCredentialParameters
 
 
 class BaseResponse(BaseModel):
