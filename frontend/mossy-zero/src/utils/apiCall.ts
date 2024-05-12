@@ -2,7 +2,7 @@ import { useAuthStore } from '@/stores/AuthStore';
 
 interface FetchOptions {
     endpoint: string;
-    data: any;
+    data?: any;
 }
 
 const baseUrl = import.meta.env.VITE_BASE_URL || ''

@@ -5,6 +5,9 @@ import { useI18n } from 'vue-i18n'
 import { callMossyApi } from './apiCall'
 import { AuthenticationService } from '@/client/services.gen'
 import { type PublicKeyCredentialCreationOptionsJSON, type PublicKeyCredentialRequestOptionsJSON } from '@simplewebauthn/types'
+import { useAuthStore } from '@/stores/AuthStore'
+
+const authStore = useAuthStore()
 
 export async function webauthnRegister(uid: string): Promise<void> {
     const regOptions = await callMossyApi({
@@ -19,4 +22,19 @@ export async function webauthnRegister(uid: string): Promise<void> {
             challenge: regOptions.challenge
         }
     })
+}
+
+export async function webauthnAuthncation(): Promise<void> {
+    const authOptions = await callMossyApi({
+        endpoint: '/m1/auth/generate-authentication-options'
+    })
+    const authData = await startAuthentication(authOptions)
+    const authResp = await callMossyApi({
+        endpoint: '/m1/auth/verify-authentication',
+        data: {
+            payload: authData,
+            challenge: authOptions.challenge
+        }
+    })
+    authStore.setToken(authResp.token)
 }
