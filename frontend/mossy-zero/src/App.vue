@@ -2,7 +2,7 @@
 import { computed, watchEffect, onMounted, onUnmounted, ref, reactive } from 'vue'
 import { RouterView } from 'vue-router'
 import setupSever from '@/setupServer.vue'
-import ErrorView from '@/views/ErrorView.vue'
+import ErrorView from '@/components/ErrorPage.vue'
 import MossyHeader from '@/components/MossyHeader.vue'
 import { NScrollbar } from 'naive-ui';
 import { useRouter } from 'vue-router'

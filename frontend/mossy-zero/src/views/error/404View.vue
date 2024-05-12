@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ErrorView from '@/views/ErrorView.vue'
+import ErrorView from '@/components/ErrorPage.vue'
 </script>
 
 <template>

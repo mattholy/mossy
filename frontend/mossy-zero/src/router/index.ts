@@ -11,11 +11,14 @@ const viewModules = import.meta.glob('../views/**/*.vue');
 function pathToRoute(path: string): ExtendedRoute {
   const segments = path.replace(/^.*[\\\\/]views[\\\\/](.*)\.vue$/, '$1').split('/');
   const name = segments[segments.length - 1];
-  const routePath = segments.map(s => s.toLowerCase()).join('/');
+  const routePath = segments
+    .map(s => s.replace('View', ''))
+    .map(s => s.replace(/[A-Z]/g, match => '-' + match.toLowerCase()))
+    .map(s => s.toLowerCase()).join('/');
 
   return {
     path: `/${routePath}`,
-    name: name.replace('.vue', ''),
+    name: 'view-' + name.replace(/View$/, '').replace(/[A-Z]/g, match => '-' + match.toLowerCase()),
     component: viewModules[path],
     children: []
   };
@@ -52,7 +55,7 @@ async function setupRoutes(): Promise<ExtendedRoute[]> {
   });
   nestedRoutes.push({
     path: '/:catchAll(.*)',
-    component: () => import('@/views/404PageView.vue')
+    component: () => import('@/views/error/404View.vue')
   });
   return nestedRoutes;
 }
@@ -66,7 +69,7 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
   const token = localStorage.getItem('auth');
-  if (to.path === '/login') {
+  if (to.path === '/public/login') {
     if (token) {
       const isValid = await checkToken(token);
       if (isValid) {
@@ -78,15 +81,20 @@ router.beforeEach(async (to) => {
       return true
     }
   } else {
-    if (to.path.startsWith('/public/') || to.path === '/public') {
+    if (
+      to.path.startsWith('/public/') ||
+      to.path === '/public' ||
+      to.path.startsWith('/error/') ||
+      to.path === '/error'
+    ) {
       return true
     } else {
       if (!token) {
-        return '/login'
+        return '/public/login'
       } else {
         const isValid = await checkToken(token);
         if (!isValid) {
-          return '/login'
+          return '/public/login'
         } else {
           return true
         }
