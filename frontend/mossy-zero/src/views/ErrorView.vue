@@ -15,7 +15,7 @@ const goHome = () => {
 </script>
 
 <template>
-    <div class="px-8 py-10 md:px-96 md:py-56">
+    <div class="px-8 py-10 md:px-40 md:py-40 xl:px-96 xl:py-56">
         <n-card :bordered="false" size="huge">
             <n-result status="500" :title="t(`api.statusmsg.${props.msg}.title`)"
                 :description="t(`api.statusmsg.${props.msg}.content`)">

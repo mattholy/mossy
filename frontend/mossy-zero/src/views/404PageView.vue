@@ -1,7 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import ErrorView from '@/views/ErrorView.vue'
+</script>
 
 <template>
-    aq3w24
+    <ErrorView msg="NotFound" />
 </template>
 
 <style scoped></style>

@@ -57,10 +57,17 @@ class SetupForm(BaseModel):
 
 @router.post('/init', response_model=BaseApiResp)
 async def setup_status(basic_info: SetupForm, db: AsyncSession = Depends(get_db)):
-    # if ready():
-    #     raise HTTPException(status_code=403, detail='AlreadyInit')
+    if ready():
+        raise HTTPException(status_code=403, detail='AlreadyInit')
     try:
-        pass
+        for key in basic_info.model_fields.keys():
+            if key == 'server_banner':
+                db.add(SystemConfig(key='server_banner',
+                       value=basic_info.server_banner.file_content))
+                continue
+            db.add(SystemConfig(key=key, value=str(getattr(basic_info, key))))
+        db.add(SystemConfig(key='init_flag', value='AllDone'))
+        await db.commit()
     except Exception as e:
         raise e
     return BaseApiResp(status='OK', msg='AllDone', payload={})

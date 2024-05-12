@@ -20,7 +20,7 @@ from env import DATABASE_URL, RUNTIME
 
 engine = create_engine(
     DATABASE_URL,
-    echo=True if RUNTIME == 'DEV' else False,
+    # echo=True if RUNTIME == 'DEV' else False,
     pool_size=20,
     max_overflow=10,
     pool_timeout=30,
@@ -29,7 +29,7 @@ engine = create_engine(
 
 async_engine = create_async_engine(
     DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://"),
-    echo=True if RUNTIME == 'DEV' else False,
+    # echo=True if RUNTIME == 'DEV' else False,
     pool_size=20,
     max_overflow=10,
     pool_timeout=30,

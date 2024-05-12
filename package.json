@@ -8,7 +8,7 @@
     "install:backend": "cd ./backend && poetry install",
     "install": "npm run install:frontend && npm run install:backend",
     "dev:frontend": "cd ./frontend/mossy-zero && npm run dev",
-    "dev:backend": "cd ./backend && poetry run alembic upgrade head && poetry run uvicorn main:app --reload",
+    "dev:backend": "cd ./backend && poetry run alembic upgrade head && poetry run uvicorn main:app --reload --host=0.0.0.0",
     "dev:backend:pack": "export LOG_LEVEL=debug && export WORKERS=2 && cd ./backend && poetry run alembic upgrade head && poetry run supervisord -c ./supervisord.conf",
     "dev": "docker compose --profile dev up --build",
     "test:frontend": "cd ./frontend/mossy-zero && npm run test:unit",

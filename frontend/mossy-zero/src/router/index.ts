@@ -48,7 +48,7 @@ async function setupRoutes(): Promise<ExtendedRoute[]> {
 
   nestedRoutes.push({
     path: '/',
-    redirect: '/workplace'
+    redirect: '/public'
   });
   nestedRoutes.push({
     path: '/:catchAll(.*)',
@@ -70,7 +70,7 @@ router.beforeEach(async (to) => {
     if (token) {
       const isValid = await checkToken(token);
       if (isValid) {
-        return '/workplace'
+        return '/mypagetest'
       } else {
         return true
       }
@@ -78,16 +78,21 @@ router.beforeEach(async (to) => {
       return true
     }
   } else {
-    if (!token) {
-      return '/login'
+    if (to.path.startsWith('/public/') || to.path === '/public') {
+      return true
     } else {
-      const isValid = await checkToken(token);
-      if (!isValid) {
+      if (!token) {
         return '/login'
       } else {
-        return true
+        const isValid = await checkToken(token);
+        if (!isValid) {
+          return '/login'
+        } else {
+          return true
+        }
       }
     }
+
   }
 });
 

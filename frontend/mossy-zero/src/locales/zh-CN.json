@@ -72,9 +72,13 @@
     },
     "api": {
         "statusmsg": {
+            "UnknownError": {
+                "title": "未知错误",
+                "content": "未知总是令人着迷"
+            },
             "PermissionDenied": {
-                "title": "权限不足",
-                "content": "很抱歉，但是你没有权限到这里来"
+                "title": "不，你不可以",
+                "content": "虽然我们知道你很想，但是没有权限的话也不行噢"
             },
             "Load failed": {
                 "title": "网络错误",
@@ -85,8 +89,20 @@
                 "content": "加载失败，服务不可用，请稍后再试"
             },
             "RequestNotUnderstandable": {
-                "title": "服务器不能理解我们发送的数据",
-                "content": "请求内容不可理解，请检查请求是否正确"
+                "title": "我们正在疯言疯语",
+                "content": "服务器不知道我们在请求些什么玩意儿，可能是我们的问题，也可能是服务器的问题"
+            },
+            "CoreAPINotReady": {
+                "title": "核心API不可用",
+                "content": "Mossy采用了一些现代化的技术，但是您的浏览器不支持。请使用最新版的Chrome、Firefox、Safari或者Edge浏览器。"
+            },
+            "Failed to fetch": {
+                "title": "网络错误",
+                "content": "网络就是如此的脆弱，我们无法获取所需的数据"
+            },
+            "NotFound": {
+                "title": "此时，你发现了：空空如也！",
+                "content": "我们四下寻找了你要的东西，但是很抱歉，没有找到"
             }
         }
     }

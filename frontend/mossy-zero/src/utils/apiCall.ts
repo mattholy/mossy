@@ -36,8 +36,11 @@ export async function callMossyApi({ endpoint, data }: FetchOptions): Promise<an
     if (responseData.status === 'OK') {
         return responseData.payload
     } else {
-        console.log(responseData.payload)
-        throw new Error(responseData.payload || 'UnknownError');
+        if (responseData.status === 'SERVER_ERROR') {
+            throw new Error(responseData.msg)
+        } else {
+            throw new Error(responseData.payload)
+        }
     }
 }
 

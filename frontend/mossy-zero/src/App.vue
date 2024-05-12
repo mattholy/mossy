@@ -14,10 +14,9 @@ import { MossySetupService } from '@/client/services.gen'
 import { $ApiServiceSetupStatus } from '@/client/schemas.gen'
 import { OpenAPI } from '@/client/core/OpenAPI'
 import { notyf } from '@/utils/notyf'
+import { browserSupportsWebAuthn } from '@simplewebauthn/browser'
 
-const style = reactive({
-  height: '100px'
-});
+
 const authStore = useAuthStore()
 const router = useRouter()
 const { t } = useI18n()
@@ -34,12 +33,20 @@ watchEffect(() => {
   themeStore.setDarkMode(osThemeRef.value === 'dark');
 });
 
-
-
 onMounted(async () => {
-
   OpenAPI.BASE = import.meta.env.VITE_BASE_URL || ''
-  MossySetupService.setupStatusSetupStatusPost()
+  await checkStatus()
+})
+
+const checkStatus = async () => {
+  if (browserSupportsWebAuthn()) {
+    showErrorPage.value = false
+  } else {
+    showErrorPage.value = true
+    errorPageMsg.value = 'CoreAPINotReady'
+    return false
+  }
+  await MossySetupService.setupStatusSetupStatusPost()
     .then(
       (res) => {
         if (res.payload.status === 'AllDone') {
@@ -55,7 +62,8 @@ onMounted(async () => {
         errorPageMsg.value = err.message
       }
     )
-});
+  return true
+}
 </script>
 
 <template>
