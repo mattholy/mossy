@@ -4,7 +4,7 @@ import { RouterView } from 'vue-router'
 import setupSever from '@/setupServer.vue'
 import ErrorView from '@/components/ErrorPage.vue'
 import MossyHeader from '@/components/MossyHeader.vue'
-import { NScrollbar } from 'naive-ui';
+import { NScrollbar, NMessageProvider } from 'naive-ui';
 import { useRouter } from 'vue-router'
 import { useThemeStore } from '@/stores/ThemeStore'
 import { useAuthStore } from '@/stores/AuthStore'
@@ -70,10 +70,12 @@ const checkStatus = async () => {
   <n-config-provider :theme="theme">
     <n-global-style />
     <NScrollbar trigger="hover" content-class="h-dvh">
-      <MossyHeader />
-      <setupSever v-if="showSetupPage" />
-      <RouterView v-else-if="showRouterPage" />
-      <ErrorView v-else-if="showErrorPage" :msg="errorPageMsg" />
+      <n-message-provider>
+        <MossyHeader />
+        <setupSever v-if="showSetupPage" />
+        <RouterView v-else-if="showRouterPage" />
+        <ErrorView v-else-if="showErrorPage" :msg="errorPageMsg" />
+      </n-message-provider>
     </NScrollbar>
   </n-config-provider>
 </template>

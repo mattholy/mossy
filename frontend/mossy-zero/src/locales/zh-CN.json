@@ -62,12 +62,15 @@
                 "placeholder": "启用此选项，将会不定期上传匿名数据，帮助Mossy来改进产品，例如反垃圾内容的机器学习模型。"
             },
             "submit": "完成初始化设置",
+            "onProcessing": "正在处理中，请稍候。在此期间，请根据屏幕提示操作。",
             "footer": "完成初始化，代表您同意Mossy的最终用户协议和隐私政策：",
             "ua": "《最终用户协议》",
             "privacy": "《隐私政策》",
             "formError": "请检查表单是否填写正确",
             "NotAllowedError": "您取消了认证或者认证超时",
-            "UserAlreadyExist": "用户已存在"
+            "UserAlreadyExist": "用户已存在",
+            "AlreadyInit": "服务器已经完成了初始化，不可以重复初始化。若要重置，请清除数据库。",
+            "AllDone": "初始化设置已完成，您可以开始使用Mossy了"
         }
     },
     "api": {
@@ -93,8 +96,8 @@
                 "content": "服务器不知道我们在请求些什么玩意儿，可能是我们的问题，也可能是服务器的问题"
             },
             "CoreAPINotReady": {
-                "title": "核心API不可用",
-                "content": "Mossy采用了一些现代化的技术，但是您的浏览器不支持。请使用最新版的Chrome、Firefox、Safari或者Edge浏览器。"
+                "title": "核心功能不可用",
+                "content": "Mossy采用了一些现代化的技术，但是您的浏览器可能不满足使用这些API的条件。请使用最新版的Chrome、Firefox、Safari或者Edge浏览器，通过HTTPS协议访问此页面。"
             },
             "Failed to fetch": {
                 "title": "网络错误",

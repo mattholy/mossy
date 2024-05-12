@@ -1,40 +1,80 @@
 import { startRegistration, startAuthentication } from '@simplewebauthn/browser'
-import type { MessageReactive } from 'naive-ui'
-import { useMessage } from 'naive-ui'
-import { useI18n } from 'vue-i18n'
-import { callMossyApi } from './apiCall'
-import { AuthenticationService } from '@/client/services.gen'
-import { type PublicKeyCredentialCreationOptionsJSON, type PublicKeyCredentialRequestOptionsJSON } from '@simplewebauthn/types'
-import { useAuthStore } from '@/stores/AuthStore'
-
-const authStore = useAuthStore()
+import { callMossyApi, MossyApiError } from './apiCall'
+import type { PublicKeyCredentialCreationOptionsJSON, PublicKeyCredentialRequestOptionsJSON, RegistrationResponseJSON, AuthenticationResponseJSON } from '@simplewebauthn/types'
 
 export async function webauthnRegister(uid: string): Promise<void> {
-    const regOptions = await callMossyApi({
-        endpoint: '/m1/auth/generate-registration-options',
-        data: { username: uid }
-    })
-    const registrationData = await startRegistration(regOptions);
-    await callMossyApi({
-        endpoint: '/m1/auth/verify-registration',
-        data: {
-            payload: registrationData,
-            challenge: regOptions.challenge
+    let regOptions: PublicKeyCredentialCreationOptionsJSON
+    let registrationData: RegistrationResponseJSON
+    try {
+        regOptions = await callMossyApi({
+            endpoint: '/api/m1/auth/generate-registration-options',
+            data: { username: uid }
+        })
+    } catch (error) {
+        if (error instanceof MossyApiError) {
+            throw new Error(error.detail)
         }
-    })
+        throw error
+    }
+
+    try {
+        registrationData = await startRegistration(regOptions);
+    } catch (error: any) {
+        throw new Error(error.name as string)
+    }
+
+    try {
+        await callMossyApi({
+            endpoint: '/api/m1/auth/verify-registration',
+            data: {
+                payload: registrationData,
+                challenge: regOptions.challenge
+            }
+        })
+    } catch (error) {
+        if (error instanceof MossyApiError) {
+            throw new Error(error.detail)
+        }
+        throw error
+    }
+
 }
 
-export async function webauthnAuthncation(): Promise<void> {
-    const authOptions = await callMossyApi({
-        endpoint: '/m1/auth/generate-authentication-options'
-    })
-    const authData = await startAuthentication(authOptions)
-    const authResp = await callMossyApi({
-        endpoint: '/m1/auth/verify-authentication',
-        data: {
-            payload: authData,
-            challenge: authOptions.challenge
+export async function webauthnAuthentication(): Promise<string> {
+    let authOptions: PublicKeyCredentialRequestOptionsJSON
+    let authData: AuthenticationResponseJSON
+    let authResp: any
+    try {
+        authOptions = await callMossyApi({
+            endpoint: '/api/m1/auth/generate-authentication-options'
+        })
+    } catch (error) {
+        if (error instanceof MossyApiError) {
+            throw new Error(error.detail)
         }
-    })
-    authStore.setToken(authResp.token)
+        throw error
+    }
+
+    try {
+        authData = await startAuthentication(authOptions);
+    } catch (error) {
+        throw new Error(error.message as string)
+    }
+
+    try {
+        authResp = await callMossyApi({
+            endpoint: '/api/m1/auth/verify-authentication',
+            data: {
+                payload: authData,
+                challenge: authOptions.challenge
+            }
+        });
+    } catch (error) {
+        if (error instanceof MossyApiError) {
+            throw new Error(error.detail)
+        }
+        throw error
+    }
+
+    return authResp.token
 }

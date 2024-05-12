@@ -8,5 +8,9 @@
   "editor.quickSuggestions": {
     "strings": "on"
   },
+  "cSpell.words": [
+    "notyf",
+    "webauthn"
+  ],
 
 }

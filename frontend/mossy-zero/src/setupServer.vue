@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { defineComponent, ref } from 'vue'
-import { NButton, NCard, NForm, NFormItem, NInput, NInputGroup, NInputGroupLabel, NUpload, NSwitch, NUploadDragger, NP, NText, NIcon } from 'naive-ui'
-import { type FormInst, type FormRules, type FormItemRule, type UploadOnChange } from 'naive-ui'
+import { onBeforeUnmount, ref } from 'vue'
+import { useMessage } from 'naive-ui'
+import { NButton, NCard, NForm, NFormItem, NInput, NInputGroup, NInputGroupLabel, NUpload, NSwitch, NUploadDragger, NIcon } from 'naive-ui'
+import type { FormInst, FormRules, FormItemRule, UploadOnChange, MessageReactive } from 'naive-ui'
 import { useI18n } from 'vue-i18n'
 import { FileTray } from '@vicons/ionicons5'
-import { MossySetupService } from '@/client/services.gen'
-import { type SetupStatusSetupInitPostData } from '@/client/types.gen'
-import { OpenAPI } from '@/client/core/OpenAPI'
 import { notyf } from '@/utils/notyf'
 import { webauthnRegister } from '@/utils/webauthn'
+import { callMossyApi } from '@/utils/apiCall'
+import { useRouter } from 'vue-router'
+import { MossyApiError } from '@/utils/apiCall'
 
 interface FileDetails {
     file_name: string;
@@ -19,8 +20,11 @@ interface FileDetails {
     isTwoToOne: boolean;
 }
 
+let messageReactive: MessageReactive | null = null
 const { t } = useI18n()
+const router = useRouter()
 const setupForm = ref<FormInst | null>(null)
+const processingForm = ref(false)
 const setupFormData = ref({
     server_name: '',
     server_desc: '',
@@ -40,42 +44,69 @@ const setupFormData = ref({
     server_telemetry: true,
     server_union: true
 })
-
-
-
+const message = useMessage()
 const ServiceUrl = new URL(import.meta.env.VITE_BASE_URL || window.location.href)
-
+const removeMessage = () => {
+    if (messageReactive) {
+        messageReactive.destroy()
+        messageReactive = null
+    }
+}
+const createMessage = () => {
+    messageReactive = message.loading(t('ui.setup_page.onProcessing'), {
+        duration: 0
+    })
+}
 const setupServer = async () => {
-    setupForm.value?.validate().then(() => {
-        MossySetupService.setupStatusSetupInitPost(
-            {
-                requestBody: {
-                    server_name: setupFormData.value.server_name,
-                    server_desc: setupFormData.value.server_desc,
-                    server_admin: setupFormData.value.server_admin,
-                    server_service: setupFormData.value.server_service,
-                    server_about: setupFormData.value.server_about,
-                    server_banner: setupFormData.value.server_banner,
-                    server_status: setupFormData.value.server_status,
-                    server_isolated: setupFormData.value.server_isolated,
-                    server_telemetry: setupFormData.value.server_telemetry,
-                    server_union: setupFormData.value.server_union
+    processingForm.value = true
+    await setupForm.value?.validate().then(async () => {
+        createMessage()
+        await callMossyApi({
+            endpoint: '/setup/init',
+            data: {
+                server_name: setupFormData.value.server_name,
+                server_desc: setupFormData.value.server_desc,
+                server_admin: setupFormData.value.server_admin,
+                server_service: setupFormData.value.server_service,
+                server_about: setupFormData.value.server_about,
+                server_banner: setupFormData.value.server_banner,
+                server_status: setupFormData.value.server_status,
+                server_isolated: setupFormData.value.server_isolated,
+                server_telemetry: setupFormData.value.server_telemetry,
+                server_union: setupFormData.value.server_union
+            }
+        }).then(async () => {
+            await webauthnRegister(setupFormData.value.server_admin)
+                .then(() => {
+                    notyf.success(t('ui.setup_page.AllDone'))
+                    setTimeout(function () {
+                        window.location.href = '/';
+                    }, 3000);
+                })
+        }).catch((e) => {
+            if (e instanceof MossyApiError) {
+                notyf.error(t(`ui.setup_page.${e.detail}`))
+                if (e.detail === 'AlreadyInit') {
+                    setTimeout(function () {
+                        window.location.href = '/';
+                    }, 3000);
+                }
+            } else {
+                if (e.name === 'NotAllowedError') {
+                    notyf.error(t(`ui.setup_page.NotAllowedError`))
+                } else {
+                    notyf.error(e)
                 }
             }
-        )
-            .then(async (res) => {
-                if (res.status === 'OK') {
-                    await webauthnRegister(setupFormData.value.server_admin)
-                }
-            })
-            .catch((e) => {
-                console.error(e)
-                notyf.error(t(`ui.setup_page.${e.message}`))
-            })
-    })
-        .catch((e) => {
-            notyf.error(t('ui.setup_page.formError'))
+        }).finally(() => {
+            removeMessage()
         })
+
+    }).catch((e) => {
+        notyf.error(t('ui.setup_page.formError'))
+    }).finally(() => {
+        processingForm.value = false
+    })
 }
 
 const handleImage: UploadOnChange = (payload) => {
@@ -202,6 +233,7 @@ const rules: FormRules = {
     ]
 }
 
+onBeforeUnmount(removeMessage)
 </script>
 
 <template>
@@ -216,7 +248,7 @@ const rules: FormRules = {
             <template #header-extra>
                 {{ t('ui.setup_page.title-extra') }}
             </template>
-            <n-form ref="setupForm" :model="setupFormData" :rules="rules">
+            <n-form :disabled="processingForm" ref="setupForm" :model="setupFormData" :rules="rules">
                 <n-form-item :label="t('ui.setup_page.server_name.label')" path="server_name">
                     <n-input v-model:value="setupFormData.server_name"
                         :placeholder="t('ui.setup_page.server_name.placeholder')" maxlength="64" show-count clearable />
@@ -247,8 +279,7 @@ const rules: FormRules = {
                 </n-form-item>
                 <n-form-item :label="t('ui.setup_page.server_banner.label')" path="server_banner">
                     <n-upload :show-preview-button="true" :default-upload="false" list-type="image" :max="1"
-                        file-list-class="preview" accept="image/*" v-model:value="setupFormData.server_banner"
-                        @change="handleImage">
+                        accept="image/*" v-model:value="setupFormData.server_banner" @change="handleImage">
                         <n-upload-dragger>
                             <n-icon size="32">
                                 <FileTray />
@@ -277,7 +308,7 @@ const rules: FormRules = {
                 </n-form-item>
             </n-form>
             <template #footer>
-                <n-button type="primary" @click="setupServer">
+                <n-button :loading="processingForm" type="primary" @click="setupServer">
                     {{ t('ui.setup_page.submit') }}
                 </n-button>
             </template>
@@ -289,10 +320,3 @@ const rules: FormRules = {
         </n-card>
     </div>
 </template>
-
-<style scoped>
-.preview {
-    width: 200px !important;
-    height: 100px !important;
-}
-</style>
