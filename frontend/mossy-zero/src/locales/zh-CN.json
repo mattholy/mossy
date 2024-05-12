@@ -2,13 +2,20 @@
     "ui": {
         "common_desc": {
             "go_home": "回到梦开始的地方",
-            "go_back": "返回"
+            "go_back": "返回",
+            "login": "登录",
+            "register": "注册账户"
         },
         "header": {
             "actions": {
                 "more": "快捷功能",
                 "localization": "切换语言",
                 "darkmode": "暗色模式"
+            }
+        },
+        "leftsider": {
+            "loginandreg": {
+                "desc": "立即注册或者登录，来关注用户和话题，喜欢、分享和评论。此外您还能与联邦宇宙中，支持ActivityPUB的任何服务器上的用户进行互动。"
             }
         },
         "setup_page": {
@@ -106,6 +113,11 @@
             "NotFound": {
                 "title": "此时，你发现了：空空如也！",
                 "content": "我们四下寻找了你要的东西，但是很抱歉，没有找到"
+            },
+            "NoPublicKey": {
+                "title": "无法获取公钥",
+                "content": "无法获取公钥，可能是网络问题或者服务器问题",
+                "notification": "没有找到你的公钥，可能已经被吊销，或者没有认证。请使用其它私钥登录，或者联系管理员。"
             }
         }
     }

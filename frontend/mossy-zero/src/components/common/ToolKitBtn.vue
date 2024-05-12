@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { NButton, NIcon, NDrawer, NDrawerContent } from "naive-ui"
+import { NButton, NIcon, NDrawer, NDrawerContent, NFlex } from "naive-ui"
 import { Menu } from "@vicons/ionicons5"
 import { useI18n } from 'vue-i18n'
 import { useThemeStore } from '@/stores/ThemeStore'
@@ -25,6 +25,42 @@ const activate = () => {
             <template #header>
                 {{ t('ui.header.actions.more') }}
             </template>
+            <n-flex vertical>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+                <n-button>ToolKit</n-button>
+            </n-flex>
             <template #footer>
                 <n-button>Footer</n-button>
             </template>

@@ -51,7 +51,7 @@ async function setupRoutes(): Promise<ExtendedRoute[]> {
 
   nestedRoutes.push({
     path: '/',
-    redirect: '/public'
+    redirect: '/about'
   });
   nestedRoutes.push({
     path: '/:catchAll(.*)',
@@ -67,41 +67,41 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach(async (to) => {
-  const token = localStorage.getItem('auth');
-  if (to.path === '/public/login') {
-    if (token) {
-      const isValid = await checkToken(token);
-      if (isValid) {
-        return '/mypagetest'
-      } else {
-        return true
-      }
-    } else {
-      return true
-    }
-  } else {
-    if (
-      to.path.startsWith('/public/') ||
-      to.path === '/public' ||
-      to.path.startsWith('/error/') ||
-      to.path === '/error'
-    ) {
-      return true
-    } else {
-      if (!token) {
-        return '/public/login'
-      } else {
-        const isValid = await checkToken(token);
-        if (!isValid) {
-          return '/public/login'
-        } else {
-          return true
-        }
-      }
-    }
+// router.beforeEach(async (to) => {
+//   const token = localStorage.getItem('auth');
+//   if (to.path === '/public/login') {
+//     if (token) {
+//       const isValid = await checkToken(token);
+//       if (isValid) {
+//         return '/mypagetest'
+//       } else {
+//         return true
+//       }
+//     } else {
+//       return true
+//     }
+//   } else {
+//     if (
+//       to.path.startsWith('/public/') ||
+//       to.path === '/public' ||
+//       to.path.startsWith('/error/') ||
+//       to.path === '/error'
+//     ) {
+//       return true
+//     } else {
+//       if (!token) {
+//         return '/public/login'
+//       } else {
+//         const isValid = await checkToken(token);
+//         if (!isValid) {
+//           return '/public/login'
+//         } else {
+//           return true
+//         }
+//       }
+//     }
 
-  }
-});
+//   }
+// });
 
 export default router;
