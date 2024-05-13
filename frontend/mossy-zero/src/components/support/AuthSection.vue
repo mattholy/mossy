@@ -5,25 +5,33 @@ import { NButton, NFlex, NIcon, NModal } from 'naive-ui'
 import { FingerPrint } from '@vicons/ionicons5'
 import { webauthnAuthentication } from '@/utils/webauthn'
 import { notyf } from '@/utils/notyf'
+import { useAuthStore } from '@/stores/AuthStore'
 
 const showReg = ref(false)
 const { t } = useI18n()
+const authStore = useAuthStore()
 const login = async () => {
-    const token = await webauthnAuthentication()
+    await webauthnAuthentication()
+        .then((res) => {
+            authStore.setToken(res)
+        })
         .catch((err) => {
             notyf.error(t(`api.statusmsg.${err.message}.notification`))
         })
+
 }
 </script>
 
 <template>
-    <n-flex vertical>
+    <n-flex vertical class="fade-in-up">
         <p class="px-2">
             {{ t('ui.leftsider.loginandreg.desc') }}
         </p>
-        <p class="px-2 py-2 font-bold ">Mossy不会记录你的任何个人信息，注册只需要提供用户名。</p>
+        <p class="px-2 py-2 font-bold ">
+            {{ t('ui.leftsider.loginandreg.saftyfirst') }}
+        </p>
         <n-button round size="large" type="primary" @click="showReg = true">
-            创建账户
+            {{ t('ui.common_desc.register') }}
         </n-button>
         <n-button round size="large" strong ghost type="primary" @click="login">
             <template #icon>
@@ -31,7 +39,7 @@ const login = async () => {
                     <FingerPrint />
                 </n-icon>
             </template>
-            登录
+            {{ t('ui.common_desc.login') }}
         </n-button>
 
 

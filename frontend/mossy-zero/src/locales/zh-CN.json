@@ -14,8 +14,17 @@
             }
         },
         "leftsider": {
+            "navigater": {
+                "home": "首页",
+                "explore": "实时动态",
+                "notifications": "通知与提醒",
+                "conversations": "私信",
+                "collections": "我的收藏",
+                "settings": "设置"
+            },
             "loginandreg": {
-                "desc": "立即注册或者登录，来关注用户和话题，喜欢、分享和评论。此外您还能与联邦宇宙中，支持ActivityPUB的任何服务器上的用户进行互动。"
+                "desc": "立即注册或者登录，来关注用户和话题，喜欢、分享和评论。此外您还能与联邦宇宙中，支持ActivityPUB的任何服务器上的用户进行互动。",
+                "saftyfirst": "Mossy不会记录你的任何个人信息，注册只需要提供用户名。"
             }
         },
         "setup_page": {
@@ -122,7 +131,12 @@
             "NoPublicKey": {
                 "title": "无法获取公钥",
                 "content": "无法获取公钥，可能是网络问题或者服务器问题",
-                "notification": "没有找到你的公钥，可能已经被吊销，或者没有认证。请使用其它私钥登录，或者联系管理员。"
+                "notification": "没有找到你的公钥，可能已经被吊销，或者还没有注册。请使用其它私钥登录，或者联系管理员。"
+            },
+            "NotAllowedError": {
+                "title": "认证失败",
+                "content": "您取消了认证或者认证超时",
+                "notification": "您取消了认证或者认证超时，登录失败，请重试"
             }
         }
     }

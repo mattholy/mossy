@@ -250,7 +250,7 @@ onBeforeUnmount(removeMessage)
 </script>
 
 <template>
-    <div class="px-2 py-4 md:px-24 md:py-24 lg:px-32 lg:py-32 xl:px-96 xl:py-56">
+    <div class="px-2 py-4 md:px-24 md:py-24 lg:px-32 lg:py-32 xl:px-96 xl:py-56 ">
         <n-card header-class="sticky top-12 z-30 font-bold bg-opacity-30 backdrop-filter backdrop-blur-md" :segmented="{
             content: true,
             footer: 'soft'

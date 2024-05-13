@@ -57,8 +57,12 @@ export async function webauthnAuthentication(): Promise<string> {
 
     try {
         authData = await startAuthentication(authOptions);
-    } catch (error) {
-        throw new Error(error.message as string)
+    } catch (error: unknown) {
+        if (isErrorWithMessage(error)) {
+            throw new Error(error.name);
+        } else {
+            throw new Error('UnknownError');
+        }
     }
 
     try {
@@ -77,4 +81,8 @@ export async function webauthnAuthentication(): Promise<string> {
     }
 
     return authResp.token
+}
+
+function isErrorWithMessage(error: any): error is { name: string } {
+    return error && typeof error.name === 'string';
 }
