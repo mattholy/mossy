@@ -12,8 +12,13 @@ Mossy setup api
 @License :   MIT License
 '''
 
+import base64
+from PIL import Image
+import io
+import re
 from fastapi import APIRouter, Depends
 from fastapi.exceptions import HTTPException
+from fastapi import status as resp_status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from pydantic import BaseModel, Field
@@ -23,6 +28,7 @@ from utils.model.api_schemas import ApiServiceSetupStatus, BaseApiResp, Webauthn
 from utils.db import get_db
 from utils.model.orm import SystemConfig
 from utils.init import init_node, ready
+from utils.logger import logger
 from routers.api.m1.authentication.endpoint import start_registration
 
 router = APIRouter(prefix='/setup', tags=['Mossy Setup'])
@@ -43,15 +49,16 @@ class ServerBanner(BaseModel):
 
 
 class SetupForm(BaseModel):
-    server_name: str = ''
+    server_name: str
     server_desc: str = ''
-    server_admin: str = ''
+    server_admin: str
     server_service: str = ''
     server_about: str = ''
     server_banner: ServerBanner = Field(default_factory=ServerBanner)
     server_status: str = ''
     server_isolated: bool = False
     server_telemetry: bool = True
+    server_allow_search: bool = True
     server_union: bool = True
 
 
@@ -60,6 +67,27 @@ async def setup_status(basic_info: SetupForm, db: AsyncSession = Depends(get_db)
     if ready():
         raise HTTPException(status_code=403, detail='AlreadyInit')
     try:
+        # check banner image
+        if basic_info.server_banner.file_size > 0:
+            try:
+                image_data = base64.b64decode(
+                    basic_info.server_banner.file_content)
+                image = Image.open(io.BytesIO(image_data))
+                width, height = image.size
+                aspect_ratio = width / height
+                tolerance = 0.05
+                is_close_to_two_to_one = (
+                    2 - tolerance) <= aspect_ratio <= (2 + tolerance)
+                if is_close_to_two_to_one != basic_info.server_banner.isTwoToOne:
+                    raise HTTPException(
+                        status_code=400, detail='BannerImageError')
+            except Exception as e:
+                logger.error(e)
+                raise HTTPException(status_code=400, detail='BannerImageError')
+        # check server admin name
+        pattern = re.compile(r'^[a-zA-Z0-9_-]{3,32}$')
+        if not pattern.match(basic_info.server_admin):
+            raise HTTPException(status_code=400, detail='AdminNameError')
         for key in basic_info.model_fields.keys():
             if key == 'server_banner':
                 db.add(SystemConfig(key='server_banner',

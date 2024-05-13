@@ -42,6 +42,7 @@ const setupFormData = ref({
     server_status: '',
     server_isolated: false,
     server_telemetry: true,
+    server_allow_search: true,
     server_union: true
 })
 const message = useMessage()
@@ -73,6 +74,7 @@ const setupServer = async () => {
                 server_status: setupFormData.value.server_status,
                 server_isolated: setupFormData.value.server_isolated,
                 server_telemetry: setupFormData.value.server_telemetry,
+                server_allow_search: setupFormData.value.server_allow_search,
                 server_union: setupFormData.value.server_union
             }
         }).then(async () => {
@@ -176,6 +178,17 @@ const rules: FormRules = {
             validator(rule: FormItemRule, value: string) {
                 if (!value) {
                     return new Error(t('ui.setup_page.server_admin.requiredError'))
+                }
+                return true
+            },
+            trigger: ['input', 'blur']
+        },
+        {
+            required: true,
+            validator(rule: FormItemRule, value: string) {
+                const regex = /^[a-zA-Z0-9_-]{3,32}$/
+                if (!regex.test(value)) {
+                    return new Error(t('ui.setup_page.server_admin.usernameError'))
                 }
                 return true
             },
@@ -301,6 +314,10 @@ onBeforeUnmount(removeMessage)
                 <n-form-item :label="t('ui.setup_page.server_telemetry.label')" path="server_telemetry">
                     <n-switch v-model:value="setupFormData.server_telemetry" />
                     <p class="text-xs px-2">{{ t('ui.setup_page.server_telemetry.placeholder') }}</p>
+                </n-form-item>
+                <n-form-item :label="t('ui.setup_page.server_allow_search.label')" path="server_allow_search">
+                    <n-switch v-model:value="setupFormData.server_allow_search" />
+                    <p class="text-xs px-2">{{ t('ui.setup_page.server_allow_search.placeholder') }}</p>
                 </n-form-item>
                 <n-form-item :label="t('ui.setup_page.server_union.label')" path="server_union">
                     <n-switch v-model:value="setupFormData.server_union" />
