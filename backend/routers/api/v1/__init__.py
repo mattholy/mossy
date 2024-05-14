@@ -14,6 +14,8 @@ ActivityPub API v1
 
 from fastapi import APIRouter
 from routers.api.v1.instance.endpoint import router as instance_router
+from routers.api.v1.apps.endpoint import router as apps_router
 
 router = APIRouter(prefix='/v1', tags=['API', 'v1'])
 router.include_router(instance_router)
+router.include_router(apps_router)
