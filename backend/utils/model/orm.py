@@ -12,14 +12,15 @@ put some words here
 @License :   MIT License
 '''
 
-from env import DATABASE_URL
 import enum
+import uuid
 from sqlalchemy import UniqueConstraint, create_engine, Column, Integer, String, DateTime, Boolean, Text, BigInteger, Float
 from sqlalchemy.dialects.postgresql import UUID, BYTEA, BIT, JSONB
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.sql import func
 from sqlalchemy.types import Enum
-import uuid
+
+from env import DATABASE_URL
 
 
 Base = declarative_base()
