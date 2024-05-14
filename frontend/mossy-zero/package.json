@@ -19,6 +19,7 @@
   "dependencies": {
     "@intlify/unplugin-vue-i18n": "^4.0.0",
     "@simplewebauthn/browser": "^10.0.0",
+    "@vueuse/core": "^10.9.0",
     "notyf": "^3.10.0",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
