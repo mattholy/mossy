@@ -6,13 +6,13 @@ import ToolKit from './ToolKitBtn.vue'
 </script>
 
 <template>
-    <div class="px-2 hidden sm:block">
+    <div class="hidden md:block">
         <n-space size="small">
             <Theme />
             <LocalizationBtn />
         </n-space>
     </div>
-    <div class="px-2 sm:hidden">
+    <div class="md:hidden">
         <n-space size="small">
             <ToolKit />
             <!-- <Theme />

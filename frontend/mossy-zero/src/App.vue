@@ -77,18 +77,20 @@ const checkStatus = async () => {
           <MossyHeader />
           <setupSever v-if="showSetupPage" />
           <n-flex v-else-if="showRouterPage" justify="center" class="flex absolute top-0 w-full h-dvh" style="gap: 0;">
-            <div class="flex-none h-dvh w-1/5 md:w-64 xl:w-72 m-0 p-0" style="border-left: 1px solid grey;">
+            <div
+              class="hidden md:flex 2xl:border-l flex-none h-dvh w-1/5 md:w-64 xl:w-72 m-0 p-0 border-gray-400 border-solid border-0">
               <NScrollbar trigger="hover" content-class="pt-12">
                 <LeftSider />
               </NScrollbar>
             </div>
-            <div class="grow h-dvh max-w-6xl w-2/5 m-0 p-0 z-30"
-              style="border-left: 1px solid grey;border-right: 1px solid grey;">
+            <div
+              class="grow h-dvh max-w-5xl w-2/5 m-0 p-0 z-30 lg:border-r md:border-l border-gray-400 border-solid border-0">
               <NScrollbar trigger="hover" content-class="pt-12 border-x-2 border-slate-800">
                 <RouterView />
               </NScrollbar>
             </div>
-            <div class="flex-none h-dvh w-1/5 md:w-64 xl:w-72 m-0 p-0" style="border-right: 1px solid grey;">
+            <div
+              class="hidden lg:flex 2xl:border-r flex-none h-dvh w-1/5 md:w-64 xl:w-72 m-0 p-0 border-gray-400 border-solid border-0">
               <NScrollbar trigger="hover" content-class="pt-12">
                 <RightSider />
               </NScrollbar>
@@ -103,6 +105,15 @@ const checkStatus = async () => {
 
 <style>
 .n-modal-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  backdrop-filter: blur(5px);
+}
+
+.n-drawer-mask {
   position: fixed;
   left: 0;
   right: 0;

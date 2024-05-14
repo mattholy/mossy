@@ -12,14 +12,17 @@ const authStore = useAuthStore()
 const theme = useThemeStore()
 const { t } = useI18n()
 const classMy = computed(() => {
-    return theme.isDarkMode ? "border-0 z-40 sticky top-0 bg-opacity-30 backdrop-brightness-50 backdrop-blur-xl h-12 flex items-center justify-center" : "border-0 z-40 sticky top-0 bg-opacity-30 backdrop-brightness-150 backdrop-blur-xl h-12 flex items-center justify-center"
+    return theme.isDarkMode ? "backdrop-brightness-50" : "backdrop-brightness-150 "
 })
 </script>
 
 <template>
-    <n-flex justify="space-between" :class="classMy" style="border-bottom: 1px solid grey;">
-        <p>MOSSY</p>
-        <div style="width: 300px;" class="hidden sm:block">
+    <n-flex justify="space-between" :class="classMy"
+        class="z-40 sticky top-0 bg-opacity-30 backdrop-blur-xl h-12 flex items-center justify-center border-gray-400 border-solid border-t-0 border-b border-l-0 border-r-0">
+        <div class="w-1/5 h-full flex items-center justify-start">
+            MOSSY
+        </div>
+        <div class="hidden md:flex items-center justify-center w-96">
             <n-input clearable round :placeholder="t('ui.common_desc.search')">
                 <template #prefix>
                     <n-icon>
@@ -28,7 +31,9 @@ const classMy = computed(() => {
                 </template>
             </n-input>
         </div>
-        <HeaderAction />
+        <div class="w-1/5 h-full flex items-center justify-end">
+            <HeaderAction />
+        </div>
     </n-flex>
 </template>
 

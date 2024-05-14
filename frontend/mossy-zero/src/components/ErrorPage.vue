@@ -13,7 +13,7 @@ const goHome = () => {
 </script>
 
 <template>
-    <div class="px-8 py-10 md:px-40 md:py-40 xl:px-96 xl:py-56">
+    <div class="pt-4 sm:pt-10 md:pt-16 lg:pt-24 xl:pt-36">
         <n-card :bordered="false" size="huge">
             <n-result status="500" :title="t(`api.statusmsg.${msg}.title`)"
                 :description="t(`api.statusmsg.${msg}.content`)">

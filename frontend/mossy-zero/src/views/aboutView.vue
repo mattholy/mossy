@@ -1,14 +1,18 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { NFlex, NImage, NCard, NIcon, NGrid, NGridItem, NButton, NCollapseTransition, c } from 'naive-ui';
 import { ChevronDown, EllipsisHorizontal } from '@vicons/ionicons5'
 import UserCard from '@/components/common/UserProfileCard.vue'
 import MarkdownViewer from '@/components/support/MarkdownViewer.vue'
+import callMossyApi from '@/utils/apiCall'
 
 const { t } = useI18n()
 const showAbout = ref(true)
 const showRules = ref(false)
+const cols = ref(window.innerWidth < 768 ? 1 : 2)
+
+// onMounted()
 </script>
 
 <template>
@@ -16,17 +20,17 @@ const showRules = ref(false)
         <n-image lazy src="https://social.kryta.app/system/site_uploads/files/000/000/001/@2x/f5b2eaf823221de8.png"
             preview-disabled width="100%" />
         <div class="text-center p-10">
-            <p class="font-bold text-4xl m-0">Mossy</p>
-            <p class="font-normal text-2xl m-0">a.b.c</p>
-            <p class="leading-10 mt-2">由Mossy驱动的去中心化社交媒体</p>
+            <p class="font-bold text-4xl m-0 p-0">Mossy</p>
+            <p class="font-normal text-2xl m-0 p-0">a.b.c</p>
+            <p class="leading-10 mt-2 p-0">由Mossy驱动的去中心化社交媒体</p>
         </div>
         <div class="mx-2">
             <n-card embedded>
-                <n-grid :cols="2" class="place-items-center">
-                    <n-grid-item>
-                        <UserCard name="管理员" uid="root" avatar="" />
+                <n-grid :cols="cols" :collapsed="true" :collapsed-rows="2">
+                    <n-grid-item class="flex items-center justify-center">
+                        <UserCard name="管理员23423423" uid="root" avatar="" />
                     </n-grid-item>
-                    <n-grid-item>
+                    <n-grid-item class="flex items-center justify-center">
                         <n-button round size="large" strong secondary tag="a" href="https://anyway.fm/news.php">
                             {{ t('ui.pages.about.serverContactBtn') }}
                         </n-button>
