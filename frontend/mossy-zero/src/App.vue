@@ -6,7 +6,7 @@ import ErrorView from '@/components/ErrorPage.vue'
 import MossyHeader from '@/components/MossyHeader.vue'
 import LeftSider from '@/components/LeftSider.vue'
 import RightSider from '@/components/RightSider.vue'
-import { NScrollbar, NMessageProvider, NFlex, NGrid, NGridItem } from 'naive-ui';
+import { NScrollbar, NMessageProvider, NFlex, NCard, NAlert } from 'naive-ui';
 import { useRouter } from 'vue-router'
 import { useThemeStore } from '@/stores/ThemeStore'
 import { useAuthStore } from '@/stores/AuthStore'
@@ -76,24 +76,24 @@ const checkStatus = async () => {
         <n-message-provider>
           <MossyHeader />
           <setupSever v-if="showSetupPage" />
-          <n-flex v-else-if="showRouterPage" justify="center" class="flex absolute top-0 w-full h-dvh">
-            <div class="flex-none h-dvh w-1/5 md:w-64 xl:w-72">
+          <n-flex v-else-if="showRouterPage" justify="center" class="flex absolute top-0 w-full h-dvh" style="gap: 0;">
+            <div class="flex-none h-dvh w-1/5 md:w-64 xl:w-72 m-0 p-0" style="border-left: 1px solid grey;">
               <NScrollbar trigger="hover" content-class="pt-12">
                 <LeftSider />
               </NScrollbar>
             </div>
-            <div class="grow h-dvh max-w-6xl w-2/5 border border-solid">
-              <NScrollbar trigger="hover" content-class="pt-12 ">
+            <div class="grow h-dvh max-w-6xl w-2/5 m-0 p-0 z-30"
+              style="border-left: 1px solid grey;border-right: 1px solid grey;">
+              <NScrollbar trigger="hover" content-class="pt-12 border-x-2 border-slate-800">
                 <RouterView />
               </NScrollbar>
             </div>
-            <div class="flex-none h-dvh w-1/5 md:w-64 xl:w-72">
+            <div class="flex-none h-dvh w-1/5 md:w-64 xl:w-72 m-0 p-0" style="border-right: 1px solid grey;">
               <NScrollbar trigger="hover" content-class="pt-12">
                 <RightSider />
               </NScrollbar>
             </div>
           </n-flex>
-
           <ErrorView v-else-if="showErrorPage" :msg="errorPageMsg" />
         </n-message-provider>
       </NScrollbar>
@@ -101,4 +101,13 @@ const checkStatus = async () => {
   </div>
 </template>
 
-<style scoped></style>
+<style>
+.n-modal-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  backdrop-filter: blur(5px);
+}
+</style>

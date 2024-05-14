@@ -4,13 +4,29 @@
             "go_home": "回到梦开始的地方",
             "go_back": "返回",
             "login": "登录",
-            "register": "注册账户"
+            "register": "注册账户",
+            "share": "分享",
+            "block": "屏蔽",
+            "follow": "关注",
+            "personProfile": "用户资料",
+            "person": "用户",
+            "report": "举报和投诉",
+            "loginMust": "这个功能需要登录后再使用",
+            "search": "搜索",
+            "submit": "提交",
+            "inputUsername": "请输入用户名",
+            "usernameAllow": "用户名只能包含字母、数字、下划线和连字符，且长度在3到32个字符之间"
         },
         "header": {
             "actions": {
                 "more": "快捷功能",
                 "localization": "切换语言",
                 "darkmode": "暗色模式"
+            },
+            "statusmsg": {
+                "shareFail": "分享失败",
+                "shareSuccess": "分享成功",
+                "shareApiNotSupported": "你的浏览器不支持分享功能"
             }
         },
         "leftsider": {
@@ -89,9 +105,19 @@
             "privacy": "《隐私政策》",
             "formError": "请检查表单是否填写正确",
             "NotAllowedError": "您取消了认证或者认证超时",
-            "UserAlreadyExist": "用户已存在",
+            "UserAlreadyExist": "用户已存在, 请尝试重置数据库",
             "AlreadyInit": "服务器已经完成了初始化，不可以重复初始化。若要重置，请清除数据库。",
             "AllDone": "初始化设置已完成，您可以开始使用Mossy了"
+        },
+        "pages": {
+            "about": {
+                "mossyDesc": "Mossy是一个开源的联邦社交网络平台，支持ActivityPub协议。Mossy的目标是为用户提供一个安全、隐私、自由的社交网络平台，让用户可以自由地分享、交流、互动。",
+                "serverAdmin": "服务器管理员：",
+                "serverContact": "联系方式：",
+                "serverContactBtn": "联系服务器管理员",
+                "serverAboutSection": "关于服务器",
+                "serverRuleSection": "服务器规则"
+            }
         }
     },
     "api": {
@@ -137,6 +163,11 @@
                 "title": "认证失败",
                 "content": "您取消了认证或者认证超时",
                 "notification": "您取消了认证或者认证超时，登录失败，请重试"
+            },
+            "UserAlreadyExist": {
+                "title": "用户已经存在了",
+                "content": "哎呀，人就是这么多，用户名先到先得",
+                "notification": "用户已经存在，请换一个用户名"
             }
         }
     }

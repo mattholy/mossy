@@ -14,7 +14,8 @@ function pathToRoute(path: string): ExtendedRoute {
   const routePath = segments
     .map(s => s.replace('View', ''))
     .map(s => s.replace(/[A-Z]/g, match => '-' + match.toLowerCase()))
-    .map(s => s.toLowerCase()).join('/');
+    .map(s => s.replace('.', '/:'))
+    .map(s => s.toLowerCase()).join('/')
 
   return {
     path: `/${routePath}`,
@@ -36,7 +37,7 @@ async function setupRoutes(): Promise<ExtendedRoute[]> {
     const segments = route.path.split('/');
     let currentPath = '';
     for (let i = 1; i < segments.length - 1; i++) {
-      currentPath += '/' + segments[i];
+      currentPath += '/' + segments[i]
       if (routesMap[currentPath]) {
         if (!routesMap[currentPath].children) {
           routesMap[currentPath].children = [];
@@ -46,8 +47,7 @@ async function setupRoutes(): Promise<ExtendedRoute[]> {
     }
   });
 
-
-  const nestedRoutes = Object.values(routesMap).filter(route => route.path.match(/^[^\\/]*\/[^\\/]*$/));
+  const nestedRoutes = Object.values(routesMap)
 
   nestedRoutes.push({
     path: '/',
@@ -60,7 +60,7 @@ async function setupRoutes(): Promise<ExtendedRoute[]> {
   return nestedRoutes;
 }
 
-const routes = await setupRoutes();
+const routes = await setupRoutes()
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -69,9 +69,14 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
   const token = localStorage.getItem('auth');
-  if (to.path === '/about' || to.path === '/explore') {
-    return true
-  } else {
+  if (
+    to.path.startsWith('/home') ||
+    to.path.startsWith('/notifications') ||
+    to.path.startsWith('/conversations') ||
+    to.path.startsWith('/collections') ||
+    to.path.startsWith('/settings')
+
+  ) {
     if (!token) {
       return '/about'
     } else {

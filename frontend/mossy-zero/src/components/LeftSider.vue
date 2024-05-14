@@ -9,9 +9,12 @@ const authStore = useAuthStore()
 </script>
 
 <template>
-    <n-flex vertical class="py-4 pt-8">
-        <Navigator />
-        <n-divider v-if="!authStore.isLoggedIn" />
-        <AuthSection v-if="!authStore.isLoggedIn" />
+    <n-flex vertical class="">
+        <div style="border-bottom: 1px solid grey;">
+            <Navigator />
+        </div>
+        <div style="border-bottom: 1px solid grey;" class="p-2" v-if="!authStore.isLoggedIn">
+            <AuthSection />
+        </div>
     </n-flex>
 </template>
