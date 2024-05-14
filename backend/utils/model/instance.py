@@ -61,10 +61,6 @@ class Rule(BaseModel):
     text: str
 
 
-class ThumbnailV1(BaseModel):
-    url: Optional[HttpUrl]
-
-
 class ThumbnailV2(BaseModel):
     url: HttpUrl
     blurhash: Optional[str]
@@ -134,15 +130,15 @@ class InstanceV1(BaseModel):
     description: str
     email: str
     version: str
-    urls: StreamingAPI
+    urls: Optional[StreamingAPI]
     stats: Stats
-    thumbnail: Optional[ThumbnailV1]
+    thumbnail: Optional[str]
     languages: List[str]
     registrations: bool
     approval_required: bool
     invites_enabled: bool
     configuration: Configuration
-    contact_account: Optional[str]  # Simplified for demonstration
+    contact_account: Optional[dict]  # Simplified for demonstration
     rules: List[Rule]
 
 
