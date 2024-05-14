@@ -46,7 +46,7 @@ async def fetch_instance(db: AsyncSession = Depends(get_db)):
     query = select(SystemConfig).filter(SystemConfig.key.in_(keys_to_fetch))
     results = await db.execute(query)
     config_dict = {result.key: result.value for result in results.scalars()}
-    logger.debug(config_dict)
+
     instance = InstanceV1(
         uri=RP_ID,
         title=get_value_or_default(config_dict.get(
