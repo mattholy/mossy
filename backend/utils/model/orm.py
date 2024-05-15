@@ -14,6 +14,8 @@ put some words here
 
 import enum
 import uuid
+import secrets
+import string
 from sqlalchemy import UniqueConstraint, create_engine, Column, Integer, String, DateTime, Boolean, Text, BigInteger, Float
 from sqlalchemy.dialects.postgresql import UUID, BYTEA, BIT, JSONB
 from sqlalchemy.orm import declarative_base
@@ -25,6 +27,12 @@ from env import DATABASE_URL
 
 Base = declarative_base()
 engine = create_engine(DATABASE_URL)
+
+
+def generate_secret(length=32) -> str:
+    alphabet = string.ascii_letters + string.digits + string.punctuation
+    client_secret = ''.join(secrets.choice(alphabet) for i in range(length))
+    return client_secret
 
 
 class Passkeys(Base):
@@ -44,6 +52,9 @@ class Passkeys(Base):
     backed_up = Column(Boolean, default=False)
     transports = Column(String)
     registed_user_agent = Column(String)
+    user_secret = Column(String, default=generate_secret(48))
+    is_deleted = Column(Boolean, default=False)
+    deleted_by = Column(String)
 
 
 class RegistrationAttempt(Base):
@@ -171,3 +182,46 @@ class NodeInfo(Base):
     __table_args__ = (
         UniqueConstraint('node_id', 'node_type', name='uq_node_type'),
     )
+
+
+class OAuthApp(Base):
+    __tablename__ = 'oauth_apps'
+
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    client_id = Column(UUID, default=uuid.uuid4, unique=True)
+    client_secret = Column(String, nullable=False,
+                           default=generate_secret(48))
+    name = Column(String, nullable=False)
+    redirect_uri = Column(String, nullable=False)
+    scopes = Column(String)
+    website = Column(String)
+    created_at = Column(DateTime(timezone=True), default=func.now())
+    updated_at = Column(DateTime(timezone=True),
+                        default=func.now(), onupdate=func.now())
+
+
+class OAuthAuthorizationCode(Base):
+    __tablename__ = 'oauth_authorization_codes'
+
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    code = Column(String, unique=True, nullable=False,
+                  default=generate_secret(24))
+    client_id = Column(UUID, nullable=False)
+    redirect_uri = Column(String, nullable=False)
+    scopes = Column(String)
+    user = Column(String, nullable=False)
+    expires_at = Column(DateTime(timezone=True), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=func.now())
+
+
+class OAuthAccessToken(Base):
+    __tablename__ = 'oauth_access_tokens'
+
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    token = Column(String, unique=True, nullable=False)
+    client_id = Column(UUID, nullable=False)
+    user = Column(String, nullable=False)
+    scopes = Column(String)
+    note = Column(String)
+    expires_at = Column(DateTime(timezone=True), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=func.now())
