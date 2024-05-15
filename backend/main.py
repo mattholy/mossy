@@ -61,10 +61,10 @@ app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/", name="Frontend Pages")
-async def read_index():
+async def read_index(request: Request):
     index_path = Path("static/index.html")
     if not index_path.is_file():
-        return PlainTextResponse(content=f"Backend server is running. Response from node {worker_info_dict['node_id']} worker {worker_info_dict['worker_id']}")
+        return PlainTextResponse(content=f"Backend server is running. Response from node {request.app.state.node_id} worker {request.app.state.worker_id}")
     return FileResponse(index_path)
 
 
@@ -160,7 +160,7 @@ async def internal_error_handler(request: Request, call_next):
         logger.error(f"An error occurred when access {
                      request.url}: ", exc_info=True)
         exception_id = await async_log_error_to_db(
-            exc, worker_info_dict['node_id'], worker_info_dict['worker_id'])
+            exc, request.app.state.node_id, request.app.state.worker_id)
         return JSONResponse(
             content={
                 "status": "SERVER_ERROR",
