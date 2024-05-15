@@ -1,8 +1,8 @@
-"""init
+"""dev
 
-Revision ID: 9f482c4e2fad
+Revision ID: ce66901b65e9
 Revises: 
-Create Date: 2024-05-15 00:12:20.907458
+Create Date: 2024-05-15 22:42:27.363612
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = '9f482c4e2fad'
+revision: str = 'ce66901b65e9'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -127,6 +127,19 @@ def upgrade() -> None:
     sa.UniqueConstraint('node_id', 'node_type', name='uq_node_type')
     )
     op.create_index(op.f('ix_node_info_node_id'), 'node_info', ['node_id'], unique=False)
+    op.create_table('oauth_apps',
+    sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
+    sa.Column('client_id', sa.UUID(), nullable=True),
+    sa.Column('client_secret', sa.String(), nullable=False),
+    sa.Column('name', sa.String(), nullable=False),
+    sa.Column('redirect_uri', sa.String(), nullable=False),
+    sa.Column('scopes', sa.String(), nullable=True),
+    sa.Column('website', sa.String(), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('client_id')
+    )
     op.create_table('system_config',
     sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
     sa.Column('key', sa.String(), nullable=False),
@@ -157,6 +170,7 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_user_config_key'), table_name='user_config')
     op.drop_table('user_config')
     op.drop_table('system_config')
+    op.drop_table('oauth_apps')
     op.drop_index(op.f('ix_node_info_node_id'), table_name='node_info')
     op.drop_table('node_info')
     op.drop_index(op.f('ix_log_operations_user'), table_name='log_operations')
