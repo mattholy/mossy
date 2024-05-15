@@ -7,7 +7,7 @@ import MossyHeader from '@/components/MossyHeader.vue'
 import LeftSider from '@/components/LeftSider.vue'
 import RightSider from '@/components/RightSider.vue'
 import { NScrollbar, NMessageProvider, NFlex, NCard, NAlert } from 'naive-ui';
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useThemeStore } from '@/stores/ThemeStore'
 import { useAuthStore } from '@/stores/AuthStore'
 import { useI18n } from 'vue-i18n'
@@ -17,10 +17,12 @@ import { $ApiServiceSetupStatus } from '@/client/schemas.gen'
 import { OpenAPI } from '@/client/core/OpenAPI'
 import { notyf } from '@/utils/notyf'
 import { browserSupportsWebAuthn } from '@simplewebauthn/browser'
+import { callMossyApi, MossyApiError } from './utils/apiCall'
 
 
 const authStore = useAuthStore()
 const router = useRouter()
+const route = useRoute()
 const { t } = useI18n()
 const themeStore = useThemeStore()
 const osThemeRef = useOsTheme()
@@ -30,6 +32,7 @@ const showSetupPage = ref(false)
 const showRouterPage = ref(false)
 const showErrorPage = ref(false)
 const errorPageMsg = ref('UnkownError')
+const showOauthPage = ref(false)
 
 watchEffect(() => {
   themeStore.setDarkMode(osThemeRef.value === 'dark');
@@ -46,25 +49,32 @@ const checkStatus = async () => {
   } else {
     showErrorPage.value = true
     errorPageMsg.value = 'CoreAPINotReady'
-    return false
   }
-  await MossySetupService.setupStatusSetupStatusPost()
-    .then(
-      (res) => {
-        if (res.payload.status === 'AllDone') {
-          showRouterPage.value = true
-        } else {
-          showSetupPage.value = true
-        }
+
+  await callMossyApi({
+    endpoint: '/setup/status'
+  })
+    .then((res) => {
+      if (res.status === 'AllDone') {
+        // TODO: check oauth status
+        showRouterPage.value = true
+        showSetupPage.value = false
+        showErrorPage.value = false
+      } else {
+        showRouterPage.value = false
+        showSetupPage.value = true
+        showErrorPage.value = false
       }
-    )
-    .catch(
-      (err) => {
+    })
+    .catch((error) => {
+      if (error instanceof MossyApiError) {
         showErrorPage.value = true
-        errorPageMsg.value = err.message
+        errorPageMsg.value = error.detail
+      } else {
+        showErrorPage.value = true
+        errorPageMsg.value = 'UnkownError'
       }
-    )
-  return true
+    })
 }
 </script>
 
@@ -97,6 +107,7 @@ const checkStatus = async () => {
             </div>
           </n-flex>
           <ErrorView v-else-if="showErrorPage" :msg="errorPageMsg" />
+          <div v-else-if="showOauthPage"></div>
         </n-message-provider>
       </NScrollbar>
     </n-config-provider>
