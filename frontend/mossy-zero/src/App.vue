@@ -57,9 +57,13 @@ const checkStatus = async () => {
     .then((res) => {
       if (res.status === 'AllDone') {
         // TODO: check oauth status
-        showRouterPage.value = true
-        showSetupPage.value = false
-        showErrorPage.value = false
+        if (route.query.test == 'oauth') {
+          showOauthPage.value = true
+        } else {
+          showRouterPage.value = true
+          showSetupPage.value = false
+          showErrorPage.value = false
+        }
       } else {
         showRouterPage.value = false
         showSetupPage.value = true
@@ -107,7 +111,7 @@ const checkStatus = async () => {
             </div>
           </n-flex>
           <ErrorView v-else-if="showErrorPage" :msg="errorPageMsg" />
-          <div v-else-if="showOauthPage"></div>
+          <div v-else-if="showOauthPage"> {{ route.query.test }}</div>
         </n-message-provider>
       </NScrollbar>
     </n-config-provider>

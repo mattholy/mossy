@@ -39,6 +39,11 @@ class UserAuthorizeResultData(BaseModel):
     allow: bool
 
 
+@router.get('/test')
+async def test():
+    return RedirectResponse(url='http://localhost:5173/#/authurize?test=oauth', status_code=302)
+
+
 @router.get('/authorize')
 async def user_authorize(
     response_type: str,
