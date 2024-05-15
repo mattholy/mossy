@@ -40,27 +40,20 @@ from utils.model.orm import NodeType
 import uuid
 from sqlalchemy.exc import ProgrammingError
 
-worker_info_dict = {
-    'node_id': NODE_ID
-}
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     worker_id = str(uuid.uuid4())
-    worker_info_dict['worker_id'] = worker_id
     private_key, public_key = await async_load_key_pair()
-    worker_info_dict['private_key'] = private_key
-    worker_info_dict['public_key'] = public_key
-    if ready():
-        init_node(public_key, NodeType.fastapi)
-    logger.info(f"Starting FastAPI worker: {
-        worker_info_dict['node_id']}: {worker_id}")
+    init_node(public_key, NodeType.fastapi)
+    logger.info(f"Starting FastAPI worker: {NODE_ID}: {worker_id}")
+    app.state.node_id = NODE_ID
+    app.state.worker_id = worker_id
+    app.state.public_key = public_key
+    app.state.private_key = private_key
     yield
-    if ready():
-        init_node(public_key, NodeType.fastapi, status=False)
-    logger.warn(f"Stopping FastAPI worker: {
-        worker_info_dict['node_id']}: {worker_id}")
+    init_node(public_key, NodeType.fastapi, status=False)
+    logger.warn(f"Stopping FastAPI worker: {NODE_ID}: {worker_id}")
 
 
 # 创建FastAPI实例
@@ -207,8 +200,8 @@ async def check_server_ready(request: Request, call_next):
 async def add_worker_info(request: Request, call_next):
     logger.debug('Incoming request with header: ' + str({key: value for key, value in request.headers.items()}) + ' body: ' + str(await request.body()))
     response = await call_next(request)
-    response.headers["X-Worker-ID"] = worker_info_dict['worker_id']
-    response.headers["X-Node-ID"] = worker_info_dict['node_id']
+    response.headers["X-Worker-ID"] = request.app.state.worker_id
+    response.headers["X-Node-ID"] = request.app.state.node_id
     return response
 
 
