@@ -100,6 +100,14 @@ async def http_exception_handler(request, exc):
     if (not isinstance(exc, (HTTPException, StarletteHTTPException))):
         raise exc
     handle_dict: dict[int, JSONResponse] = {
+        400: JSONResponse(
+            content={
+                "status": "CLIENT_ERROR",
+                "msg": "InvalidData",
+                "payload": exc.detail
+            },
+            status_code=401,
+        ),
         401: JSONResponse(
             content={
                 "status": "CLIENT_ERROR",
