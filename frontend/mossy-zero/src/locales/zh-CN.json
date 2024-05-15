@@ -107,7 +107,9 @@
             "NotAllowedError": "您取消了认证或者认证超时",
             "UserAlreadyExist": "用户已存在, 请尝试重置数据库",
             "AlreadyInit": "服务器已经完成了初始化，不可以重复初始化。若要重置，请清除数据库。",
-            "AllDone": "初始化设置已完成，您可以开始使用Mossy了"
+            "AllDone": "初始化设置已完成，您可以开始使用Mossy了",
+            "BannerImageAspectError": "Banner图片比例不正确，请重新选择",
+            "BannerImageFormatError": "Banner图片格式无法识别，请确认它是一张图片"
         },
         "pages": {
             "about": {
