@@ -16,7 +16,7 @@ import base64
 from PIL import Image, UnidentifiedImageError
 import io
 import re
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from fastapi.exceptions import HTTPException
 from fastapi import status as resp_status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -30,7 +30,6 @@ from utils.model.orm import SystemConfig
 from utils.init import init_node, ready
 from utils.logger import logger, async_log_error_to_db
 from routers.api.m1.authentication.endpoint import start_registration
-from main import worker_info_dict
 
 router = APIRouter(prefix='/setup', tags=['Mossy Setup'])
 
@@ -64,7 +63,7 @@ class SetupForm(BaseModel):
 
 
 @router.post('/init', response_model=BaseApiResp)
-async def setup_status(basic_info: SetupForm, db: AsyncSession = Depends(get_db)):
+async def setup_status(basic_info: SetupForm, request: Request, db: AsyncSession = Depends(get_db)):
     if ready():
         raise HTTPException(status_code=403, detail='AlreadyInit')
     try:
@@ -91,7 +90,7 @@ async def setup_status(basic_info: SetupForm, db: AsyncSession = Depends(get_db)
                     status_code=400, detail='BannerImageFormatError')
             except Exception as e:
                 await async_log_error_to_db(
-                    e, worker_info_dict['node_id'], worker_info_dict['worker_id'])
+                    e, request.app.state.node_id, request.app.state.worker_id)
                 raise HTTPException(status_code=400, detail='UnknownError')
         # check server admin name
         pattern = re.compile(r'^[a-zA-Z0-9_-]{3,32}$')
