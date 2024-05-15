@@ -65,7 +65,9 @@ async def fetch_instance(db: AsyncSession = Depends(get_db)):
         },
         # thumbnail='https://mossy.moe/static/mossy_logo.png',
         thumbnail=get_value_or_default(config_dict.get('server_banner'), ''),
-        languages=[],
+        languages=[
+            'en'
+        ],
         registrations=True,
         approval_required=False,
         invites_enabled=True,

@@ -12,6 +12,7 @@ put some words here
 @License :   MIT License
 '''
 
+import uuid
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -21,7 +22,7 @@ from typing import Optional
 
 from utils.model.instance import InstanceV1
 from env import RP_ID, RELEASE_VERSION
-from utils.model.orm import SystemConfig
+from utils.model.orm import SystemConfig, OAuthApp
 from utils.db import get_db
 from utils.tools import get_value_or_default
 from utils.logger import logger
@@ -35,9 +36,8 @@ class AppModel(BaseModel):
     name: str
     website: Optional[HttpUrl] = None
     redirect_uri: str
-    client_id: Optional[str] = None
+    client_id: Optional[uuid.UUID] = None
     client_secret: Optional[str] = None
-    vapid_key: str
 
 
 @router.post(
@@ -52,13 +52,20 @@ async def app_register(
         scopes: Optional[str],
         website: Optional[str],
         db: AsyncSession = Depends(get_db)):
-    data = {
-        "id": "672",
-        "name": "IceCubesApp",
-        "website": "https://github.com/Dimillian/IceCubesApp",
-        "redirect_uri": "icecubesapp://",
-        "client_id": "raOShq-qMOpH2FXMtJZbrZmiuFsUbvCoUhv2CrqsjPo",
-        "client_secret": "Am-znehfqmHqSAUuVE3mBYcTAYtak_f8mKBBXXNsnOg",
-        "vapid_key": "BKvZCto1H0fjRImRU6qLLzzouE0_Twtwv67fNkXU5PN7lPFkEtwsPT7TOUGr8TuFwUxJah7WSedNgppHlfA2P2k="
-    }
-    return AppModel(**data)
+    new_app = OAuthApp(
+        name=client_name,
+        website=website,
+        redirect_uri=redirect_uris,
+        scopes=scopes
+    )
+    db.add(new_app)
+    await db.commit()
+    await db.refresh(new_app)
+    return AppModel(
+        id=str(new_app.id),
+        name=new_app.name,
+        website=new_app.website,
+        redirect_uri=new_app.redirect_uri,
+        client_id=new_app.client_id,
+        client_secret=new_app.client_secret
+    )
