@@ -41,7 +41,8 @@ async def fetch_instance(db: AsyncSession = Depends(get_db)):
     keys_to_fetch = [
         'server_name',
         'server_desc',
-        'server_banner'
+        'server_banner',
+        'server_service'
     ]
     query = select(SystemConfig).filter(SystemConfig.key.in_(keys_to_fetch))
     results = await db.execute(query)
@@ -54,7 +55,7 @@ async def fetch_instance(db: AsyncSession = Depends(get_db)):
         short_description=get_value_or_default(
             config_dict.get('server_name'), 'Default Server Description'),
         description="",
-        email="",
+        email=config_dict.get('server_service'),
         version=RELEASE_VERSION,
         urls=None,
         stats={
@@ -62,6 +63,7 @@ async def fetch_instance(db: AsyncSession = Depends(get_db)):
             'status_count': 0,
             'domain_count': 0
         },
+        # thumbnail='https://mossy.moe/static/mossy_logo.png',
         thumbnail=get_value_or_default(config_dict.get('server_banner'), ''),
         languages=[],
         registrations=True,
