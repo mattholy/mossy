@@ -33,13 +33,11 @@ Although it sounds like a joke, it's actually very fast. Thanks to its fully asy
 
 Mossy is here to deliver an exceptional experience with cutting-edge technology.
 According to that, Mossy can do much better to protect your information & personal identity
-(**We don't even need your Email**).
+(**We don't even need your email**).
 
 We lovingly provide:
 
-- **Full ActivityPub support**: Yes, Mossy supports ActivityPub
-
-- **Accesse your Mossy from nearest point**: Place your server anywhere and everywhere all over the world, they share the same data
+- **Full ActivityPub support**: Yes, Mossy supports ActivityPub. Even more, all types of activities are **supported**, e.g. status, article, gallery, ask box...
 - **High performance**: Even a small server can handel a large number of requests from fediverse
 - **Flexible cluster**: Join a new node into your cluster at your will
 - **Compatible with Mastodon's APIs**: So any application developed for Mastodon can generally be used with Mossy as well (Maybe, we are tring)
