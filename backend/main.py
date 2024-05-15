@@ -106,7 +106,7 @@ async def http_exception_handler(request, exc):
                 "msg": "InvalidData",
                 "payload": exc.detail
             },
-            status_code=401,
+            status_code=400,
         ),
         401: JSONResponse(
             content={
