@@ -16,13 +16,14 @@ import jwt
 import aiofiles
 from pathlib import Path
 import uuid
-from typing import Tuple
+from typing import Tuple, Any
 from datetime import datetime, timedelta, timezone
 from fastapi import Depends, Header, HTTPException, Security
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from pydantic import BaseModel
 
 from utils.db import get_db
 from env import RP_ID
@@ -33,16 +34,21 @@ from cryptography.hazmat.primitives.asymmetric import ec
 security = HTTPBearer()
 
 
-async def get_current_user(
+class UserSession(BaseModel):
+    user: str
+    session: uuid.UUID
+
+
+async def get_current_user_session(
     authentication: HTTPAuthorizationCredentials = Security(security),
     user_agent: str = Header(...),
     db: AsyncSession = Depends(get_db)
-) -> str:
-    user = await verify_jwt(authentication.credentials,
-                            user_agent, db, return_user=True)
-    if not user:
+) -> UserSession:
+    data = await verify_jwt(authentication.credentials,
+                            user_agent, db, return_info=True)
+    if not data:
         raise HTTPException(status_code=401)
-    return user
+    return UserSession(**data)
 
 
 async def permission_check(user: str, permission_node: str, db: AsyncSession) -> bool:
@@ -58,8 +64,8 @@ class RequirePermission:
     def __init__(self, permission_node: str):
         self.permission_node = permission_node
 
-    async def __call__(self, user: str = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
-        if not await permission_check(user, self.permission_node, db):
+    async def __call__(self, user_session: UserSession = Depends(get_current_user_session), db: AsyncSession = Depends(get_db)):
+        if not await permission_check(user_session.user, self.permission_node, db):
             raise HTTPException(status_code=401)
 
 
@@ -75,37 +81,47 @@ def generate_jwt(secrets: str, user_id: str) -> tuple[str, dict]:
     return token, payload
 
 
-async def verify_jwt(jwt_str: str, ua: str, db: AsyncSession, return_user=False) -> bool | str:
+async def verify_jwt(
+        jwt_str: str,
+        ua: str,
+        db: AsyncSession,
+        return_info=False
+):
     try:
         res = jwt.decode(jwt_str, algorithms=['HS256'], options={
                          'verify_signature': False})
     except Exception:
         return False
 
-    find_key = False
     try:
         result = await db.execute(select(AuthSession).filter_by(id=res['jti']))
         current_session = result.scalars().first()
         if current_session is None:
             return False
 
-        result = await db.execute(select(Passkeys).filter_by(user=res['sub']))
-        passkeys = result.scalars().all()
+        result = await db.execute(select(Passkeys).filter_by(id=current_session.related_passkey))
+        passkey = result.scalars().first()
+        if not passkey:
+            return False
     except Exception:
         return False
 
-    for pkey in passkeys:
-        try:
-            res = jwt.decode(jwt_str, algorithms=['HS256'], key=str(pkey.id))
-            if current_session.user_agent == ua:
-                find_key = True
-                break
-        except:
-            continue
-
-    if not find_key:
+    try:
+        res = jwt.decode(jwt_str, algorithms=[
+                         'HS256'], key=str(passkey.user_secret))
+    except:
         return False
-    return res['sub'] if return_user else True
+
+    if current_session.user_agent != ua:
+        return False
+
+    if return_info:
+        return {
+            'user': res['sub'],
+            'session': current_session.id
+        }
+
+    return True
 
 
 def generate_ecc_key_pair() -> Tuple[str, str]:
