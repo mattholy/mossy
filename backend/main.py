@@ -59,7 +59,7 @@ async def lifespan(app: FastAPI):
     yield
     if ready():
         init_node(public_key, NodeType.fastapi, status=False)
-    logger.error(f"Stopping FastAPI worker: {
+    logger.warn(f"Stopping FastAPI worker: {
         worker_info_dict['node_id']}: {worker_id}")
 
 

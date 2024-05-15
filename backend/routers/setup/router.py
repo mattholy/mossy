@@ -13,7 +13,7 @@ Mossy setup api
 '''
 
 import base64
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 import io
 import re
 from fastapi import APIRouter, Depends
@@ -28,8 +28,9 @@ from utils.model.api_schemas import ApiServiceSetupStatus, BaseApiResp, Webauthn
 from utils.db import get_db
 from utils.model.orm import SystemConfig
 from utils.init import init_node, ready
-from utils.logger import logger
+from utils.logger import logger, async_log_error_to_db
 from routers.api.m1.authentication.endpoint import start_registration
+from main import worker_info_dict
 
 router = APIRouter(prefix='/setup', tags=['Mossy Setup'])
 
@@ -70,8 +71,12 @@ async def setup_status(basic_info: SetupForm, db: AsyncSession = Depends(get_db)
         # check banner image
         if basic_info.server_banner.file_size > 0:
             try:
-                image_data = base64.b64decode(
-                    basic_info.server_banner.file_content)
+                img_base64 = basic_info.server_banner.file_content
+                if img_base64.startswith('data:'):
+                    if not img_base64.startswith('data:image'):
+                        raise UnidentifiedImageError
+                    img_base64 = img_base64.split(',')[1]
+                image_data = base64.b64decode(img_base64)
                 image = Image.open(io.BytesIO(image_data))
                 width, height = image.size
                 aspect_ratio = width / height
@@ -80,10 +85,14 @@ async def setup_status(basic_info: SetupForm, db: AsyncSession = Depends(get_db)
                     2 - tolerance) <= aspect_ratio <= (2 + tolerance)
                 if is_close_to_two_to_one != basic_info.server_banner.isTwoToOne:
                     raise HTTPException(
-                        status_code=400, detail='BannerImageError')
+                        status_code=400, detail='BannerImageAspectError')
+            except UnidentifiedImageError as e:
+                raise HTTPException(
+                    status_code=400, detail='BannerImageFormatError')
             except Exception as e:
-                logger.error(e)
-                raise HTTPException(status_code=400, detail='BannerImageError')
+                await async_log_error_to_db(
+                    e, worker_info_dict['node_id'], worker_info_dict['worker_id'])
+                raise HTTPException(status_code=400, detail='UnknownError')
         # check server admin name
         pattern = re.compile(r'^[a-zA-Z0-9_-]{3,32}$')
         if not pattern.match(basic_info.server_admin):
