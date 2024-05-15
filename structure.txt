@@ -3,7 +3,6 @@
     docker-compose.yaml
     Dockerfile
     LICENSE
-    package-lock.json
     package.json
     README.md
     requirements.txt
@@ -29,14 +28,27 @@
             README
             script.py.mako
             versions/
-                0a6c6a80b727_add_table.py
-                934f6ca3ce64_init.py
+                9f482c4e2fad_init.py
         routers/
             api/
                 router.py
-                authentication/
-                    endpoint.py
+                m1/
+                    __init__.py
+                    authentication/
+                        endpoint.py
+                v1/
+                    __init__.py
+                    apps/
+                        endpoint.py
+                    instance/
+                        endpoint.py
+                v2/
+                    __init__.py
             nodeinfo/
+                router.py
+            oauth/
+                router.py
+            setup/
                 router.py
             wellknown/
                 router.py
@@ -50,14 +62,120 @@
             db.py
             init.py
             logger.py
-            security.py
+            tools.py
             model/
                 api_schemas.py
+                instance.py
                 nodeinfo.py
                 orm.py
+            system/
+                encryption.py
+                security.py
     docs/
         fedi.png
         INDEX.md
+    frontend/
+        mossy-zero/
+            .env.development
+            .eslintrc.cjs
+            .gitignore
+            .prettierrc.json
+            cypress.config.ts
+            env.d.ts
+            index.html
+            openapi-ts.config.ts
+            package.json
+            postcss.config.js
+            README.md
+            tailwind.config.js
+            tsconfig.app.json
+            tsconfig.json
+            tsconfig.node.json
+            tsconfig.vitest.json
+            vite.config.ts
+            vitest.config.ts
+            .vscode/
+                extensions.json
+            cypress/
+                e2e/
+                    example.cy.ts
+                    tsconfig.json
+                fixtures/
+                    example.json
+                support/
+                    commands.ts
+                    e2e.ts
+            node_modules/
+            public/
+                favicon.ico
+            src/
+                App.vue
+                i18n.ts
+                main.ts
+                setupServer.vue
+                assets/
+                    main.css
+                client/
+                    index.ts
+                    schemas.gen.ts
+                    services.gen.ts
+                    types.gen.ts
+                    core/
+                        ApiError.ts
+                        ApiRequestOptions.ts
+                        ApiResult.ts
+                        CancelablePromise.ts
+                        OpenAPI.ts
+                        request.ts
+                components/
+                    ErrorPage.vue
+                    HelloWorld.vue
+                    LeftSider.vue
+                    MossyHeader.vue
+                    RightSider.vue
+                    common/
+                        HeaderAction.vue
+                        LocalizationBtn.vue
+                        MainMenu.vue
+                        ThemeBtn.vue
+                        ToolKitBtn.vue
+                        UserProfileCard.vue
+                    icons/
+                        IconCommunity.vue
+                        IconDocumentation.vue
+                        IconEcosystem.vue
+                        IconSupport.vue
+                        IconTooling.vue
+                    support/
+                        AuthSection.vue
+                        MarkdownViewer.vue
+                        NavigationSection.vue
+                        SubpageHeader.vue
+                    __tests__/
+                        HelloWorld.spec.ts
+                locales/
+                    en-US.json
+                    zh-CN.json
+                router/
+                    index.ts
+                stores/
+                    authStore.ts
+                    PermissionsStore.ts
+                    themeStore.ts
+                utils/
+                    apiCall.ts
+                    checkToken.ts
+                    notyf.ts
+                    webauthn.ts
+                views/
+                    aboutView.vue
+                    ErrorView.vue
+                    publicView.vue
+                    userView.id.vue
+                    error/
+                        404View.vue
+                    public/
+                        loginNiceView.vue
     node_modules/
     scripts/
         list_directory_tree.py
