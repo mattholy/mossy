@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineProps } from 'vue'
 import { NFlex, NButton, NIcon, NPopover, NDivider } from 'naive-ui'
 import { useRoute, useRouter } from 'vue-router'
 import { ChevronBack, ShareSocial, EllipsisHorizontal, HandRight, Warning } from '@vicons/ionicons5'

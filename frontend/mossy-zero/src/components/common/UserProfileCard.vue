@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineProps } from 'vue'
 import { NAvatar, NFlex, NPopover, NCard } from 'naive-ui'
 import { useRouter } from 'vue-router'
 
