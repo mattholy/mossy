@@ -43,9 +43,7 @@
   })
 
   const checkStatus = async () => {
-    if (browserSupportsWebAuthn()) {
-      showErrorPage.value = false
-    } else {
+    if (!browserSupportsWebAuthn()) {
       showErrorPage.value = true
       errorPageMsg.value = 'CoreAPINotReady'
     }
@@ -55,7 +53,7 @@
     })
       .then((res) => {
         if (res.status === 'AllDone') {
-          if (route.query.authorize == 'oauth') {
+          if (route.query.authorize && route.query.authorize == 'oauth') {
             showOauthPage.value = true
           } else {
             showRouterPage.value = true
@@ -70,7 +68,7 @@
           errorPageMsg.value = error.detail
         } else {
           showErrorPage.value = true
-          errorPageMsg.value = 'UnknownError'
+          errorPageMsg.value = error.message
         }
       })
   }
