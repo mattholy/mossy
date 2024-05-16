@@ -1,252 +1,257 @@
 <script setup lang="ts">
-import { onBeforeUnmount, ref } from 'vue'
-import { useMessage } from 'naive-ui'
-import { NButton, NCard, NForm, NFormItem, NInput, NInputGroup, NInputGroupLabel, NUpload, NSwitch, NUploadDragger, NIcon } from 'naive-ui'
-import type { FormInst, FormRules, FormItemRule, UploadOnChange, MessageReactive } from 'naive-ui'
-import { useI18n } from 'vue-i18n'
-import { FileTray } from '@vicons/ionicons5'
-import { notyf } from '@/utils/notyf'
-import { webauthnRegister } from '@/utils/webauthn'
-import { callMossyApi } from '@/utils/apiCall'
-import { useRouter } from 'vue-router'
-import { MossyApiError } from '@/utils/apiCall'
+    import { onBeforeUnmount, ref } from 'vue'
+    import { useMessage } from 'naive-ui'
+    import { NButton, NCard, NForm, NFormItem, NInput, NInputGroup, NInputGroupLabel, NUpload, NSwitch, NUploadDragger, NIcon } from 'naive-ui'
+    import type { FormInst, FormRules, FormItemRule, UploadOnChange, MessageReactive } from 'naive-ui'
+    import { useI18n } from 'vue-i18n'
+    import { FileTray } from '@vicons/ionicons5'
+    import { notyf } from '@/utils/notyf'
+    import { webauthnRegister } from '@/utils/webauthn'
+    import { callMossyApi } from '@/utils/apiCall'
+    import { useRouter } from 'vue-router'
+    import { MossyApiError } from '@/utils/apiCall'
 
-interface FileDetails {
-    file_name: string;
-    file_count: number;
-    file_size: number;
-    file_type: string;
-    file_content: string;
-    isTwoToOne: boolean;
-}
-
-let messageReactive: MessageReactive | null = null
-const { t } = useI18n()
-const router = useRouter()
-const setupForm = ref<FormInst | null>(null)
-const processingForm = ref(false)
-const setupFormData = ref({
-    server_name: '',
-    server_desc: '',
-    server_admin: '',
-    server_service: '',
-    server_about: '',
-    server_banner: {
-        file_name: '',
-        file_count: 0,
-        file_size: 0,
-        file_type: '',
-        file_content: '',
-        isTwoToOne: false
-    },
-    server_status: '',
-    server_isolated: false,
-    server_telemetry: true,
-    server_allow_search: true,
-    server_union: true
-})
-const message = useMessage()
-const ServiceUrl = new URL(import.meta.env.VITE_BASE_URL || window.location.href)
-const removeMessage = () => {
-    if (messageReactive) {
-        messageReactive.destroy()
-        messageReactive = null
+    interface FileDetails {
+        file_name: string;
+        file_count: number;
+        file_size: number;
+        file_type: string;
+        file_content: string;
+        isTwoToOne: boolean;
     }
-}
-const createMessage = () => {
-    messageReactive = message.loading(t('ui.setup_page.onProcessing'), {
-        duration: 0
-    })
-}
-const setupServer = async () => {
-    processingForm.value = true
-    await setupForm.value?.validate().then(async () => {
-        createMessage()
-        await callMossyApi({
-            endpoint: '/setup/init',
-            data: {
-                server_name: setupFormData.value.server_name,
-                server_desc: setupFormData.value.server_desc,
-                server_admin: setupFormData.value.server_admin,
-                server_service: setupFormData.value.server_service,
-                server_about: setupFormData.value.server_about,
-                server_banner: setupFormData.value.server_banner,
-                server_status: setupFormData.value.server_status,
-                server_isolated: setupFormData.value.server_isolated,
-                server_telemetry: setupFormData.value.server_telemetry,
-                server_allow_search: setupFormData.value.server_allow_search,
-                server_union: setupFormData.value.server_union
-            }
-        }).then(async () => {
-            await webauthnRegister(setupFormData.value.server_admin)
-                .then(() => {
-                    notyf.success(t('ui.setup_page.AllDone'))
-                    setTimeout(function () {
-                        window.location.href = '/';
-                    }, 3000);
-                })
-        }).catch((e) => {
-            if (e instanceof MossyApiError) {
-                notyf.error(t(`ui.setup_page.${e.detail}`))
-                if (e.detail === 'AlreadyInit') {
-                    setTimeout(function () {
-                        window.location.href = '/';
-                    }, 3000);
-                }
-            } else {
-                if (e.name === 'NotAllowedError') {
-                    notyf.error(t(`ui.setup_page.NotAllowedError`))
-                } else {
-                    notyf.error(e)
-                }
-            }
-        }).finally(() => {
-            removeMessage()
-        })
 
-    }).catch((e) => {
-        notyf.error(t('ui.setup_page.formError'))
-    }).finally(() => {
-        processingForm.value = false
-    })
-}
-
-const handleImage: UploadOnChange = (payload) => {
-    if (payload.fileList.length === 0) {
-        setupFormData.value.server_banner.file_count = 0
-        setupFormData.value.server_banner.file_size = 0
-        setupFormData.value.server_banner.file_type = ''
-        setupFormData.value.server_banner.file_name = ''
-        setupFormData.value.server_banner.isTwoToOne = false
-        setupFormData.value.server_banner.file_content = ''
-        return
-    } else {
-        const firstFile = payload.fileList[0].file;
-        if (!firstFile) {
-            return;
-        }
-        setupFormData.value.server_banner.file_count = payload.fileList.length
-        setupFormData.value.server_banner.file_size = firstFile.size
-        setupFormData.value.server_banner.file_type = firstFile.type
-        setupFormData.value.server_banner.file_name = firstFile.name
-        const reader = new FileReader();
-        reader.onload = (event: ProgressEvent<FileReader>) => {
-            const img = new Image();
-            img.onload = () => {
-                const aspectRatio = img.width / img.height;
-                if (Math.abs(aspectRatio - 2) < 0.1) {
-                    setupFormData.value.server_banner.isTwoToOne = true
-                    if (event.target?.result) {
-                        const base64Content = event.target.result.toString();
-                        setupFormData.value.server_banner.file_content = base64Content
-                    }
-                } else {
-                    setupFormData.value.server_banner.isTwoToOne = false
-                }
-            };
-            img.onerror = () => {
-                console.error('Error loading image.');
-            };
-            if (event.target?.result) {
-                img.src = event.target.result.toString();
-            }
-        };
-        reader.onerror = (error) => {
-            console.error('Error reading file:', error);
-        };
-        reader.readAsDataURL(firstFile);
-    }
-}
-
-const rules: FormRules = {
-    server_name: [
-        {
-            required: true,
-            validator(rule: FormItemRule, value: string) {
-                if (!value) {
-                    return new Error(t('ui.setup_page.server_name.requiredError'))
-                }
-                return true
-            },
-            trigger: ['input', 'blur']
-        }
-    ],
-    server_desc: [],
-    server_admin: [
-        {
-            required: true,
-            validator(rule: FormItemRule, value: string) {
-                if (!value) {
-                    return new Error(t('ui.setup_page.server_admin.requiredError'))
-                }
-                return true
-            },
-            trigger: ['input', 'blur']
+    let messageReactive: MessageReactive | null = null
+    const { t } = useI18n()
+    const router = useRouter()
+    const setupForm = ref<FormInst | null>(null)
+    const processingForm = ref(false)
+    const setupFormData = ref({
+        server_name: '',
+        server_desc: '',
+        server_admin: '',
+        server_service: '',
+        server_about: '',
+        server_banner: {
+            file_name: '',
+            file_count: 0,
+            file_size: 0,
+            file_type: '',
+            file_content: '',
+            isTwoToOne: false
         },
-        {
-            required: true,
-            validator(rule: FormItemRule, value: string) {
-                const regex = /^[a-zA-Z0-9_-]{3,32}$/
-                if (!regex.test(value)) {
-                    return new Error(t('ui.setup_page.server_admin.usernameError'))
-                }
-                return true
-            },
-            trigger: ['input', 'blur']
+        server_status: '',
+        server_isolated: false,
+        server_telemetry: true,
+        server_allow_search: true,
+        server_union: true
+    })
+    const message = useMessage()
+    const ServiceUrl = new URL(import.meta.env.VITE_BASE_URL || window.location.href)
+    const removeMessage = () => {
+        if (messageReactive) {
+            messageReactive.destroy()
+            messageReactive = null
         }
-    ],
-    server_service: [
-        {
-            validator(rule: FormItemRule, value: string) {
-                if (value) {
-                    try {
-                        new URL(value);
-                        return true
-                    } catch (e) {
-                        return new Error(t('ui.setup_page.server_service.urlError'))
+    }
+    const createMessage = () => {
+        messageReactive = message.loading(t('ui.setup_page.onProcessing'), {
+            duration: 0
+        })
+    }
+    const setupServer = async () => {
+        processingForm.value = true
+        await setupForm.value?.validate().then(async () => {
+            createMessage()
+            await callMossyApi({
+                endpoint: '/setup/init',
+                data: {
+                    server_name: setupFormData.value.server_name,
+                    server_desc: setupFormData.value.server_desc,
+                    server_admin: setupFormData.value.server_admin,
+                    server_service: setupFormData.value.server_service,
+                    server_about: setupFormData.value.server_about,
+                    server_banner: setupFormData.value.server_banner,
+                    server_status: setupFormData.value.server_status,
+                    server_isolated: setupFormData.value.server_isolated,
+                    server_telemetry: setupFormData.value.server_telemetry,
+                    server_allow_search: setupFormData.value.server_allow_search,
+                    server_union: setupFormData.value.server_union
+                }
+            }).then(async () => {
+                await webauthnRegister(setupFormData.value.server_admin)
+                    .then(() => {
+                        notyf.success(t('ui.setup_page.AllDone'))
+                        setTimeout(function () {
+                            window.location.href = '/';
+                        }, 3000);
+                    })
+                    .catch((e) => {
+                        console.error(e)
+                        notyf.error(e)
+                    })
+            }).catch((e) => {
+                console.warn(e)
+                if (e instanceof MossyApiError) {
+                    notyf.error(t(`ui.setup_page.${e.detail}`))
+                    if (e.detail === 'AlreadyInit') {
+                        setTimeout(function () {
+                            window.location.href = '/';
+                        }, 3000);
+                    }
+                } else {
+                    if (e.name === 'NotAllowedError') {
+                        notyf.error(t(`ui.setup_page.NotAllowedError`))
+                    } else {
+                        notyf.error(e)
                     }
                 }
-                return true
-            },
-            trigger: ['input', 'blur']
-        }
-    ],
-    server_about: [],
-    server_banner: [
-        {
-            validator(rule: FormItemRule, value: FileDetails) {
-                if (value.file_count > 0) {
-                    if (value.file_count != 1) {
-                        return new Error(t('ui.setup_page.server_banner.fileCountError'))
-                    }
-                    if (!value.isTwoToOne) {
-                        return new Error(t('ui.setup_page.server_banner.aspectRatioError'))
-                    }
-                }
-                return true
-            },
-            trigger: ['input', 'blur']
-        }
-    ],
-    server_status: [
-        {
-            validator(rule: FormItemRule, value: string) {
-                if (value) {
-                    try {
-                        new URL(value);
-                        return true
-                    } catch (e) {
-                        return new Error(t('ui.setup_page.server_status.urlError'))
-                    }
-                }
-                return true
-            },
-            trigger: ['input', 'blur']
-        }
-    ]
-}
+            }).finally(() => {
+                removeMessage()
+            })
 
-onBeforeUnmount(removeMessage)
+        }).catch((e) => {
+            notyf.error(t('ui.setup_page.formError'))
+        }).finally(() => {
+            processingForm.value = false
+        })
+    }
+
+    const handleImage: UploadOnChange = (payload) => {
+        if (payload.fileList.length === 0) {
+            setupFormData.value.server_banner.file_count = 0
+            setupFormData.value.server_banner.file_size = 0
+            setupFormData.value.server_banner.file_type = ''
+            setupFormData.value.server_banner.file_name = ''
+            setupFormData.value.server_banner.isTwoToOne = false
+            setupFormData.value.server_banner.file_content = ''
+            return
+        } else {
+            const firstFile = payload.fileList[0].file;
+            if (!firstFile) {
+                return;
+            }
+            setupFormData.value.server_banner.file_count = payload.fileList.length
+            setupFormData.value.server_banner.file_size = firstFile.size
+            setupFormData.value.server_banner.file_type = firstFile.type
+            setupFormData.value.server_banner.file_name = firstFile.name
+            const reader = new FileReader();
+            reader.onload = (event: ProgressEvent<FileReader>) => {
+                const img = new Image();
+                img.onload = () => {
+                    const aspectRatio = img.width / img.height;
+                    if (Math.abs(aspectRatio - 2) < 0.1) {
+                        setupFormData.value.server_banner.isTwoToOne = true
+                        if (event.target?.result) {
+                            const base64Content = event.target.result.toString();
+                            setupFormData.value.server_banner.file_content = base64Content
+                        }
+                    } else {
+                        setupFormData.value.server_banner.isTwoToOne = false
+                    }
+                };
+                img.onerror = () => {
+                    console.error('Error loading image.');
+                };
+                if (event.target?.result) {
+                    img.src = event.target.result.toString();
+                }
+            };
+            reader.onerror = (error) => {
+                console.error('Error reading file:', error);
+            };
+            reader.readAsDataURL(firstFile);
+        }
+    }
+
+    const rules: FormRules = {
+        server_name: [
+            {
+                required: true,
+                validator(rule: FormItemRule, value: string) {
+                    if (!value) {
+                        return new Error(t('ui.setup_page.server_name.requiredError'))
+                    }
+                    return true
+                },
+                trigger: ['input', 'blur']
+            }
+        ],
+        server_desc: [],
+        server_admin: [
+            {
+                required: true,
+                validator(rule: FormItemRule, value: string) {
+                    if (!value) {
+                        return new Error(t('ui.setup_page.server_admin.requiredError'))
+                    }
+                    return true
+                },
+                trigger: ['input', 'blur']
+            },
+            {
+                required: true,
+                validator(rule: FormItemRule, value: string) {
+                    const regex = /^[a-zA-Z0-9_-]{3,32}$/
+                    if (!regex.test(value)) {
+                        return new Error(t('ui.setup_page.server_admin.usernameError'))
+                    }
+                    return true
+                },
+                trigger: ['input', 'blur']
+            }
+        ],
+        server_service: [
+            {
+                validator(rule: FormItemRule, value: string) {
+                    if (value) {
+                        try {
+                            new URL(value);
+                            return true
+                        } catch (e) {
+                            return new Error(t('ui.setup_page.server_service.urlError'))
+                        }
+                    }
+                    return true
+                },
+                trigger: ['input', 'blur']
+            }
+        ],
+        server_about: [],
+        server_banner: [
+            {
+                validator(rule: FormItemRule, value: FileDetails) {
+                    if (value.file_count > 0) {
+                        if (value.file_count != 1) {
+                            return new Error(t('ui.setup_page.server_banner.fileCountError'))
+                        }
+                        if (!value.isTwoToOne) {
+                            return new Error(t('ui.setup_page.server_banner.aspectRatioError'))
+                        }
+                    }
+                    return true
+                },
+                trigger: ['input', 'blur']
+            }
+        ],
+        server_status: [
+            {
+                validator(rule: FormItemRule, value: string) {
+                    if (value) {
+                        try {
+                            new URL(value);
+                            return true
+                        } catch (e) {
+                            return new Error(t('ui.setup_page.server_status.urlError'))
+                        }
+                    }
+                    return true
+                },
+                trigger: ['input', 'blur']
+            }
+        ]
+    }
+
+    onBeforeUnmount(removeMessage)
 </script>
 
 <template>

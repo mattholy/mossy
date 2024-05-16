@@ -130,7 +130,9 @@ async def after_registration(response: dict, db: AsyncSession = Depends(get_db))
         await db.commit()
         return WebauthnReg(status='OK', msg='AllDone', payload=None)
     except InvalidRegistrationResponse as e:
-        raise HTTPException(status_code=406, detail=str(e))
+        if str(e).startswith("Unexpected client data origin"):
+            raise HTTPException(status_code=401, detail='InvalidOrigin')
+        raise HTTPException(status_code=401, detail=str(e))
     except Exception as e:
         raise e
 
@@ -174,6 +176,8 @@ async def after_authentication(response: dict, request: Request, db: AsyncSessio
         await db.commit()
         return WebauthnReg(status='OK', msg='AllDone', payload={'token': token})
     except InvalidAuthenticationResponse as e:
+        if str(e).startswith("Unexpected client data origin"):
+            raise HTTPException(status_code=401, detail='InvalidOrigin')
         raise HTTPException(status_code=401, detail=str(e))
     except Exception as e:
         raise e

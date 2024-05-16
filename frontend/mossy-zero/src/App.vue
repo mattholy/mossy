@@ -78,7 +78,7 @@
   <div class="h-dvh">
     <n-config-provider :theme="theme">
       <n-global-style />
-      <NScrollbar trigger="hover" content-class="h-dvh">
+      <NScrollbar trigger="hover" class="h-dvh">
         <n-message-provider>
           <MossyHeader />
           <setupSever v-if="showSetupPage" />

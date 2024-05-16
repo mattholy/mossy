@@ -135,6 +135,14 @@ async def http_exception_handler(request, exc):
             },
             status_code=406,
         ),
+        410: JSONResponse(
+            content={
+                "status": "CLIENT_ERROR",
+                "msg": "ResourceDeleted",
+                "payload": exc.detail
+            },
+            status_code=406,
+        ),
         503: JSONResponse(
             content={
                 "status": "SERVER_ERROR",
@@ -179,7 +187,7 @@ async def internal_error_handler(request: Request, call_next):
 
 @app.middleware("http")
 async def check_server_ready(request: Request, call_next):
-    if request.url.path in ['/', '/setup/status', '/setup/init', '/docs', '/openapi.json']:
+    if request.url.path in ['/', '/favicon.ico', '/setup/status', '/setup/init', '/docs', '/openapi.json'] or request.url.path.startswith('/assets'):
         return await call_next(request)
     else:
         if ready():
@@ -188,13 +196,13 @@ async def check_server_ready(request: Request, call_next):
             return JSONResponse(
                 content={
                     "status": "SERVER_ERROR",
-                    "msg": "ServiceUnavailable",
+                    "msg": "ServiceInitializing",
                     "payload": {
-                        "instruction": f'This endpoint is not available now. The Server is not ready. Please finish setuppp.',
+                        "instruction": f'This endpoint is not available now. The Server is not ready. Please finish setup.',
                         'setup_url': f'{BACKEND_URL}'
                     }
                 },
-                status_code=503,
+                status_code=425,
             )
 
 
