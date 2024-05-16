@@ -40,6 +40,13 @@ class AppModel(BaseModel):
     client_secret: Optional[str] = None
 
 
+class AppOauthData(BaseModel):
+    client_name: str
+    redirect_uris: str
+    scopes: str
+    website: str
+
+
 @router.post(
     '',
     response_class=JSONResponse,
@@ -47,16 +54,14 @@ class AppModel(BaseModel):
     tags=['OAuth']
 )
 async def app_register(
-        client_name: str,
-        redirect_uris: str,
-        scopes: Optional[str],
-        website: Optional[str],
-        db: AsyncSession = Depends(get_db)):
+        payload: AppOauthData,
+        db: AsyncSession = Depends(get_db)
+):
     new_app = OAuthApp(
-        name=client_name,
-        website=website,
-        redirect_uri=redirect_uris,
-        scopes=scopes
+        name=payload.client_name,
+        website=payload.website,
+        redirect_uri=payload.redirect_uris,
+        scopes=payload.scopes
     )
     db.add(new_app)
     await db.commit()

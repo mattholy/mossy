@@ -89,7 +89,7 @@ REDIS_URL = os.environ.get(
     'REDIS_URL', 'redis://:password@localhost:6379/0')
 
 RUNTIME = os.environ.get('RUNTIME', 'DEV')
-ALLOWED_ORIGINS = '*' if RUNTIME =='dev' else RP_ID
+ALLOWED_ORIGINS = '*' if RUNTIME == 'DEV' else RP_ID
 
 NODE_ID = os.environ.get(
     'NODE_ID', generate_uuid_from_ip())
