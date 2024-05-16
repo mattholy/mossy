@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { NSpace } from 'naive-ui';
-import Theme from './ThemeBtn.vue'
-import LocalizationBtn from './LocalizationBtn.vue';
-import ToolKit from './ToolKitBtn.vue'
+    import { NSpace } from 'naive-ui';
+    import Theme from './ThemeBtn.vue'
+    import LocalizationBtn from './LocalizationBtn.vue';
+    import ToolKit from './ToolKitBtn.vue'
 </script>
 
 <template>
@@ -15,8 +15,6 @@ import ToolKit from './ToolKitBtn.vue'
     <div class="md:hidden">
         <n-space size="small">
             <ToolKit />
-            <!-- <Theme />
-            <LocalizationBtn /> -->
         </n-space>
     </div>
 </template>

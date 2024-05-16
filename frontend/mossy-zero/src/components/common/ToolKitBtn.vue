@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { ref } from 'vue'
-    import { NButton, NIcon, NDrawer, NDrawerContent, NFlex } from "naive-ui"
+    import { NButton, NIcon, NDrawer, NDrawerContent, NFlex, NSwitch, NForm, NFormItem } from "naive-ui"
     import { Menu } from "@vicons/ionicons5"
     import { useI18n } from 'vue-i18n'
     import { useThemeStore } from '@/stores/themeStore'
@@ -26,40 +26,12 @@
                 {{ t('ui.header.actions.more') }}
             </template>
             <n-flex vertical>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
-                <n-button>ToolKit</n-button>
+                <n-flex justify="space-between">
+                    <span>h黑暗模式</span>
+                    <n-switch v-model:value="themeStore.isDarkMode" />
+                </n-flex>
+
+
             </n-flex>
             <template #footer>
                 <n-button>Footer</n-button>

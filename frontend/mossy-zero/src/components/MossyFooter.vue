@@ -18,7 +18,7 @@
 
 <template>
     <n-flex justify="space-around" :class="classMy"
-        class="flex z-40 sticky bottom-0 bg-opacity-30 backdrop-blur-lg h-12  items-center justify-center border-gray-400 border-solid border-t-0 border-b-0 md:border-b border-l-0 border-r-0">
+        class="flex z-40 sticky bottom-0 mt-2 bg-opacity-30 backdrop-blur-lg h-14 items-center justify-center border-gray-400 border-solid border-t-0 border-b-0 md:border-b border-l-0 border-r-0">
         <p>footer</p>
     </n-flex>
 </template>
