@@ -1,7 +1,8 @@
 <script setup lang="ts">
   import { computed, watchEffect, onMounted, onUnmounted, ref, reactive } from 'vue'
   import { RouterView } from 'vue-router'
-  import setupSever from '@/setupServer.vue'
+  import setupSever from '@/ViewSetupServer.vue'
+  import OathPage from '@/ViewOauthAuthorize.vue'
   import ErrorView from '@/components/ErrorPage.vue'
   import MossyHeader from '@/components/MossyHeader.vue'
   import LeftSider from '@/components/LeftSider.vue'
@@ -14,7 +15,6 @@
   import { darkTheme, useOsTheme, useThemeVars, NConfigProvider, NGlobalStyle } from 'naive-ui'
   import { MossySetupService } from '@/client/services.gen'
   import { $ApiServiceSetupStatus } from '@/client/schemas.gen'
-  import { OpenAPI } from '@/client/core/OpenAPI'
   import { notyf } from '@/utils/notyf'
   import { browserSupportsWebAuthn } from '@simplewebauthn/browser'
   import { callMossyApi, MossyApiError } from './utils/apiCall'
@@ -39,7 +39,6 @@
   });
 
   onMounted(async () => {
-    OpenAPI.BASE = import.meta.env.VITE_BASE_URL || ''
     await checkStatus()
   })
 
@@ -106,7 +105,7 @@
             </div>
           </n-flex>
           <ErrorView v-else-if="showErrorPage" :msg="errorPageMsg" />
-          <div v-else-if="showOauthPage"> {{ route.query.test }}</div>
+          <OathPage v-else-if="showOauthPage" />
         </n-message-provider>
       </NScrollbar>
     </n-config-provider>
