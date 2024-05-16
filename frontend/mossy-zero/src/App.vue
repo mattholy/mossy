@@ -8,8 +8,8 @@
   import RightSider from '@/components/RightSider.vue'
   import { NScrollbar, NMessageProvider, NFlex, NCard, NAlert } from 'naive-ui';
   import { useRouter, useRoute } from 'vue-router'
-  import { useThemeStore } from '@/stores/ThemeStore'
-  import { useAuthStore } from '@/stores/AuthStore'
+  import { useThemeStore } from '@/stores/themeStore'
+  import { useAuthStore } from '@/stores/authStore'
   import { useI18n } from 'vue-i18n'
   import { darkTheme, useOsTheme, useThemeVars, NConfigProvider, NGlobalStyle } from 'naive-ui'
   import { MossySetupService } from '@/client/services.gen'

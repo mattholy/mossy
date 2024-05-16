@@ -1,4 +1,4 @@
-import { useAuthStore } from '@/stores/AuthStore';
+import { useAuthStore } from '@/stores/authStore';
 
 interface FetchOptions {
     endpoint: string;

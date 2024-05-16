@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { NButton, NIcon, NDrawer, NDrawerContent, NFlex } from "naive-ui"
-import { Menu } from "@vicons/ionicons5"
-import { useI18n } from 'vue-i18n'
-import { useThemeStore } from '@/stores/ThemeStore'
+    import { ref } from 'vue'
+    import { NButton, NIcon, NDrawer, NDrawerContent, NFlex } from "naive-ui"
+    import { Menu } from "@vicons/ionicons5"
+    import { useI18n } from 'vue-i18n'
+    import { useThemeStore } from '@/stores/themeStore'
 
-const { t } = useI18n()
-const themeStore = useThemeStore()
+    const { t } = useI18n()
+    const themeStore = useThemeStore()
 
-const active = ref(false)
-const activate = () => {
-    active.value = true
-}
+    const active = ref(false)
+    const activate = () => {
+        active.value = true
+    }
 </script>
 
 <template>

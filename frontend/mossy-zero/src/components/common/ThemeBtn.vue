@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { NTooltip, NButton, NIcon } from "naive-ui"
-import { SunnyOutline } from "@vicons/ionicons5"
-import { useI18n } from 'vue-i18n'
-import { useThemeStore } from '@/stores/ThemeStore'
+    import { NTooltip, NButton, NIcon } from "naive-ui"
+    import { SunnyOutline } from "@vicons/ionicons5"
+    import { useI18n } from 'vue-i18n'
+    import { useThemeStore } from '@/stores/themeStore'
 
-const { t } = useI18n()
-const themeStore = useThemeStore()
+    const { t } = useI18n()
+    const themeStore = useThemeStore()
 </script>
 
 <template>

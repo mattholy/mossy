@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
-import { NFlex, NDivider } from 'naive-ui';
-import AuthSection from '@/components/support/AuthSection.vue'
-import Navigator from '@/components/support/NavigationSection.vue'
-import { useAuthStore } from '@/stores/AuthStore'
+    import { RouterView } from 'vue-router'
+    import { NFlex, NDivider } from 'naive-ui';
+    import AuthSection from '@/components/support/AuthSection.vue'
+    import Navigator from '@/components/support/NavigationSection.vue'
+    import { useAuthStore } from '@/stores/authStore'
 
-const authStore = useAuthStore()
+    const authStore = useAuthStore()
 </script>
 
 <template>

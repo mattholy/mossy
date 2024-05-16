@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { NFlex, NInput, NIcon } from 'naive-ui'
-import HeaderAction from './common/HeaderAction.vue'
-import { useAuthStore } from '@/stores/AuthStore'
-import { useThemeStore } from '@/stores/ThemeStore'
-import MainMenu from './common/MainMenu.vue'
-import { Search, FlashOutline } from '@vicons/ionicons5'
-import { useI18n } from 'vue-i18n'
+    import { ref, computed } from 'vue'
+    import { NFlex, NInput, NIcon } from 'naive-ui'
+    import HeaderAction from './common/HeaderAction.vue'
+    import { useAuthStore } from '@/stores/authStore'
+    import { useThemeStore } from '@/stores/themeStore'
+    import MainMenu from './common/MainMenu.vue'
+    import { Search, FlashOutline } from '@vicons/ionicons5'
+    import { useI18n } from 'vue-i18n'
 
-const authStore = useAuthStore()
-const theme = useThemeStore()
-const { t } = useI18n()
-const classMy = computed(() => {
-    return theme.isDarkMode ? "backdrop-brightness-50" : "backdrop-brightness-150 "
-})
+    const authStore = useAuthStore()
+    const theme = useThemeStore()
+    const { t } = useI18n()
+    const classMy = computed(() => {
+        return theme.isDarkMode ? "backdrop-brightness-50" : "backdrop-brightness-150 "
+    })
 </script>
 
 <template>
@@ -38,9 +38,9 @@ const classMy = computed(() => {
 </template>
 
 <style scoped>
-input {
-    backdrop-filter: blur(10px);
-    background-color: rgba(187, 187, 187, .5);
-    color: black !important;
-}
+    input {
+        backdrop-filter: blur(10px);
+        background-color: rgba(187, 187, 187, .5);
+        color: black !important;
+    }
 </style>

@@ -1,55 +1,55 @@
 <script setup lang="ts">
-import { NFlex, NButton, NIcon, NPopover, NDivider } from 'naive-ui'
-import { useRoute, useRouter } from 'vue-router'
-import { ChevronBack, ShareSocial, EllipsisHorizontal, HandRight, Warning } from '@vicons/ionicons5'
-import { useI18n } from 'vue-i18n'
-import { notyf } from '@/utils/notyf'
-import { useAuthStore } from '@/stores/AuthStore'
+    import { NFlex, NButton, NIcon, NPopover, NDivider } from 'naive-ui'
+    import { useRoute, useRouter } from 'vue-router'
+    import { ChevronBack, ShareSocial, EllipsisHorizontal, HandRight, Warning } from '@vicons/ionicons5'
+    import { useI18n } from 'vue-i18n'
+    import { notyf } from '@/utils/notyf'
+    import { useAuthStore } from '@/stores/authStore'
 
-interface Props {
-    pageCategory: 'user' | 'activity'
-    resourceUri: string;
-}
+    interface Props {
+        pageCategory: 'user' | 'activity'
+        resourceUri: string;
+    }
 
-const authStore = useAuthStore()
-const props = defineProps<Props>();
-const route = useRoute()
-const router = useRouter()
-const { t } = useI18n()
-const uri = route.params.id
+    const authStore = useAuthStore()
+    const props = defineProps<Props>();
+    const route = useRoute()
+    const router = useRouter()
+    const { t } = useI18n()
+    const uri = route.params.id
 
-const handleShare = async () => {
-    if (navigator.share) {
-        try {
-            // TODO: Add shareable content
-            await navigator.share({
-                title: '',
-                text: '',
-                url: ''
-            })
-        } catch (error) {
-            notyf.error(t('ui.header.statusmsg.shareFail'))
+    const handleShare = async () => {
+        if (navigator.share) {
+            try {
+                // TODO: Add shareable content
+                await navigator.share({
+                    title: '',
+                    text: '',
+                    url: ''
+                })
+            } catch (error) {
+                notyf.error(t('ui.header.statusmsg.shareFail'))
+            }
+        } else {
+            notyf.error(t('ui.header.statusmsg.shareApiNotSupported'));
         }
-    } else {
-        notyf.error(t('ui.header.statusmsg.shareApiNotSupported'));
     }
-}
 
-const handleBlock = async () => {
-    if (!authStore.isLoggedIn) {
-        notyf.error(t('ui.common_desc.loginMust'))
-        return
+    const handleBlock = async () => {
+        if (!authStore.isLoggedIn) {
+            notyf.error(t('ui.common_desc.loginMust'))
+            return
+        }
+        // TODO: Add block functionality
     }
-    // TODO: Add block functionality
-}
 
-const handleReport = async () => {
-    if (!authStore.isLoggedIn) {
-        notyf.error(t('ui.common_desc.loginMust'))
-        return
+    const handleReport = async () => {
+        if (!authStore.isLoggedIn) {
+            notyf.error(t('ui.common_desc.loginMust'))
+            return
+        }
+        // TODO: Add report functionality
     }
-    // TODO: Add report functionality
-}
 </script>
 
 <template>
@@ -113,8 +113,8 @@ const handleReport = async () => {
 </template>
 
 <style scoped>
-.putThemOnLeft button {
-    text-align: left;
-    width: fit-content;
-}
+    .putThemOnLeft button {
+        text-align: left;
+        width: fit-content;
+    }
 </style>

@@ -1,73 +1,73 @@
 <script setup lang="ts">
-import { onBeforeUnmount, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useMessage } from 'naive-ui'
-import { NButton, NFlex, NIcon, NModal, NInput, NInputGroup, NInputGroupLabel } from 'naive-ui'
-import type { MessageReactive } from 'naive-ui'
-import { FingerPrint } from '@vicons/ionicons5'
-import { webauthnAuthentication, webauthnRegister } from '@/utils/webauthn'
-import { notyf } from '@/utils/notyf'
-import { useAuthStore } from '@/stores/AuthStore'
-import { MossyApiError } from '@/utils/apiCall'
+    import { onBeforeUnmount, ref } from 'vue'
+    import { useI18n } from 'vue-i18n'
+    import { useMessage } from 'naive-ui'
+    import { NButton, NFlex, NIcon, NModal, NInput, NInputGroup, NInputGroupLabel } from 'naive-ui'
+    import type { MessageReactive } from 'naive-ui'
+    import { FingerPrint } from '@vicons/ionicons5'
+    import { webauthnAuthentication, webauthnRegister } from '@/utils/webauthn'
+    import { notyf } from '@/utils/notyf'
+    import { useAuthStore } from '@/stores/authStore'
+    import { MossyApiError } from '@/utils/apiCall'
 
-let messageReactive: MessageReactive | null = null
-const message = useMessage()
-const showReg = ref(false)
-const { t } = useI18n()
-const authStore = useAuthStore()
-const login = async () => {
-    await webauthnAuthentication()
-        .then((res) => {
-            authStore.setToken(res)
-        })
-        .catch((err) => {
-            notyf.error(t(`api.statusmsg.${err.message}.notification`))
-        })
+    let messageReactive: MessageReactive | null = null
+    const message = useMessage()
+    const showReg = ref(false)
+    const { t } = useI18n()
+    const authStore = useAuthStore()
+    const login = async () => {
+        await webauthnAuthentication()
+            .then((res) => {
+                authStore.setToken(res)
+            })
+            .catch((err) => {
+                notyf.error(t(`api.statusmsg.${err.message}.notification`))
+            })
 
-}
-const username = ref('')
-const usernameInputDisable = ref(false)
-const ServiceUrl = new URL(import.meta.env.VITE_BASE_URL || window.location.href)
-const register = async () => {
-    usernameInputDisable.value = true
-    createMessage()
-    await webauthnRegister(username.value)
-        .then(() => {
-            notyf.success(t('ui.setup_page.AllDone'))
-            showReg.value = false
-            login()
-        })
-        .catch((e) => {
-            notyf.error(t(`api.statusmsg.${e.message}.notification`))
-        })
-        .finally(() => {
-            removeMessage()
-            usernameInputDisable.value = false
-        })
-}
-const removeMessage = () => {
-    if (messageReactive) {
-        messageReactive.destroy()
-        messageReactive = null
     }
-}
-const createMessage = () => {
-    messageReactive = message.loading(t('ui.setup_page.onProcessing'), {
-        duration: 0
-    })
-}
-const inputCheck = (value: string): boolean => {
-    const urlSafeRegex = /^[A-Za-z0-9\-_]+$/;
-    if (urlSafeRegex.test(value)) {
-        console.log(value);
-        return true
-    } else {
-        return false
+    const username = ref('')
+    const usernameInputDisable = ref(false)
+    const ServiceUrl = new URL(import.meta.env.VITE_BASE_URL || window.location.href)
+    const register = async () => {
+        usernameInputDisable.value = true
+        createMessage()
+        await webauthnRegister(username.value)
+            .then(() => {
+                notyf.success(t('ui.setup_page.AllDone'))
+                showReg.value = false
+                login()
+            })
+            .catch((e) => {
+                notyf.error(t(`api.statusmsg.${e.message}.notification`))
+            })
+            .finally(() => {
+                removeMessage()
+                usernameInputDisable.value = false
+            })
     }
-}
+    const removeMessage = () => {
+        if (messageReactive) {
+            messageReactive.destroy()
+            messageReactive = null
+        }
+    }
+    const createMessage = () => {
+        messageReactive = message.loading(t('ui.setup_page.onProcessing'), {
+            duration: 0
+        })
+    }
+    const inputCheck = (value: string): boolean => {
+        const urlSafeRegex = /^[A-Za-z0-9\-_]+$/;
+        if (urlSafeRegex.test(value)) {
+            console.log(value);
+            return true
+        } else {
+            return false
+        }
+    }
 
 
-onBeforeUnmount(removeMessage)
+    onBeforeUnmount(removeMessage)
 </script>
 
 <template>
