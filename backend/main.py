@@ -72,6 +72,11 @@ async def read_index(request: Request):
 async def read_index():
     return PlainTextResponse('test_page')
 
+
+@app.get("/favicon.ico", name="Frontend Pages")
+async def fetch_favicon():
+    return FileResponse("logo.png")
+
 # 导入路由
 app.include_router(api_router)
 app.include_router(wellknown_router)
