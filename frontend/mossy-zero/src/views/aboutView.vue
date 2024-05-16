@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useWindowSize } from '@vueuse/core'
-import { useI18n } from 'vue-i18n'
-import { NFlex, NImage, NCard, NIcon, NGrid, NGridItem, NButton, NCollapseTransition, c } from 'naive-ui';
-import { ChevronDown, EllipsisHorizontal } from '@vicons/ionicons5'
-import UserCard from '@/components/common/UserProfileCard.vue'
-import MarkdownViewer from '@/components/support/MarkdownViewer.vue'
-import callMossyApi from '@/utils/apiCall'
+    import { ref, computed, onMounted, onUnmounted } from 'vue'
+    import { useWindowSize } from '@vueuse/core'
+    import { useI18n } from 'vue-i18n'
+    import { NFlex, NImage, NCard, NIcon, NGrid, NGridItem, NButton, NCollapseTransition, c } from 'naive-ui';
+    import { ChevronDown, EllipsisHorizontal } from '@vicons/ionicons5'
+    import UserCard from '@/components/common/UserProfileCard.vue'
+    import MarkdownViewer from '@/components/support/MarkdownViewer.vue'
+    import { callMossyApi } from '@/utils/apiCall'
 
-const { t } = useI18n()
-const { width } = useWindowSize();
-const showAbout = ref(true)
-const showRules = ref(false)
-const cols = computed(() => {
-    return width.value < 768 ? 1 : 2
-});
+    const { t } = useI18n()
+    const { width } = useWindowSize();
+    const showAbout = ref(true)
+    const showRules = ref(false)
+    const cols = computed(() => {
+        return width.value < 768 ? 1 : 2
+    });
 </script>
 
 <template>
