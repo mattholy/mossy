@@ -85,10 +85,7 @@ app.include_router(setup_router)
 app.include_router(oauth_router)
 
 # 静态文件服务
-try:
-    app.mount("/", StaticFiles(directory="static"), name="Frontend Pages")
-except RuntimeError:
-    pass
+app.mount("/", StaticFiles(directory="static"), name="Frontend Pages")
 
 # 异常处理
 

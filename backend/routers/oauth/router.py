@@ -39,11 +39,6 @@ class UserAuthorizeResultData(BaseModel):
     allow: bool
 
 
-@router.get('/test')
-async def test():
-    return RedirectResponse(url='http://localhost:5173/#/authurize?test=oauth', status_code=302)
-
-
 @router.get('/authorize')
 async def user_authorize(
     response_type: str,
@@ -51,13 +46,8 @@ async def user_authorize(
     redirect_uri: str,
     scope: str
 ):
-    # return RedirectResponse(url=f'/#/?authorize=oauth&response_type={response_type}&client_id={client_id}&redirect_uri={redirect_uri}&scope={scope}')
-    return JSONResponse(content={
-        'response_type': response_type,
-        'client_id': client_id,
-        'redirect_uri': redirect_uri,
-        'scope': scope
-    })
+    return RedirectResponse(url=f'/#/authorize?authorize=oauth&response_type={response_type}&client_id={client_id}&redirect_uri={redirect_uri}&scope={scope}')
+    return RedirectResponse(url=f'{FRONTEND_URL}/#/authorize?authorize=oauth&response_type={response_type}&client_id={client_id}&redirect_uri={redirect_uri}&scope={scope}')
 
 
 @router.post('/authorize')

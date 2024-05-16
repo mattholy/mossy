@@ -73,7 +73,6 @@ def generate_uuid_from_ip():
 
 
 BACKEND_URL = os.environ.get('CLUSTER_ID', 'http://localhost:8000')
-FRONTEND_URL = os.environ.get('CLUSTER_ID', 'http://localhost:5173')
 
 RELEASE_VERSION = os.environ.get('RELEASE_TAG', get_git_commit_id())
 API_BASE_URL = '/api'

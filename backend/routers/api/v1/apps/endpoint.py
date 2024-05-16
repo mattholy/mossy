@@ -13,12 +13,13 @@ put some words here
 '''
 
 import uuid
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Body
 from fastapi.responses import JSONResponse
+from fastapi.exceptions import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from pydantic import BaseModel, HttpUrl
-from typing import Optional
+from typing import Optional, List
 
 from utils.model.instance import InstanceV1
 from env import RP_ID, RELEASE_VERSION
@@ -47,6 +48,26 @@ class AppOauthData(BaseModel):
     website: str
 
 
+async def get_payload(
+    client_name: Optional[str] = Query(None),
+    website: Optional[str] = Query(None),
+    redirect_uris: Optional[str] = Query(None),
+    scopes: Optional[str] = Query(None),
+    body: Optional[AppOauthData] = Body(None)
+):
+    if body:
+        return body
+    elif all([client_name, website, redirect_uris, scopes]):
+        return AppOauthData(
+            client_name=client_name,
+            website=website,
+            redirect_uris=redirect_uris,
+            scopes=scopes
+        )
+    else:
+        raise HTTPException(status_code=422, detail="InvalidParameters")
+
+
 @router.post(
     '',
     response_class=JSONResponse,
@@ -54,8 +75,8 @@ class AppOauthData(BaseModel):
     tags=['OAuth']
 )
 async def app_register(
-        payload: AppOauthData,
-        db: AsyncSession = Depends(get_db)
+    payload: AppOauthData = Depends(get_payload),
+    db: AsyncSession = Depends(get_db)
 ):
     new_app = OAuthApp(
         name=payload.client_name,
