@@ -5,6 +5,7 @@
   import OathPage from '@/ViewOauthAuthorize.vue'
   import ErrorView from '@/components/ErrorPage.vue'
   import MossyHeader from '@/components/MossyHeader.vue'
+  import MossyFooter from '@/components/MossyFooter.vue'
   import LeftSider from '@/components/LeftSider.vue'
   import RightSider from '@/components/RightSider.vue'
   import { NScrollbar, NMessageProvider, NFlex, NCard, NAlert } from 'naive-ui';
@@ -94,6 +95,7 @@
               <NScrollbar trigger="hover" content-class="pt-12 border-x-2 border-slate-800">
                 <RouterView />
               </NScrollbar>
+              <MossyFooter />
             </div>
             <div
               class="hidden lg:flex 2xl:border-r flex-none h-dvh w-1/5 md:w-64 xl:w-72 m-0 p-0 border-gray-400 border-solid border-0">

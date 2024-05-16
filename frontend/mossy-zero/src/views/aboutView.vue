@@ -41,81 +41,85 @@
             </n-card>
         </div>
         <div class="mx-2">
-            <n-card embedded class="font-bold cursor-pointer items-center text-center" @click="showAbout = !showAbout">
-                <p class="text-lg m-2">{{ t('ui.pages.about.serverAboutSection') }}</p>
-                <n-icon size="30">
-                    <EllipsisHorizontal v-if="!showAbout" />
-                    <ChevronDown v-else />
-                </n-icon>
+            <n-card embedded>
+                <div class="font-bold cursor-pointer items-center text-center" @click="showAbout = !showAbout">
+                    <p class="text-lg m-2">{{ t('ui.pages.about.serverAboutSection') }}</p>
+                    <n-icon size="30">
+                        <EllipsisHorizontal v-if="!showAbout" />
+                        <ChevronDown v-else />
+                    </n-icon>
+                </div>
+                <n-collapse-transition :show="showAbout">
+                    <n-card>
+                        <MarkdownViewer />
+                    </n-card>
+                </n-collapse-transition>
             </n-card>
-            <n-collapse-transition :show="showAbout">
-                <n-card>
-                    <MarkdownViewer />
-                </n-card>
-            </n-collapse-transition>
         </div>
         <div class="mx-2">
-            <n-card embedded class="font-bold cursor-pointer items-center text-center" @click="showRules = !showRules">
-                <p class="text-lg  m-2">{{ t('ui.pages.about.serverRuleSection') }}</p>
-                <n-icon size="30">
-                    <EllipsisHorizontal v-if="!showRules" />
-                    <ChevronDown v-else />
-                </n-icon>
+            <n-card embedded>
+                <div class="font-bold cursor-pointer items-center text-center" @click="showRules = !showRules">
+                    <p class="text-lg  m-2">{{ t('ui.pages.about.serverRuleSection') }}</p>
+                    <n-icon size="30">
+                        <EllipsisHorizontal v-if="!showRules" />
+                        <ChevronDown v-else />
+                    </n-icon>
+                </div>
+                <n-collapse-transition :show="showRules">
+                    <n-card>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                        <p>asdasds</p>
+                    </n-card>
+                </n-collapse-transition>
             </n-card>
-            <n-collapse-transition :show="showRules">
-                <n-card>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                    <p>asdasds</p>
-                </n-card>
-            </n-collapse-transition>
         </div>
     </n-flex>
 
