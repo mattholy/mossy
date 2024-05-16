@@ -38,7 +38,10 @@
   const { width } = useWindowSize()
   const small_device = computed(() => {
     return width.value < 768
-  });
+  })
+  const medium_device = computed(() => {
+    return width.value < 1024
+  })
 
   watchEffect(() => {
     themeStore.setDarkMode(osThemeRef.value === 'dark');
@@ -89,7 +92,7 @@
           <MossyHeader />
           <setupSever v-if="showSetupPage" />
           <n-flex v-else-if="showRouterPage" justify="center" class="flex absolute top-0 w-full h-dvh" style="gap: 0;">
-            <div
+            <div v-if="!small_device"
               class="hidden md:flex 2xl:border-l flex-none h-dvh w-1/5 md:w-64 xl:w-72 m-0 p-0 border-gray-400 border-solid border-0">
               <n-scrollbar trigger="hover" content-class="pt-12">
                 <LeftSider />
@@ -102,7 +105,7 @@
                 <MossyFooter v-if="small_device" />
               </NScrollbar>
             </div>
-            <div
+            <div v-if="!medium_device"
               class="hidden lg:flex 2xl:border-r flex-none h-dvh w-1/5 md:w-64 xl:w-72 m-0 p-0 border-gray-400 border-solid border-0">
               <NScrollbar trigger="hover" content-class="pt-12">
                 <RightSider />
