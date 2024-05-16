@@ -31,7 +31,7 @@ from routers.nodeinfo.router import router as nodeinfo_router
 from routers.setup.router import router as setup_router
 from routers.oauth.router import router as oauth_router
 from utils.logger import async_log_error_to_db, logger
-from env import NODE_ID, BACKEND_URL
+from env import NODE_ID, BACKEND_URL,ALLOWED_ORIGINS
 from utils.system.security import async_load_key_pair
 from utils.init import init_node, ready
 from utils.model.orm import NodeType
@@ -212,4 +212,4 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.add_middleware(TrustedHostMiddleware, allowed_hosts=['*'])
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=[ALLOWED_ORIGINS])
