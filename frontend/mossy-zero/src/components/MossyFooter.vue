@@ -17,23 +17,9 @@
 </script>
 
 <template>
-    <n-flex justify="space-between" :class="classMy"
+    <n-flex justify="space-around" :class="classMy"
         class="flex z-40 sticky bottom-0 bg-opacity-30 backdrop-blur-lg h-12  items-center justify-center border-gray-400 border-solid border-t-0 border-b-0 md:border-b border-l-0 border-r-0">
-        <div class="w-1/5 h-full flex items-center justify-start">
-            MOSSY
-        </div>
-        <div class="hidden md:flex items-center justify-center w-96">
-            <n-input clearable round :placeholder="t('ui.common_desc.search')">
-                <template #prefix>
-                    <n-icon>
-                        <Search />
-                    </n-icon>
-                </template>
-            </n-input>
-        </div>
-        <div class="w-1/5 h-full flex items-center justify-end">
-            <HeaderAction />
-        </div>
+        <p>footer</p>
     </n-flex>
 </template>
 

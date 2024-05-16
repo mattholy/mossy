@@ -19,6 +19,7 @@
   import { notyf } from '@/utils/notyf'
   import { browserSupportsWebAuthn } from '@simplewebauthn/browser'
   import { callMossyApi, MossyApiError } from './utils/apiCall'
+  import { useWindowSize } from '@vueuse/core'
 
 
   const authStore = useAuthStore()
@@ -34,6 +35,10 @@
   const showErrorPage = ref(false)
   const errorPageMsg = ref('UnknownError')
   const showOauthPage = ref(false)
+  const { width } = useWindowSize()
+  const small_device = computed(() => {
+    return width.value < 768
+  });
 
   watchEffect(() => {
     themeStore.setDarkMode(osThemeRef.value === 'dark');
@@ -94,8 +99,8 @@
               class="grow h-dvh max-w-5xl w-2/5 m-0 p-0 z-30 lg:border-r md:border-l border-gray-400 border-solid border-0">
               <NScrollbar trigger="hover" content-class="pt-12 border-x-2 border-slate-800">
                 <RouterView />
+                <MossyFooter v-if="small_device" />
               </NScrollbar>
-              <MossyFooter />
             </div>
             <div
               class="hidden lg:flex 2xl:border-r flex-none h-dvh w-1/5 md:w-64 xl:w-72 m-0 p-0 border-gray-400 border-solid border-0">
