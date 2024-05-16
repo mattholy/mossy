@@ -12,5 +12,11 @@
     "notyf",
     "webauthn"
   ],
+  "editor.formatOnSave": true,
+  "files.autoSaveWhenNoErrors": true,
+  "github.copilot.enable": {
+    "markdown": "true"
+  },
+  "css.format.spaceAroundSelectorSeparator": true,
 
 }
