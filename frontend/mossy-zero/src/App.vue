@@ -1,85 +1,80 @@
 <script setup lang="ts">
-import { computed, watchEffect, onMounted, onUnmounted, ref, reactive } from 'vue'
-import { RouterView } from 'vue-router'
-import setupSever from '@/setupServer.vue'
-import ErrorView from '@/components/ErrorPage.vue'
-import MossyHeader from '@/components/MossyHeader.vue'
-import LeftSider from '@/components/LeftSider.vue'
-import RightSider from '@/components/RightSider.vue'
-import { NScrollbar, NMessageProvider, NFlex, NCard, NAlert } from 'naive-ui';
-import { useRouter, useRoute } from 'vue-router'
-import { useThemeStore } from '@/stores/ThemeStore'
-import { useAuthStore } from '@/stores/AuthStore'
-import { useI18n } from 'vue-i18n'
-import { darkTheme, useOsTheme, useThemeVars, NConfigProvider, NGlobalStyle } from 'naive-ui'
-import { MossySetupService } from '@/client/services.gen'
-import { $ApiServiceSetupStatus } from '@/client/schemas.gen'
-import { OpenAPI } from '@/client/core/OpenAPI'
-import { notyf } from '@/utils/notyf'
-import { browserSupportsWebAuthn } from '@simplewebauthn/browser'
-import { callMossyApi, MossyApiError } from './utils/apiCall'
+  import { computed, watchEffect, onMounted, onUnmounted, ref, reactive } from 'vue'
+  import { RouterView } from 'vue-router'
+  import setupSever from '@/setupServer.vue'
+  import ErrorView from '@/components/ErrorPage.vue'
+  import MossyHeader from '@/components/MossyHeader.vue'
+  import LeftSider from '@/components/LeftSider.vue'
+  import RightSider from '@/components/RightSider.vue'
+  import { NScrollbar, NMessageProvider, NFlex, NCard, NAlert } from 'naive-ui';
+  import { useRouter, useRoute } from 'vue-router'
+  import { useThemeStore } from '@/stores/ThemeStore'
+  import { useAuthStore } from '@/stores/AuthStore'
+  import { useI18n } from 'vue-i18n'
+  import { darkTheme, useOsTheme, useThemeVars, NConfigProvider, NGlobalStyle } from 'naive-ui'
+  import { MossySetupService } from '@/client/services.gen'
+  import { $ApiServiceSetupStatus } from '@/client/schemas.gen'
+  import { OpenAPI } from '@/client/core/OpenAPI'
+  import { notyf } from '@/utils/notyf'
+  import { browserSupportsWebAuthn } from '@simplewebauthn/browser'
+  import { callMossyApi, MossyApiError } from './utils/apiCall'
 
 
-const authStore = useAuthStore()
-const router = useRouter()
-const route = useRoute()
-const { t } = useI18n()
-const themeStore = useThemeStore()
-const osThemeRef = useOsTheme()
-const theme = computed(() => themeStore.isDarkMode ? darkTheme : null)
-const themeVars = useThemeVars()
-const showSetupPage = ref(false)
-const showRouterPage = ref(false)
-const showErrorPage = ref(false)
-const errorPageMsg = ref('UnkownError')
-const showOauthPage = ref(false)
+  const authStore = useAuthStore()
+  const router = useRouter()
+  const route = useRoute()
+  const { t } = useI18n()
+  const themeStore = useThemeStore()
+  const osThemeRef = useOsTheme()
+  const theme = computed(() => themeStore.isDarkMode ? darkTheme : null)
+  const themeVars = useThemeVars()
+  const showSetupPage = ref(false)
+  const showRouterPage = ref(false)
+  const showErrorPage = ref(false)
+  const errorPageMsg = ref('UnknownError')
+  const showOauthPage = ref(false)
 
-watchEffect(() => {
-  themeStore.setDarkMode(osThemeRef.value === 'dark');
-});
+  watchEffect(() => {
+    themeStore.setDarkMode(osThemeRef.value === 'dark');
+  });
 
-onMounted(async () => {
-  OpenAPI.BASE = import.meta.env.VITE_BASE_URL || ''
-  await checkStatus()
-})
-
-const checkStatus = async () => {
-  if (browserSupportsWebAuthn()) {
-    showErrorPage.value = false
-  } else {
-    showErrorPage.value = true
-    errorPageMsg.value = 'CoreAPINotReady'
-  }
-
-  await callMossyApi({
-    endpoint: '/setup/status'
+  onMounted(async () => {
+    OpenAPI.BASE = import.meta.env.VITE_BASE_URL || ''
+    await checkStatus()
   })
-    .then((res) => {
-      if (res.status === 'AllDone') {
-        // TODO: check oauth status
-        if (route.query.test == 'oauth') {
-          showOauthPage.value = true
+
+  const checkStatus = async () => {
+    if (browserSupportsWebAuthn()) {
+      showErrorPage.value = false
+    } else {
+      showErrorPage.value = true
+      errorPageMsg.value = 'CoreAPINotReady'
+    }
+
+    await callMossyApi({
+      endpoint: '/setup/status'
+    })
+      .then((res) => {
+        if (res.status === 'AllDone') {
+          if (route.query.authorize == 'oauth') {
+            showOauthPage.value = true
+          } else {
+            showRouterPage.value = true
+          }
         } else {
-          showRouterPage.value = true
-          showSetupPage.value = false
-          showErrorPage.value = false
+          showSetupPage.value = true
         }
-      } else {
-        showRouterPage.value = false
-        showSetupPage.value = true
-        showErrorPage.value = false
-      }
-    })
-    .catch((error) => {
-      if (error instanceof MossyApiError) {
-        showErrorPage.value = true
-        errorPageMsg.value = error.detail
-      } else {
-        showErrorPage.value = true
-        errorPageMsg.value = 'UnkownError'
-      }
-    })
-}
+      })
+      .catch((error) => {
+        if (error instanceof MossyApiError) {
+          showErrorPage.value = true
+          errorPageMsg.value = error.detail
+        } else {
+          showErrorPage.value = true
+          errorPageMsg.value = 'UnknownError'
+        }
+      })
+  }
 </script>
 
 <template>
@@ -93,9 +88,9 @@ const checkStatus = async () => {
           <n-flex v-else-if="showRouterPage" justify="center" class="flex absolute top-0 w-full h-dvh" style="gap: 0;">
             <div
               class="hidden md:flex 2xl:border-l flex-none h-dvh w-1/5 md:w-64 xl:w-72 m-0 p-0 border-gray-400 border-solid border-0">
-              <NScrollbar trigger="hover" content-class="pt-12">
+              <n-scrollbar trigger="hover" content-class="pt-12">
                 <LeftSider />
-              </NScrollbar>
+              </n-scrollbar>
             </div>
             <div
               class="grow h-dvh max-w-5xl w-2/5 m-0 p-0 z-30 lg:border-r md:border-l border-gray-400 border-solid border-0">
@@ -119,21 +114,21 @@ const checkStatus = async () => {
 </template>
 
 <style>
-.n-modal-mask {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  backdrop-filter: blur(5px);
-}
+  .n-modal-mask {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    backdrop-filter: blur(5px);
+  }
 
-.n-drawer-mask {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  backdrop-filter: blur(5px);
-}
+  .n-drawer-mask {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    backdrop-filter: blur(5px);
+  }
 </style>
