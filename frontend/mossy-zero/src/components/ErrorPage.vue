@@ -1,26 +1,24 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-import { NButton, NResult, NCard } from 'naive-ui'
+    import { useI18n } from 'vue-i18n'
+    import { NButton, NResult, NCard } from 'naive-ui'
 
-defineProps<{
-    msg: string
-}>()
+    defineProps<{
+        msg: string
+    }>()
 
-const { t } = useI18n()
-const goHome = () => {
-    window.location.href = '/'
-}
+    const { t } = useI18n()
+    const goHome = () => {
+        window.location.href = '/'
+    }
 </script>
 
 <template>
     <div class="pt-4 sm:pt-10 md:pt-16 lg:pt-24 xl:pt-36">
-        <n-card :bordered="false" size="huge">
-            <n-result status="500" :title="t(`api.statusmsg.${msg}.title`)"
-                :description="t(`api.statusmsg.${msg}.content`)">
-                <template #footer>
-                    <n-button @click="goHome">{{ t('ui.common_desc.go_home') }}</n-button>
-                </template>
-            </n-result>
-        </n-card>
+        <n-result status="500" :title="t(`api.statusmsg.${msg}.title`)"
+            :description="t(`api.statusmsg.${msg}.content`)">
+            <template #footer>
+                <n-button @click="goHome">{{ t('ui.common_desc.go_home') }}</n-button>
+            </template>
+        </n-result>
     </div>
 </template>
