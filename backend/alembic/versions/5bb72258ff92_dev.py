@@ -1,8 +1,8 @@
 """dev
 
-Revision ID: ce66901b65e9
+Revision ID: 5bb72258ff92
 Revises: 
-Create Date: 2024-05-15 22:42:27.363612
+Create Date: 2024-05-17 22:05:24.130856
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = 'ce66901b65e9'
+revision: str = '5bb72258ff92'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -34,6 +34,9 @@ def upgrade() -> None:
     sa.Column('backed_up', sa.Boolean(), nullable=True),
     sa.Column('transports', sa.String(), nullable=True),
     sa.Column('registed_user_agent', sa.String(), nullable=True),
+    sa.Column('user_secret', sa.String(), nullable=True),
+    sa.Column('is_deleted', sa.Boolean(), nullable=True),
+    sa.Column('deleted_by', sa.String(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('credential_id')
     )
@@ -127,6 +130,18 @@ def upgrade() -> None:
     sa.UniqueConstraint('node_id', 'node_type', name='uq_node_type')
     )
     op.create_index(op.f('ix_node_info_node_id'), 'node_info', ['node_id'], unique=False)
+    op.create_table('oauth_access_tokens',
+    sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
+    sa.Column('token', sa.String(), nullable=False),
+    sa.Column('client_id', sa.UUID(), nullable=False),
+    sa.Column('user', sa.String(), nullable=False),
+    sa.Column('scopes', sa.String(), nullable=True),
+    sa.Column('note', sa.String(), nullable=True),
+    sa.Column('expires_at', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('token')
+    )
     op.create_table('oauth_apps',
     sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
     sa.Column('client_id', sa.UUID(), nullable=True),
@@ -139,6 +154,18 @@ def upgrade() -> None:
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('client_id')
+    )
+    op.create_table('oauth_authorization_codes',
+    sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
+    sa.Column('code', sa.String(), nullable=False),
+    sa.Column('client_id', sa.UUID(), nullable=False),
+    sa.Column('redirect_uri', sa.String(), nullable=False),
+    sa.Column('scopes', sa.String(), nullable=True),
+    sa.Column('user', sa.String(), nullable=False),
+    sa.Column('expires_at', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('code')
     )
     op.create_table('system_config',
     sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
@@ -170,7 +197,9 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_user_config_key'), table_name='user_config')
     op.drop_table('user_config')
     op.drop_table('system_config')
+    op.drop_table('oauth_authorization_codes')
     op.drop_table('oauth_apps')
+    op.drop_table('oauth_access_tokens')
     op.drop_index(op.f('ix_node_info_node_id'), table_name='node_info')
     op.drop_table('node_info')
     op.drop_index(op.f('ix_log_operations_user'), table_name='log_operations')

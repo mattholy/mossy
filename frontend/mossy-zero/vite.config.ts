@@ -1,15 +1,18 @@
-import { fileURLToPath, URL } from 'node:url'
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import vueJsx from '@vitejs/plugin-vue-jsx'
-import VueDevTools from 'vite-plugin-vue-devtools'
-import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
-import { visualizer } from 'rollup-plugin-visualizer'
-import path from 'path'
+import { fileURLToPath, URL } from 'node:url';
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import vueJsx from '@vitejs/plugin-vue-jsx';
+import VueDevTools from 'vite-plugin-vue-devtools';
+import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite';
+import { visualizer } from 'rollup-plugin-visualizer';
+import path from 'path';
+import { mergeConfig } from 'vite';
+import vitestConfig from './vitest.config';
 
 export default defineConfig(({ mode }) => {
   const isDev = mode === 'development';
-  return {
+
+  const baseConfig = {
     plugins: [
       vue(),
       vueJsx(),
@@ -28,7 +31,10 @@ export default defineConfig(({ mode }) => {
       outDir: isDev ? path.resolve(__dirname, '../../backend/static') : 'dist',
       rollupOptions: {
         output: {
-          manualChunks(id) {
+          manualChunks(id: string) {
+            if (id.includes('node_modules/highlight.js')) {
+              return 'highlight.js';
+            }
             if (id.includes('node_modules/naive-ui')) {
               return 'naive-ui';
             }
@@ -42,5 +48,8 @@ export default defineConfig(({ mode }) => {
         },
       },
     }
-  }
-})
+  };
+
+  // Merge the base Vite config with Vitest config
+  return mergeConfig(baseConfig, vitestConfig);
+});

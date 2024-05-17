@@ -4,9 +4,14 @@ import i18n, { setI18nLanguage } from './i18n'
 import router from './router'
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
-import { VueShowdownPlugin } from 'vue-showdown'
+import VMdPreview from '@kangc/v-md-editor/lib/preview'
+import '@kangc/v-md-editor/lib/style/preview.css'
+import vuePressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js'
+import '@kangc/v-md-editor/lib/theme/style/github.css'
 import '@/assets/main.css'
 import 'notyf/notyf.min.css'
+import hljs from 'highlight.js'
+
 
 async function init() {
     await setI18nLanguage('zh-CN')
@@ -16,9 +21,10 @@ async function init() {
     app.use(i18n)
     app.use(router)
     app.use(pinia)
-    app.use(VueShowdownPlugin, {
-        flavor: 'github'
+    VMdPreview.use(vuePressTheme, {
+        Hljs: hljs,
     })
+    app.use(VMdPreview)
     app.mount('#app')
 }
 

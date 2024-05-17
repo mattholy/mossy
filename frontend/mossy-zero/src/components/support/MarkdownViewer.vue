@@ -1,17 +1,11 @@
 <script setup lang="ts">
-const md = `
-# asdasds
-## 33333
-
-> asdasds
-
-- asd
-- d3d
+    const text = `
+# Markdown Preview
 `
 </script>
 
 <template>
-    <VueShowdown :markdown=md />
+    <v-md-preview :text="text" preview-class="vuepress-markdown-body"></v-md-preview>
 </template>
 
 

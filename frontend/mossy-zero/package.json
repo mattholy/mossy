@@ -19,15 +19,17 @@
   },
   "dependencies": {
     "@intlify/unplugin-vue-i18n": "^4.0.0",
+    "@kangc/v-md-editor": "^2.3.18",
     "@simplewebauthn/browser": "^10.0.0",
     "@vueuse/core": "^10.9.0",
+    "babel-plugin-prismjs": "^2.1.0",
     "notyf": "^3.10.0",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
+    "prismjs": "^1.29.0",
     "vue": "^3.4.21",
     "vue-i18n": "^9.13.1",
-    "vue-router": "^4.3.0",
-    "vue-showdown": "^4.2.0"
+    "vue-router": "^4.3.0"
   },
   "devDependencies": {
     "@hey-api/openapi-ts": "^0.43.2",
@@ -36,6 +38,7 @@
     "@tsconfig/node20": "^20.1.4",
     "@types/jsdom": "^21.1.6",
     "@types/node": "^20.12.12",
+    "@types/prismjs": "^1.26.4",
     "@vicons/ionicons5": "^0.12.0",
     "@vitejs/plugin-vue": "^5.0.4",
     "@vitejs/plugin-vue-jsx": "^3.1.0",
@@ -61,7 +64,7 @@
     "vite": "^5.2.11",
     "vite-plugin-bundle-analyzer": "^0.0.1",
     "vite-plugin-vue-devtools": "^7.0.25",
-    "vitest": "^1.4.0",
+    "vitest": "^1.6.0",
     "vue-tsc": "^2.0.11"
   }
 }
