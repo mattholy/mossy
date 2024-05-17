@@ -25,7 +25,7 @@
 
 Mossy is a interplanetary microblogging platform of fediverse, just like [Mastodon](https://github.com/mastodon/mastodon) or [Misskey](https://github.com/misskey-dev/misskey).
 
-Although it sounds like a joke, it's actually very fast. Thanks to its fully asynchronous structure, it can fully utilize all your CPU resources (and memory as well ❤️).
+Mossy operates quickly and smoothly. Thanks to its fully asynchronous architecture, it effectively utilizes your CPU and memory resources, both on the server and client sides. We are dedicated to providing you with the most seamless experience possible.
 
 ![Static Badge](https://img.shields.io/badge/Try%20it%20out-blue?style=for-the-badge)
 
@@ -38,11 +38,12 @@ According to that, Mossy can do much better to protect your information & person
 We lovingly provide:
 
 - **Full ActivityPub support**: Yes, Mossy supports ActivityPub. Even more, all types of activities are **supported**, e.g. status, article, gallery, ask box...
+- **Creator-friendly**: Mossy will be compatible with HDR photos and videos, and supports most wide color gamuts
 - **High performance**: Even a small server can handel a large number of requests from fediverse
-- **Flexible cluster**: Join a new node into your cluster at your will
+- **Flexible cluster**: Setup any new node within your cluster at your will
 - **Compatible with Mastodon's APIs**: So any application developed for Mastodon can generally be used with Mossy as well (Maybe, we are tring)
 - **Cluster of clusters**: Each Mossy Cluster can communicate with other Mossy Clusters, using algorithms to eliminate spam
-- **Creator-friendly**: Mossy will be compatible with HDR photos and videos, and supports most wide color gamuts
+- **Privacy**: Mossy will never collect your personal information, and will never share your data with third parties. Additionally, when everyone in the chat is using Mossy, we support end-to-end encryption to ensure your conversations are secure and worry-free.
 
 </div>
 
