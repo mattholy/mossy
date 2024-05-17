@@ -30,6 +30,7 @@ from env import RP_ID
 from utils.model.orm import Passkeys, RegistrationAttempt, AuthSession, Permission
 import cryptography
 from cryptography.hazmat.primitives.asymmetric import ec
+from utils.logger import logger
 
 security = HTTPBearer()
 
@@ -87,32 +88,39 @@ async def verify_jwt(
         db: AsyncSession,
         return_info=False
 ):
+    logger.debug(f'Verifying JWT: {jwt_str}')
     try:
         res = jwt.decode(jwt_str, algorithms=['HS256'], options={
                          'verify_signature': False})
     except Exception:
+        logger.debug('JWT Decryption Failed')
         return False
 
     try:
         result = await db.execute(select(AuthSession).filter_by(id=res['jti']))
         current_session = result.scalars().first()
         if current_session is None:
+            logger.debug('Session Not Found')
             return False
 
         result = await db.execute(select(Passkeys).filter_by(id=current_session.related_passkey))
         passkey = result.scalars().first()
         if not passkey:
+            logger.debug('Passkey Not Found')
             return False
     except Exception:
+        logger.debug('Database Error')
         return False
 
     try:
         res = jwt.decode(jwt_str, algorithms=[
                          'HS256'], key=str(passkey.user_secret))
     except:
+        logger.debug('JWT Signature Verification Failed')
         return False
 
     if current_session.user_agent != ua:
+        logger.debug('User Agent Mismatch')
         return False
 
     if return_info:

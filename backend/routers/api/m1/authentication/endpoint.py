@@ -162,7 +162,7 @@ async def after_authentication(response: dict, request: Request, db: AsyncSessio
             require_user_verification=True,
         )
         passkey.sign_count = authentication_verification.new_sign_count
-        token, payload = generate_jwt(str(passkey.id), passkey.user)
+        token, payload = generate_jwt(passkey.user_secret, passkey.user)
         new_session = AuthSession(
             id=payload['jti'],
             user=passkey.user,
