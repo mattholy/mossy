@@ -19,7 +19,7 @@
         },
         "header": {
             "actions": {
-                "more": "快捷功能",
+                "more": "快捷设置",
                 "localization": "切换语言",
                 "darkmode": "暗色模式"
             },
@@ -30,7 +30,7 @@
             }
         },
         "leftsider": {
-            "navigater": {
+            "navigator": {
                 "home": "首页",
                 "explore": "实时动态",
                 "notifications": "通知与提醒",
@@ -175,6 +175,11 @@
                 "title": "来源不可信",
                 "content": "我们无法确认这个来源直接来自于你，可能存在中间人攻击或者CSRF攻击。所有请求都已被阻断，你的数据很安全。",
                 "notification": "请求的来源不正确，可能是CSRF攻击导致，请刷新页面或稍后再试"
+            },
+            "InvalidToken": {
+                "title": "无效的令牌",
+                "content": "令牌无效，可能是过期或者被篡改",
+                "notification": "登录失效，请重新登录"
             }
         }
     }

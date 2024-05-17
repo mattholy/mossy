@@ -1,5 +1,5 @@
 
-import { defineStore } from 'pinia';
+import { defineStore } from 'pinia'
 
 interface AuthState {
   token: string | null;
@@ -18,7 +18,7 @@ export const useAuthStore = defineStore('auth', {
     }
   },
   getters: {
-    isLoggedIn: (state) => state.token !== null
-  },
-  persist: true
+    isLoggedIn: (state) => state.token !== null,
+    currentToken: (state) => state.token
+  }
 });

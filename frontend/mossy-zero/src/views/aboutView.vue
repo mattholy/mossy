@@ -56,7 +56,7 @@
                 </n-collapse-transition>
             </n-card>
         </div>
-        <div class="mx-2">
+        <div class="mx-2 mb-2">
             <n-card embedded>
                 <div class="font-bold cursor-pointer items-center text-center" @click="showRules = !showRules">
                     <p class="text-lg  m-2">{{ t('ui.pages.about.serverRuleSection') }}</p>

@@ -54,10 +54,9 @@
 
 <template>
     <n-flex justify="space-between"
-        class="z-40 sticky top-0 font-bold bg-opacity-30 backdrop-filter backdrop-blur-md h-12 items-center"
-        style="border-bottom: 1px solid grey;">
+        class="z-40 px-2 sticky top-0 font-bold bg-opacity-30 backdrop-filter backdrop-blur-md h-12 items-center border-solid border-0 border-b border-gray-500">
         <div class="w-2/12 text-left">
-            <n-button icon-placement="left" round ghost strong :bordered="false" @click="router.back()">
+            <n-button icon-placement="left" circle :bordered="false" @click="router.back()">
                 <template #icon>
                     <n-icon>
                         <ChevronBack />
@@ -72,7 +71,7 @@
         <div class="w-2/12 text-right">
             <n-popover trigger="click" placement="bottom">
                 <template #trigger>
-                    <n-button icon-placement="right" round ghost strong :bordered="false">
+                    <n-button icon-placement="right" circle :bordered="false">
                         <template #icon>
                             <n-icon>
                                 <EllipsisHorizontal />

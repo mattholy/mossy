@@ -1,17 +1,26 @@
+import { callMossyApi, MossyApiError } from "./apiCall";
+import { notyf } from "./notyf";
+import i18n from '@/i18n';
+import pinia from '@/pinia';
+import { useAuthStore } from '@/stores/authStore';
+
+const { t } = i18n.global;
+const authStore = useAuthStore(pinia);
+
 export async function checkToken(token: string): Promise<boolean> {
-    const baseUrl = import.meta.env.VITE_BASE_URL || '';
-    try {
-        const response = await fetch(`${baseUrl}/api/m1/auth/verify-jwt`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: token
+    console.log('checkToken');
+    return await callMossyApi({
+        endpoint: '/api/m1/auth/verify-jwt',
+        data: { token }
+    })
+        .then((res) => {
+            return true;
+        })
+        .catch((error) => {
+            if (error instanceof MossyApiError) {
+                notyf.error(t(`api.statusmsg.${error.detail}.notification`));
+            }
+            authStore.clearToken();
+            return false;
         });
-        const data = await response.json();
-        return response.ok && data.status === 'OK';
-    } catch (error) {
-        console.error('Error verifying token:', error);
-        return false;
-    }
 }

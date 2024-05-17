@@ -12,6 +12,7 @@
   import { useRouter, useRoute } from 'vue-router'
   import { useThemeStore } from '@/stores/themeStore'
   import { useAuthStore } from '@/stores/authStore'
+  import { useLocalizationStore } from '@/stores/localizationStore'
   import { useI18n } from 'vue-i18n'
   import { darkTheme, useOsTheme, useThemeVars, NConfigProvider, NGlobalStyle } from 'naive-ui'
   import { MossySetupService } from '@/client/services.gen'
@@ -23,6 +24,7 @@
 
 
   const authStore = useAuthStore()
+  const localizationStore = useLocalizationStore()
   const router = useRouter()
   const route = useRoute()
   const { t } = useI18n()
@@ -49,6 +51,8 @@
 
   onMounted(async () => {
     await checkStatus()
+    localizationStore.setLanguage(navigator.language);
+    authStore.setToken('aaa')
   })
 
   const checkStatus = async () => {
@@ -93,20 +97,20 @@
           <setupSever v-if="showSetupPage" />
           <n-flex v-else-if="showRouterPage" justify="center" class="flex absolute top-0 w-full h-dvh" style="gap: 0;">
             <div v-if="!small_device"
-              class="hidden md:flex 2xl:border-l flex-none h-dvh w-1/5 md:w-64 xl:w-72 m-0 p-0 border-gray-400 border-solid border-0">
+              class="hidden md:flex 2xl:border-l flex-none h-dvh w-1/5 md:w-64 xl:w-72 m-0 p-0 border-gray-500 border-solid border-0">
               <n-scrollbar trigger="hover" content-class="pt-12">
                 <LeftSider />
               </n-scrollbar>
             </div>
             <div
-              class="grow h-dvh max-w-5xl w-2/5 m-0 p-0 z-30 lg:border-r md:border-l border-gray-400 border-solid border-0">
-              <NScrollbar trigger="hover" content-class="pt-12 border-x-2 border-slate-800">
+              class="grow h-dvh max-w-5xl w-2/5 m-0 p-0 z-30 lg:border-r md:border-l border-gray-500 border-solid border-0">
+              <NScrollbar trigger="hover" class="h-dvh" content-class="h-dvh flex flex-col pt-12">
                 <RouterView />
-                <MossyFooter v-if="small_device" />
+                <MossyFooter v-if="small_device" class="mt-auto min-h-14 max-h-14" />
               </NScrollbar>
             </div>
             <div v-if="!medium_device"
-              class="hidden lg:flex 2xl:border-r flex-none h-dvh w-1/5 md:w-64 xl:w-72 m-0 p-0 border-gray-400 border-solid border-0">
+              class="hidden lg:flex 2xl:border-r flex-none h-dvh w-1/5 md:w-64 xl:w-72 m-0 p-0 border-gray-500 border-solid border-0">
               <NScrollbar trigger="hover" content-class="pt-12">
                 <RightSider />
               </NScrollbar>

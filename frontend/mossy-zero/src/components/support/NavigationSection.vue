@@ -19,10 +19,8 @@
     const { t } = useI18n()
     const route = useRoute()
     const authStore = useAuthStore()
-    const isLoggedIn = computed(() => authStore.isLoggedIn);
-    function renderIcon(key: string, icon: Component, iconSeleted: Component) {
-        return () => h(NIcon, null, { default: () => h(key == selectedValue.value ? icon : iconSeleted) })
-    }
+    const isLoggedIn = computed(() => authStore.isLoggedIn)
+
 
     const menuOptions = computed(() => [
         {
@@ -35,7 +33,7 @@
                         },
                         class: 'text-xl'
                     },
-                    { default: () => t('ui.leftsider.navigater.home') }
+                    { default: () => t('ui.leftsider.navigator.home') }
                 ),
             key: 'home',
             icon: renderIcon('home', Home, HomeOutline),
@@ -51,7 +49,7 @@
                         },
                         class: 'text-xl'
                     },
-                    { default: () => t('ui.leftsider.navigater.explore') }
+                    { default: () => t('ui.leftsider.navigator.explore') }
                 ),
             key: 'explore',
             icon: renderIcon('explore', Compass, CompassOutline),
@@ -67,7 +65,7 @@
                         },
                         class: 'text-xl'
                     },
-                    { default: () => t('ui.leftsider.navigater.notifications') }
+                    { default: () => t('ui.leftsider.navigator.notifications') }
                 ),
             key: 'notifications',
             icon: renderIcon('notifications', Notifications, NotificationsOutline),
@@ -83,7 +81,7 @@
                         },
                         class: 'text-xl'
                     },
-                    { default: () => t('ui.leftsider.navigater.conversations') }
+                    { default: () => t('ui.leftsider.navigator.conversations') }
                 ),
             key: 'conversations',
             icon: renderIcon('conversations', Mail, MailOutline),
@@ -99,7 +97,7 @@
                         },
                         class: 'text-xl'
                     },
-                    { default: () => t('ui.leftsider.navigater.collections') }
+                    { default: () => t('ui.leftsider.navigator.collections') }
                 ),
             key: 'collections',
             icon: renderIcon('collections', Bookmark, BookmarkOutline),
@@ -115,7 +113,7 @@
                         },
                         class: 'text-xl'
                     },
-                    { default: () => t('ui.leftsider.navigater.settings') }
+                    { default: () => t('ui.leftsider.navigator.settings') }
                 ),
             key: 'settings',
             icon: renderIcon('settings', Cog, CogOutline),
@@ -123,6 +121,10 @@
         },
     ])
     const selectedValue = ref<string>(window.location.hash.split('/')[1] || '');
+
+    function renderIcon(key: string, icon: Component, iconSelected: Component) {
+        return () => h(NIcon, null, { default: () => h(key == selectedValue.value ? icon : iconSelected) })
+    }
 
     onMounted(() => {
         watch(() => route.path, () => {

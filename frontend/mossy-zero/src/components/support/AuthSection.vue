@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { onBeforeUnmount, ref } from 'vue'
+    import { onBeforeUnmount, ref, computed, watchEffect } from 'vue'
     import { useI18n } from 'vue-i18n'
     import { useMessage } from 'naive-ui'
     import { NButton, NFlex, NIcon, NModal, NInput, NInputGroup, NInputGroupLabel } from 'naive-ui'
@@ -9,7 +9,10 @@
     import { notyf } from '@/utils/notyf'
     import { useAuthStore } from '@/stores/authStore'
     import { MossyApiError } from '@/utils/apiCall'
+    import { useWindowSize } from '@vueuse/core'
 
+    const { width } = useWindowSize()
+    const small_device = computed(() => width.value < 768)
     let messageReactive: MessageReactive | null = null
     const message = useMessage()
     const showReg = ref(false)
@@ -57,6 +60,9 @@
         })
     }
     const inputCheck = (value: string): boolean => {
+        if (value.length === 0) {
+            return true
+        }
         const urlSafeRegex = /^[A-Za-z0-9\-_]+$/;
         if (urlSafeRegex.test(value)) {
             console.log(value);
@@ -71,17 +77,17 @@
 </script>
 
 <template>
-    <n-flex vertical class="fade-in-up">
-        <p class="p-0 m-0 ">
+    <n-flex :vertical="!small_device" class="mx-2 md:mx-0">
+        <p class="p-0 m-0 hidden md:block">
             {{ t('ui.leftsider.loginandreg.desc') }}
         </p>
-        <p class="p-0 m-0 font-bold ">
+        <p class="p-0 m-0 font-bold hidden md:block">
             {{ t('ui.leftsider.loginandreg.saftyfirst') }}
         </p>
-        <n-button round size="large" type="primary" @click="showReg = true">
+        <n-button round :size="!small_device ? 'large' : 'medium'" type="primary" @click="showReg = true">
             {{ t('ui.common_desc.register') }}
         </n-button>
-        <n-button round size="large" strong ghost type="primary" @click="login">
+        <n-button round :size="!small_device ? 'large' : 'medium'" strong ghost type="primary" @click="login">
             <template #icon>
                 <n-icon>
                     <FingerPrint />
@@ -92,10 +98,11 @@
         <n-modal v-model:show="showReg" preset="card" :title="t('ui.common_desc.register')"
             class="w-11/12 md:w-1/2 max-w-xl">
             <n-input-group>
-                <n-input-group-label>@</n-input-group-label>
+                <n-input-group-label size="large">@</n-input-group-label>
                 <n-input v-model:value="username" :placeholder="t('ui.common_desc.inputUsername')" maxlength="32"
-                    show-count clearable :disabled="usernameInputDisable" :allow-input="inputCheck" />
-                <n-input-group-label class="hidden md:block">{{ ServiceUrl.host }}</n-input-group-label>
+                    show-count clearable :disabled="usernameInputDisable" :allow-input="inputCheck" size="large">
+                </n-input>
+                <n-input-group-label size="large" class="hidden md:block">{{ ServiceUrl.host }}</n-input-group-label>
             </n-input-group>
             <template #footer>
                 {{ t('ui.common_desc.usernameAllow') }}

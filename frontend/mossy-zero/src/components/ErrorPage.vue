@@ -13,7 +13,7 @@
 </script>
 
 <template>
-    <div class="pt-4 sm:pt-10 md:pt-16 lg:pt-24 xl:pt-36">
+    <div class="mt-16 sm:mt-20 md:mt-28 lg:mt-40 xl:mt-52">
         <n-result status="500" :title="t(`api.statusmsg.${msg}.title`)"
             :description="t(`api.statusmsg.${msg}.content`)">
             <template #footer>
