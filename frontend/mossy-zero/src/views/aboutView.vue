@@ -38,6 +38,8 @@
         return width.value < 768 ? 1 : 2
     });
     const host = location.host
+    const universe_user_count = ref(0)
+    const universe_user_count_30 = ref(0)
     const about_data = ref<Mossy>({
         title: '',
         admin_id: '',
@@ -62,6 +64,16 @@
         }).catch((err: MossyApiError) => {
             notyf.error(err.detail)
         })
+
+        fetch('https://api.fedidb.org/v1/stats')
+            .then((res) => res.json())
+            .then((res) => {
+                universe_user_count.value = res.total_users
+                universe_user_count_30.value = res.monthly_active_users
+            })
+            .catch((err) => {
+                console.error(err)
+            })
     })
 </script>
 
@@ -93,12 +105,12 @@
                 <n-grid :cols="cols * 2" :collapsed="true" :collapsed-rows="2">
                     <n-grid-item class="flex items-center justify-center">
                         <n-statistic label="联邦宇宙总用户数" tabular-nums>
-                            <n-number-animation show-separator :from="0" :to="12039" />
+                            <n-number-animation show-separator :from="0" :to="universe_user_count" />
                         </n-statistic>
                     </n-grid-item>
                     <n-grid-item class="flex items-center justify-center">
                         <n-statistic label="联邦宇宙30天活跃" tabular-nums>
-                            <n-number-animation show-separator :from="0" :to="12039" />
+                            <n-number-animation show-separator :from="0" :to="universe_user_count_30" />
                         </n-statistic>
                     </n-grid-item>
                     <n-grid-item class="flex items-center justify-center">

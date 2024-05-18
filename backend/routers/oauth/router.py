@@ -47,7 +47,6 @@ async def user_authorize(
     scope: str
 ):
     return RedirectResponse(url=f'/#/authorize?authorize=oauth&response_type={response_type}&client_id={client_id}&redirect_uri={redirect_uri}&scope={scope}')
-    return RedirectResponse(url=f'{FRONTEND_URL}/#/authorize?authorize=oauth&response_type={response_type}&client_id={client_id}&redirect_uri={redirect_uri}&scope={scope}')
 
 
 @router.post('/authorize')
