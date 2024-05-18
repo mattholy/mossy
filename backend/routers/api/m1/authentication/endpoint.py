@@ -39,6 +39,7 @@ from utils.db import get_db
 from utils.model.api_schemas import WebauthnReg
 from utils.model.orm import Passkeys, RegistrationAttempt, AuthSession, UserRegProcess
 from utils.system.security import generate_jwt, verify_jwt, get_current_user_session
+from utils.logger import logger
 
 from env import RP_ID, RP_NAME, RP_SOURCE, DATABASE_URL
 
@@ -57,11 +58,20 @@ class User(BaseModel):
 async def start_registration(user: User, request: Request, db: AsyncSession = Depends(get_db)):
     user_agent = request.headers.get('user-agent', 'unknown')
     access_address = request.client.host
-    result = await db.execute(select(UserRegProcess).filter_by(username=user.username))
+    # Check if there is a registration process of the user
+    result = await db.execute(select(RegistrationAttempt).filter_by(user=user.username))
     go_find_user = result.scalars().first()
+    # Check if user already exists
+    if_exists = await db.execute(select(Passkeys).filter_by(user=user.username))
+    user_exists = if_exists.scalars().first()
 
-    if go_find_user and go_find_user.finished_register:
+    if user_exists or (go_find_user and go_find_user.created_at > datetime.now(timezone.utc) - timedelta(minutes=3)):
         raise HTTPException(status_code=403, detail='UserAlreadyExist')
+
+    if go_find_user and go_find_user.created_at < datetime.now(timezone.utc) - timedelta(minutes=3):
+        logger.debug(
+            f"User {user.username} registration process timeout, deleting the process. Registed at {go_find_user.created_at}, now {datetime.now(timezone.utc)}")
+        await db.delete(go_find_user)
 
     simple_registration_options: PublicKeyCredentialCreationOptions = generate_registration_options(
         rp_id=RP_ID,
@@ -77,11 +87,6 @@ async def start_registration(user: User, request: Request, db: AsyncSession = De
         user_agent=user_agent,
         access_address=access_address
     )
-    new_user = UserRegProcess(
-        username=user.username,
-        finished_register=False
-    )
-    db.add(new_user)
     db.add(new_attempt)
     await db.commit()
 
@@ -97,11 +102,9 @@ async def after_registration(response: dict, db: AsyncSession = Depends(get_db))
 
     result = await db.execute(select(RegistrationAttempt).filter_by(challenge=challenge))
     att = result.scalars().first()
-    user_result = await db.execute(select(UserRegProcess).filter_by(username=att.user))
-    go_find_user = user_result.scalars().first()
 
     if att is None or att.created_at < datetime.now(timezone.utc) - timedelta(minutes=3):
-        await db.delete(go_find_user)
+        await db.delete(att)
         await db.commit()
         raise HTTPException(status_code=406, detail='RegistrationTimeOut')
 
@@ -125,7 +128,6 @@ async def after_registration(response: dict, db: AsyncSession = Depends(get_db))
             raw_id=response['payload']['rawId']
         )
         db.add(new_key)
-        go_find_user.finished_register = True
         db.delete(att)
         await db.commit()
         return WebauthnReg(status='OK', msg='AllDone', payload=None)
