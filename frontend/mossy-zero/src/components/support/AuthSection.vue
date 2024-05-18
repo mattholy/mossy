@@ -21,7 +21,7 @@
     const login = async () => {
         await webauthnAuthentication()
             .then((res) => {
-                userStateStore.setToken(res)
+                // userStateStore.setToken(res)mutiple
             })
             .catch((err) => {
                 notyf.error(t(`api.statusmsg.${err.message}.notification`))

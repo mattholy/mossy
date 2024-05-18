@@ -6,7 +6,6 @@ import { useUserStateStore } from '@/stores/userStateStore';
 type ExtendedRoute = RouteRecordRaw & {
   children?: ExtendedRoute[];
 };
-const userStateStore = useUserStateStore(pinia);
 const viewModules = import.meta.glob('../views/**/*.vue');
 // const baseUrl = import.meta.env.VITE_BASE_URL || '';
 
@@ -70,6 +69,8 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to) => {
+  const userStateStore = useUserStateStore(pinia);
+
   if (
     to.path.startsWith('/home') ||
     to.path.startsWith('/notifications') ||

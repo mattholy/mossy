@@ -1,5 +1,7 @@
 import { startRegistration, startAuthentication } from '@simplewebauthn/browser'
 import { callMossyApi, MossyApiError } from './apiCall'
+import pinia from '@/stores';
+import { useUserStateStore } from '@/stores/userStateStore';
 import type { PublicKeyCredentialCreationOptionsJSON, PublicKeyCredentialRequestOptionsJSON, RegistrationResponseJSON, AuthenticationResponseJSON } from '@simplewebauthn/types'
 
 export async function webauthnRegister(uid: string): Promise<void> {
@@ -79,7 +81,8 @@ export async function webauthnAuthentication(): Promise<string> {
         }
         throw error
     }
-
+    const userStateStore = useUserStateStore(pinia);
+    userStateStore.setToken(authResp.token)
     return authResp.token
 }
 

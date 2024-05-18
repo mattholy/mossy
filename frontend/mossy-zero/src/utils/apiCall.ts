@@ -1,3 +1,4 @@
+import pinia from '@/stores';
 import { useUserStateStore } from '@/stores/userStateStore';
 
 interface FetchOptions {
@@ -20,7 +21,7 @@ export async function callMossyApi({ endpoint, data }: FetchOptions): Promise<an
     if (!isValidJson(data)) {
         throw new Error("Provided data is not a valid JSON object.");
     }
-    const userStateStore = useUserStateStore();
+    const userStateStore = useUserStateStore(pinia);
     const headers = new Headers({
         'Content-Type': 'application/json',
         'X-Mossy-API': 'api/m1',
