@@ -2,10 +2,10 @@
     import { useRouter, useRoute } from 'vue-router'
     import { callMossyApi, MossyApiError } from './utils/apiCall'
     import { useThemeStore } from '@/stores/themeStore'
-    import { useAuthStore } from '@/stores/authStore'
+    import { useUserStateStore } from '@/stores/userStateStore'
     import { useI18n } from 'vue-i18n'
 
-    const authStore = useAuthStore()
+    const userStateStore = useUserStateStore()
     const route = useRoute()
     const router = useRouter()
 </script>

@@ -3,9 +3,9 @@
     import { NFlex, NDivider } from 'naive-ui';
     import AuthSection from '@/components/support/AuthSection.vue'
     import Navigator from '@/components/support/NavigationSection.vue'
-    import { useAuthStore } from '@/stores/authStore'
+    import { useUserStateStore } from '@/stores/userStateStore'
 
-    const authStore = useAuthStore()
+    const userStateStore = useUserStateStore()
 </script>
 
 <template>
@@ -13,7 +13,7 @@
         <div style="border-bottom: 1px solid grey;">
             <Navigator />
         </div>
-        <div style="border-bottom: 1px solid grey;" class="p-2" v-if="!authStore.isLoggedIn">
+        <div style="border-bottom: 1px solid grey;" class="p-2" v-if="!userStateStore.isLoggedIn">
             <AuthSection />
         </div>
     </n-flex>

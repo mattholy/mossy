@@ -1,9 +1,10 @@
 import { defineStore } from 'pinia'
-import { useOsTheme } from 'naive-ui';
+import { useOsTheme } from 'naive-ui'
 
 interface ThemeState {
     isDarkMode: boolean;
 }
+
 const osThemeRef = useOsTheme()
 export const useThemeStore = defineStore('theme', {
     state: (): ThemeState => ({
@@ -16,5 +17,6 @@ export const useThemeStore = defineStore('theme', {
         setDarkMode(isDarkMode: boolean) {
             this.isDarkMode = isDarkMode;
         }
-    }
+    },
+    persist: true
 });

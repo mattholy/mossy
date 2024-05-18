@@ -11,7 +11,7 @@
   import { NScrollbar, NMessageProvider, NFlex, NCard, NAlert } from 'naive-ui';
   import { useRouter, useRoute } from 'vue-router'
   import { useThemeStore } from '@/stores/themeStore'
-  import { useAuthStore } from '@/stores/authStore'
+  import { useUserStateStore } from '@/stores/userStateStore'
   import { useLocalizationStore } from '@/stores/localizationStore'
   import { useI18n } from 'vue-i18n'
   import { darkTheme, useOsTheme, useThemeVars, NConfigProvider, NGlobalStyle } from 'naive-ui'
@@ -23,7 +23,7 @@
   import { useWindowSize } from '@vueuse/core'
 
 
-  const authStore = useAuthStore()
+  const userStateStore = useUserStateStore()
   const localizationStore = useLocalizationStore()
   const router = useRouter()
   const route = useRoute()
@@ -46,13 +46,12 @@
   })
 
   watchEffect(() => {
-    themeStore.setDarkMode(osThemeRef.value === 'dark');
+    themeStore.setDarkMode(osThemeRef.value === 'dark')
   });
 
   onMounted(async () => {
     await checkStatus()
-    localizationStore.setLanguage(navigator.language);
-    authStore.setToken('aaa')
+    localizationStore.setLanguage(navigator.language)
   })
 
   const checkStatus = async () => {

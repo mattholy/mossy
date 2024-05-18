@@ -1,12 +1,12 @@
 import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-router';
 import { checkToken } from '@/utils/checkToken';
-import pinia from '@/pinia';
-import { useAuthStore } from '@/stores/authStore';
+import pinia from '@/stores';
+import { useUserStateStore } from '@/stores/userStateStore';
 
 type ExtendedRoute = RouteRecordRaw & {
   children?: ExtendedRoute[];
 };
-const authStore = useAuthStore(pinia);
+const userStateStore = useUserStateStore(pinia);
 const viewModules = import.meta.glob('../views/**/*.vue');
 // const baseUrl = import.meta.env.VITE_BASE_URL || '';
 
@@ -78,10 +78,10 @@ router.beforeEach(async (to) => {
     to.path.startsWith('/settings')
 
   ) {
-    if (!authStore.isLoggedIn) {
+    if (!userStateStore.isLoggedIn) {
       return '/about'
     } else {
-      const isValid = await checkToken(authStore.currentToken as string);
+      const isValid = await checkToken(userStateStore.currentToken as string);
       if (!isValid) {
         return '/about'
       } else {

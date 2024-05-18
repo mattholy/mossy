@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import { defineStore } from 'pinia'
 import { setI18nLanguage } from '@/i18n'
 
 interface LocalizationState {
@@ -20,6 +20,7 @@ export const useLocalizationStore = defineStore('localization', {
             setI18nLanguage(language)
         },
     },
+    persist: true,
 });
 
 const languageNames: { [key: string]: string } = {

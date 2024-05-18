@@ -14,12 +14,11 @@
         Cog, CogOutline
     } from '@vicons/ionicons5'
     import { useRoute } from 'vue-router'
-    import { useAuthStore } from '@/stores/authStore'
+    import { useUserStateStore } from '@/stores/userStateStore'
 
     const { t } = useI18n()
     const route = useRoute()
-    const authStore = useAuthStore()
-    const isLoggedIn = computed(() => authStore.isLoggedIn)
+    const userStateStore = useUserStateStore()
 
 
     const menuOptions = computed(() => [
@@ -37,7 +36,7 @@
                 ),
             key: 'home',
             icon: renderIcon('home', Home, HomeOutline),
-            show: isLoggedIn.value
+            show: userStateStore.isLoggedIn
         },
         {
             label: () =>
@@ -69,7 +68,7 @@
                 ),
             key: 'notifications',
             icon: renderIcon('notifications', Notifications, NotificationsOutline),
-            show: isLoggedIn.value
+            show: userStateStore.isLoggedIn
         },
         {
             label: () =>
@@ -85,7 +84,7 @@
                 ),
             key: 'conversations',
             icon: renderIcon('conversations', Mail, MailOutline),
-            show: isLoggedIn.value
+            show: userStateStore.isLoggedIn
         },
         {
             label: () =>
@@ -101,7 +100,7 @@
                 ),
             key: 'collections',
             icon: renderIcon('collections', Bookmark, BookmarkOutline),
-            show: isLoggedIn.value
+            show: userStateStore.isLoggedIn
         },
         {
             label: () =>
@@ -117,7 +116,7 @@
                 ),
             key: 'settings',
             icon: renderIcon('settings', Cog, CogOutline),
-            show: authStore.isLoggedIn
+            show: userStateStore.isLoggedIn
         },
     ])
     const selectedValue = ref<string>(window.location.hash.split('/')[1] || '');

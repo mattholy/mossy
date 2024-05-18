@@ -1,4 +1,4 @@
-import { useAuthStore } from '@/stores/authStore';
+import { useUserStateStore } from '@/stores/userStateStore';
 
 interface FetchOptions {
     endpoint: string;
@@ -20,14 +20,14 @@ export async function callMossyApi({ endpoint, data }: FetchOptions): Promise<an
     if (!isValidJson(data)) {
         throw new Error("Provided data is not a valid JSON object.");
     }
-    const store = useAuthStore();
+    const userStateStore = useUserStateStore();
     const headers = new Headers({
         'Content-Type': 'application/json',
         'X-Mossy-API': 'api/m1',
     });
 
-    if (store.token) {
-        headers.append('Authorization', `Bearer ${store.token}`);
+    if (userStateStore.isLoggedIn) {
+        headers.append('Authorization', `Bearer ${userStateStore.currentToken}`);
     }
 
     const fetchOptions: RequestInit = {

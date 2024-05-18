@@ -2,8 +2,8 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import i18n, { setI18nLanguage } from './i18n';
-import router from './router';
-import myPinia from '@/pinia';
+import router from '@/router';
+import pinia from '@/stores'
 import VMdPreview from '@kangc/v-md-editor/lib/preview';
 import '@kangc/v-md-editor/lib/style/preview.css';
 import vuePressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js';
@@ -16,7 +16,7 @@ const app = createApp(App);
 
 app.use(i18n);
 app.use(router);
-app.use(myPinia);
+app.use(pinia);
 VMdPreview.use(vuePressTheme, {
     Hljs: hljs,
 });

@@ -1,11 +1,11 @@
 import { callMossyApi, MossyApiError } from "./apiCall";
 import { notyf } from "./notyf";
 import i18n from '@/i18n';
-import pinia from '@/pinia';
-import { useAuthStore } from '@/stores/authStore';
+import pinia from '@/stores';
+import { useUserStateStore } from '@/stores/userStateStore';
 
 const { t } = i18n.global;
-const authStore = useAuthStore(pinia);
+const userStateStore = useUserStateStore(pinia);
 
 export async function checkToken(token: string): Promise<boolean> {
     console.log('checkToken');
@@ -20,7 +20,7 @@ export async function checkToken(token: string): Promise<boolean> {
             if (error instanceof MossyApiError) {
                 notyf.error(t(`api.statusmsg.${error.detail}.notification`));
             }
-            authStore.clearToken();
+            userStateStore.clearToken();
             return false;
         });
 }

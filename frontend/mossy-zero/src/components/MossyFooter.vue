@@ -2,7 +2,7 @@
     import { h, ref, onMounted, watch, computed, reactive } from 'vue'
     import type { Component } from 'vue'
     import { NFlex, NButton, NInput, NIcon, NIconWrapper } from 'naive-ui'
-    import { useAuthStore } from '@/stores/authStore'
+    import { useUserStateStore } from '@/stores/userStateStore'
     import { useThemeStore } from '@/stores/themeStore'
     import { useI18n } from 'vue-i18n'
     import { useRoute } from 'vue-router'
@@ -16,7 +16,7 @@
         Add as AddIcon
     } from '@vicons/ionicons5'
 
-    const authStore = useAuthStore()
+    const userStateStore = useUserStateStore()
     const selectedValue = ref('')
     const theme = useThemeStore()
     const { t } = useI18n()
@@ -42,7 +42,7 @@
             <!-- <Compass /> -->
             <CompassOutline />
         </n-icon>
-        <n-button v-if="authStore.isLoggedIn" circle size="large" type="primary">
+        <n-button v-if="userStateStore.isLoggedIn" circle size="large" type="primary">
             <template #icon>
                 <AddIcon />
             </template>

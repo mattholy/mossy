@@ -7,21 +7,21 @@
     import { FingerPrint } from '@vicons/ionicons5'
     import { webauthnAuthentication, webauthnRegister } from '@/utils/webauthn'
     import { notyf } from '@/utils/notyf'
-    import { useAuthStore } from '@/stores/authStore'
+    import { useUserStateStore } from '@/stores/userStateStore'
     import { MossyApiError } from '@/utils/apiCall'
     import { useWindowSize } from '@vueuse/core'
 
+    const userStateStore = useUserStateStore()
     const { width } = useWindowSize()
     const small_device = computed(() => width.value < 768)
     let messageReactive: MessageReactive | null = null
     const message = useMessage()
     const showReg = ref(false)
     const { t } = useI18n()
-    const authStore = useAuthStore()
     const login = async () => {
         await webauthnAuthentication()
             .then((res) => {
-                authStore.setToken(res)
+                userStateStore.setToken(res)
             })
             .catch((err) => {
                 notyf.error(t(`api.statusmsg.${err.message}.notification`))
