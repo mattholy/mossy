@@ -1,14 +1,15 @@
 <script setup lang="ts">
-    import { onBeforeUnmount, ref } from 'vue'
+    import { onBeforeUnmount, ref, h } from 'vue'
     import { useMessage } from 'naive-ui'
     import { NButton, NCard, NForm, NFormItem, NInput, NInputGroup, NInputGroupLabel, NUpload, NSwitch, NUploadDragger, NIcon } from 'naive-ui'
     import type { FormInst, FormRules, FormItemRule, UploadOnChange, MessageReactive } from 'naive-ui'
+    import { useDialog } from 'naive-ui'
     import { useI18n } from 'vue-i18n'
     import { FileTray } from '@vicons/ionicons5'
     import { notyf } from '@/utils/notyf'
     import { webauthnRegister } from '@/utils/webauthn'
     import { callMossyApi } from '@/utils/apiCall'
-    import { useRouter } from 'vue-router'
+    import { useRouter, useRoute } from 'vue-router'
     import { MossyApiError } from '@/utils/apiCall'
 
     interface FileDetails {
@@ -23,6 +24,8 @@
     let messageReactive: MessageReactive | null = null
     const { t } = useI18n()
     const router = useRouter()
+    const route = useRoute()
+    const dialog = useDialog()
     const setupForm = ref<FormInst | null>(null)
     const processingForm = ref(false)
     const setupFormData = ref({
@@ -78,12 +81,21 @@
                     server_union: setupFormData.value.server_union
                 }
             }).then(async () => {
-                await webauthnRegister(setupFormData.value.server_admin)
-                    .then(() => {
+                await webauthnRegister(setupFormData.value.server_admin, route)
+                    .then((r_key) => {
                         notyf.success(t('ui.setup_page.AllDone'))
-                        setTimeout(function () {
-                            window.location.href = '/';
-                        }, 3000);
+                        dialog.success({
+                            title: t('ui.common_desc.registerFinish'),
+                            content: () => h('div', {}, [
+                                h('p', t('ui.common_desc.save_key')),
+                                h('code', { class: 'text-xl' }, r_key)
+                            ]),
+                            positiveText: t('ui.common_desc.done'),
+                            onPositiveClick: () => {
+                                window.location.href = '/';
+                                return true
+                            }
+                        })
                     })
                     .catch((e) => {
                         console.error(e)

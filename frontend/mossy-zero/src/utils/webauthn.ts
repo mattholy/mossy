@@ -3,10 +3,12 @@ import { callMossyApi, MossyApiError } from './apiCall'
 import pinia from '@/stores';
 import { useUserStateStore } from '@/stores/userStateStore';
 import type { PublicKeyCredentialCreationOptionsJSON, PublicKeyCredentialRequestOptionsJSON, RegistrationResponseJSON, AuthenticationResponseJSON } from '@simplewebauthn/types'
+import type { RouteLocationNormalizedLoaded } from 'vue-router';
 
-export async function webauthnRegister(uid: string): Promise<void> {
+export async function webauthnRegister(uid: string, route?: RouteLocationNormalizedLoaded): Promise<String> {
     let regOptions: PublicKeyCredentialCreationOptionsJSON
     let registrationData: RegistrationResponseJSON
+    let recovery_key: String
     try {
         regOptions = await callMossyApi({
             endpoint: '/api/m1/auth/generate-registration-options',
@@ -33,11 +35,18 @@ export async function webauthnRegister(uid: string): Promise<void> {
     }
 
     try {
-        await callMossyApi({
+        recovery_key = await callMossyApi({
             endpoint: '/api/m1/auth/verify-registration',
             data: {
                 payload: registrationData,
-                challenge: regOptions.challenge
+                challenge: regOptions.challenge,
+                register_from: (route && route.query.client_name) ? route.query.client_name.toString() : 'MossyWebApp'
+            }
+        }).then((res) => {
+            if (res.recovery_key) {
+                return res.recovery_key
+            } else {
+                return ''
             }
         })
     } catch (error) {
@@ -46,7 +55,7 @@ export async function webauthnRegister(uid: string): Promise<void> {
         }
         throw error
     }
-
+    return recovery_key
 }
 
 export async function webauthnAuthentication(): Promise<string> {

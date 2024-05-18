@@ -60,7 +60,6 @@
             method: 'GET',
         }).then((res) => {
             about_data.value = res
-            console.log(about_data.value)
         }).catch((err: MossyApiError) => {
             notyf.error(err.detail)
         })

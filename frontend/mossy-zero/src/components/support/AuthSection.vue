@@ -1,8 +1,9 @@
 <script setup lang="ts">
-    import { onBeforeUnmount, ref, computed, watchEffect } from 'vue'
+    import { onBeforeUnmount, ref, computed, watchEffect, h } from 'vue'
     import { useI18n } from 'vue-i18n'
     import { useMessage } from 'naive-ui'
-    import { NButton, NFlex, NIcon, NModal, NInput, NInputGroup, NInputGroupLabel } from 'naive-ui'
+    import { NButton, NFlex, NIcon, NModal, NInput, NInputGroup, NInputGroupLabel, NCard } from 'naive-ui'
+    import { useDialog } from 'naive-ui'
     import type { MessageReactive } from 'naive-ui'
     import { FingerPrint } from '@vicons/ionicons5'
     import { webauthnAuthentication, webauthnRegister } from '@/utils/webauthn'
@@ -10,18 +11,23 @@
     import { useUserStateStore } from '@/stores/userStateStore'
     import { MossyApiError } from '@/utils/apiCall'
     import { useWindowSize } from '@vueuse/core'
+    import { useRouter, useRoute } from 'vue-router'
+
 
     const userStateStore = useUserStateStore()
     const { width } = useWindowSize()
     const small_device = computed(() => width.value < 768)
     let messageReactive: MessageReactive | null = null
     const message = useMessage()
+    const router = useRouter()
+    const route = useRoute()
+    const dialog = useDialog()
     const showReg = ref(false)
     const { t } = useI18n()
     const login = async () => {
         await webauthnAuthentication()
-            .then((res) => {
-                // userStateStore.setToken(res)mutiple
+            .then(() => {
+                router.push('/home')
             })
             .catch((err) => {
                 notyf.error(t(`api.statusmsg.${err.message}.notification`))
@@ -35,10 +41,26 @@
         usernameInputDisable.value = true
         createMessage()
         await webauthnRegister(username.value)
-            .then(() => {
+            .then((r_key) => {
                 notyf.success(t('ui.setup_page.AllDone'))
                 showReg.value = false
-                login()
+                if (r_key && r_key != '') {
+                    dialog.success({
+                        title: t('ui.common_desc.registerFinish'),
+                        content: () => h('div', {}, [
+                            h('p', t('ui.common_desc.save_key')),
+                            h('code', { class: 'text-xl' }, r_key)
+                        ]),
+                        positiveText: t('ui.common_desc.done'),
+                        onPositiveClick: () => {
+                            login()
+                            return true
+                        }
+                    })
+                }
+                else {
+                    login()
+                }
             })
             .catch((e) => {
                 notyf.error(t(`api.statusmsg.${e.message}.notification`))
@@ -65,7 +87,6 @@
         }
         const urlSafeRegex = /^[A-Za-z0-9\-_]+$/;
         if (urlSafeRegex.test(value)) {
-            console.log(value);
             return true
         } else {
             return false

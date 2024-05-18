@@ -15,6 +15,9 @@ auth.py
 import json
 import jwt
 import uuid
+import hashlib
+import random
+import string
 from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Depends
 from fastapi import Request
@@ -37,11 +40,12 @@ from webauthn.helpers.structs import PublicKeyCredentialCreationOptions
 
 from utils.db import get_db
 from utils.model.api_schemas import WebauthnReg
-from utils.model.orm import Passkeys, RegistrationAttempt, AuthSession
+from utils.model.orm import generate_secret, Passkeys, RegistrationAttempt, AuthSession, MossyUser
 from utils.system.security import generate_jwt, verify_jwt, get_current_user_session
 from utils.logger import logger
 
 from env import RP_ID, RP_NAME, RP_SOURCE, DATABASE_URL
+
 
 router = APIRouter(prefix='/auth', tags=['Authentication'])
 
@@ -94,9 +98,9 @@ async def start_registration(user: User, request: Request, db: AsyncSession = De
 
 
 @router.post('/verify-registration', response_class=JSONResponse, response_model=WebauthnReg)
-async def after_registration(response: dict, db: AsyncSession = Depends(get_db)):
+async def after_registration(request_data: dict, db: AsyncSession = Depends(get_db)):
     try:
-        challenge = base64url_to_bytes(response["challenge"])
+        challenge = base64url_to_bytes(request_data["challenge"])
     except KeyError:
         raise HTTPException(status_code=406, detail='ChallengeNotProvided')
 
@@ -108,9 +112,11 @@ async def after_registration(response: dict, db: AsyncSession = Depends(get_db))
         await db.commit()
         raise HTTPException(status_code=406, detail='RegistrationTimeOut')
 
+    mossy_user_query = await db.execute(select(MossyUser).filter_by(username=att.user))
+    mossy_user = mossy_user_query.scalars().first()
     try:
         registration_verification = verify_registration_response(
-            credential=response['payload'],
+            credential=request_data['payload'],
             expected_challenge=challenge,
             expected_origin=RP_SOURCE,
             expected_rp_id=RP_ID,
@@ -122,14 +128,29 @@ async def after_registration(response: dict, db: AsyncSession = Depends(get_db))
             public_key=registration_verification.credential_public_key,
             device_type=registration_verification.credential_device_type.name,
             annotate="Passkey@" + att.access_address,
-            transports=','.join(response['payload']['response']['transports']),
+            transports=','.join(
+                request_data['payload']['response']['transports']),
             sign_count=registration_verification.sign_count,
             registed_user_agent=att.user_agent,
-            raw_id=response['payload']['rawId']
+            raw_id=request_data['payload']['rawId']
         )
+        # register user if not exists (for the first time registration)
+        if not mossy_user:
+            r_key = '-'.join([''.join(random.choices(string.ascii_lowercase, k=6))
+                             for _ in range(4)])
+            ag = hashlib.sha256()
+            ag.update((r_key+'@'+att.user).encode('utf-8'))
+            mossy_user = MossyUser(
+                username=att.user,
+                registration_source=request_data['register_from'],
+                recovery_key=ag.hexdigest()
+            )
+            db.add(mossy_user)
         db.add(new_key)
         db.delete(att)
         await db.commit()
+        if r_key:
+            return WebauthnReg(status='OK', msg='AllDone', payload={'recovery_key': r_key})
         return WebauthnReg(status='OK', msg='AllDone', payload=None)
     except InvalidRegistrationResponse as e:
         if str(e).startswith("Unexpected client data origin"):
