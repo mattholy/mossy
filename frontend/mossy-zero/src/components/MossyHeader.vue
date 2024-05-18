@@ -9,8 +9,10 @@
     import { useI18n } from 'vue-i18n'
     import AuthSection from '@/components/support/AuthSection.vue'
     import { useWindowSize } from '@vueuse/core'
+    import { useRoute } from 'vue-router'
 
     const { width } = useWindowSize()
+    const route = useRoute()
     const small_device = computed(() => width.value < 768)
     const userStateStore = useUserStateStore()
     const theme = useThemeStore()
@@ -25,7 +27,7 @@
         class="z-40 sticky top-0 backdrop-blur-lg h-12 flex items-center justify-center border-gray-500 border-solid border-t-0 border-b border-l-0 border-r-0 box-border"
         :class="bgcolor">
         <div class="h-full flex items-center justify-start">
-            <AuthSection v-if="small_device && !userStateStore.isLoggedIn" />
+            <AuthSection v-if="small_device && !userStateStore.isLoggedIn && route.path != '/authorize'" />
             <p v-else>Mossy Logo</p>
         </div>
         <div class="hidden md:flex items-center justify-center w-96">

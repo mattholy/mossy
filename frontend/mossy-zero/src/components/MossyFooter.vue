@@ -35,7 +35,7 @@
 </script>
 
 <template>
-    <n-flex justify="space-around"
+    <n-flex justify="space-evenly"
         class="flex z-40 sticky bottom-0 backdrop-blur-lg h-14 items-center justify-center border-gray-500 border-solid border-t border-b-0 border-l-0 border-r-0"
         :class="bgcolor">
         <div class="h-14 px-4 flex items-center justify-center" v-if="userStateStore.isLoggedIn"

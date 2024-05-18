@@ -15,13 +15,15 @@ put some words here
 
 from fastapi import APIRouter, Depends, Query, Request
 from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.exceptions import HTTPException
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from pydantic import BaseModel, HttpUrl
 from typing import Optional
 
 from env import RP_ID, RELEASE_VERSION
-from utils.model.orm import SystemConfig, OAuthAuthorizationCode
+from utils.model.orm import SystemConfig, OAuthAuthorizationCode, OAuthApp
 from utils.model.api_schemas import BaseApiResp
 from utils.db import get_db
 from utils.tools import get_value_or_default
@@ -44,9 +46,14 @@ async def user_authorize(
     response_type: str,
     client_id: str,
     redirect_uri: str,
-    scope: str
+    scope: str,
+    db: AsyncSession = Depends(get_db)
 ):
-    return RedirectResponse(url=f'/#/authorize?authorize=oauth&response_type={response_type}&client_id={client_id}&redirect_uri={redirect_uri}&scope={scope}')
+    fetch_app = await db.execute(select(OAuthApp).where(OAuthApp.client_id == client_id))
+    app = fetch_app.scalars().first()
+    if not app:
+        raise HTTPException(status_code=404, detail='ClientNotFound')
+    return RedirectResponse(url=f'/#/authorize?authorize=oauth&response_type={response_type}&client_id={client_id}&redirect_uri={redirect_uri}&scope={scope}&client_name={app.name}')
 
 
 @router.post('/authorize')
