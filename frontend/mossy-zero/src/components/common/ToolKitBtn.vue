@@ -29,7 +29,7 @@
 </script>
 
 <template>
-    <n-button circle ghost :bordered=false :focusable=false @click="activate">
+    <n-button ghost :bordered=false :focusable=false @click="activate" size="large" type="primary" class="h-12">
         <n-icon>
             <MenuIcon />
         </n-icon>

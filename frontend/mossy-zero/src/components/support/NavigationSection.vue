@@ -134,7 +134,7 @@
 
 <template>
     <n-menu :icon-size="25" v-model:value="selectedValue" accordion :options="menuOptions"
-        @click="console.log(selectedValue)" class="transition duration-300 ease-in-out" />
+        class="transition duration-300 ease-in-out" />
 
 </template>
 

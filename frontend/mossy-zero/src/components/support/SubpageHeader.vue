@@ -4,14 +4,14 @@
     import { ChevronBack, ShareSocial, EllipsisHorizontal, HandRight, Warning } from '@vicons/ionicons5'
     import { useI18n } from 'vue-i18n'
     import { notyf } from '@/utils/notyf'
-    import { useAuthStore } from '@/stores/authStore'
+    import { useUserStateStore } from '@/stores/userStateStore'
 
     interface Props {
         pageCategory: 'user' | 'activity'
         resourceUri: string;
     }
 
-    const authStore = useAuthStore()
+    const userStateStore = useUserStateStore()
     const props = defineProps<Props>();
     const route = useRoute()
     const router = useRouter()
@@ -36,7 +36,7 @@
     }
 
     const handleBlock = async () => {
-        if (!authStore.isLoggedIn) {
+        if (!userStateStore.isLoggedIn) {
             notyf.error(t('ui.common_desc.loginMust'))
             return
         }
@@ -44,7 +44,7 @@
     }
 
     const handleReport = async () => {
-        if (!authStore.isLoggedIn) {
+        if (!userStateStore.isLoggedIn) {
             notyf.error(t('ui.common_desc.loginMust'))
             return
         }

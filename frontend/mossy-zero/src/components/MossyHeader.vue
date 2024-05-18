@@ -15,17 +15,18 @@
     const userStateStore = useUserStateStore()
     const theme = useThemeStore()
     const { t } = useI18n()
-    const classMy = computed(() => {
-        return theme.isDarkMode ? "backdrop-brightness-50" : ""
+    const bgcolor = computed(() => {
+        return theme.isDarkMode ? "bg-neutral-700/70" : "bg-neutral-50/70"
     })
 </script>
 
 <template>
-    <n-flex justify="space-between" :class="classMy"
-        class="z-40 sticky top-0 bg-opacity-30 backdrop-blur-lg h-12 flex items-center justify-center border-gray-500 border-solid border-t-0 border-b border-l-0 border-r-0 box-border">
+    <n-flex justify="space-between"
+        class="z-40 sticky top-0 backdrop-blur-lg h-12 flex items-center justify-center border-gray-500 border-solid border-t-0 border-b border-l-0 border-r-0 box-border"
+        :class="bgcolor">
         <div class="h-full flex items-center justify-start">
             <AuthSection v-if="small_device && !userStateStore.isLoggedIn" />
-            <p v-else>{{ userStateStore.isLoggedIn }}</p>
+            <p v-else>Mossy Logo</p>
         </div>
         <div class="hidden md:flex items-center justify-center w-96">
             <n-input clearable round :placeholder="t('ui.common_desc.search')">
@@ -36,7 +37,7 @@
                 </template>
             </n-input>
         </div>
-        <div class="h-full flex items-center justify-end px-2">
+        <div class="h-full flex items-center justify-end">
             <HeaderAction />
         </div>
     </n-flex>
