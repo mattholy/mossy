@@ -1,11 +1,15 @@
 <script setup lang="ts">
-    const text = `
-# Markdown Preview
-`
+    import { defineProps } from 'vue'
+
+    interface Props {
+        content: string;
+    }
+
+    const props = defineProps<Props>();
 </script>
 
 <template>
-    <v-md-preview :text="text" preview-class="vuepress-markdown-body"></v-md-preview>
+    <v-md-preview :text="props.content" preview-class="vuepress-markdown-body"></v-md-preview>
 </template>
 
 

@@ -100,6 +100,8 @@ async def setup_status(basic_info: SetupForm, request: Request, db: AsyncSession
             if key == 'server_banner':
                 db.add(SystemConfig(key='server_banner',
                        value=basic_info.server_banner.file_content))
+                db.add(SystemConfig(key='server_banner_mime',
+                       value=basic_info.server_banner.file_type))
                 continue
             db.add(SystemConfig(key=key, value=str(getattr(basic_info, key))))
         db.add(SystemConfig(key='init_flag', value='AllDone'))

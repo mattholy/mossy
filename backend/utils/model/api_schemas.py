@@ -11,14 +11,14 @@ api.py
 @Contact :   smile.used@hotmail.com
 @License :   MIT License
 '''
-from typing import List, Optional
+from typing import List, Optional, Literal
 from pydantic import BaseModel, Field
 
 from webauthn.helpers.structs import PublicKeyCredentialCreationOptions, PublicKeyCredentialParameters
 
 
 class BaseResponse(BaseModel):
-    status: str
+    status: Literal['OK', 'CLIENT_ERROR', 'SERVER_ERROR']
     msg: str
 
 

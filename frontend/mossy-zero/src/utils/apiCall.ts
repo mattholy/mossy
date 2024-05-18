@@ -1,9 +1,11 @@
 import pinia from '@/stores';
 import { useUserStateStore } from '@/stores/userStateStore';
+import type { G } from 'vitest/dist/reporters-yx5ZTtEV.js';
 
 interface FetchOptions {
     endpoint: string;
     data?: any;
+    method?: "GET" | "POST" | "PUT" | "DELETE";
 }
 
 interface MossyApiResponse {
@@ -14,7 +16,7 @@ interface MossyApiResponse {
 
 const baseUrl = import.meta.env.VITE_BASE_URL || ''
 
-export async function callMossyApi({ endpoint, data }: FetchOptions): Promise<any> {
+export async function callMossyApi({ endpoint, data, method = "POST" }: FetchOptions): Promise<any> {
     if (!endpoint.startsWith('/')) {
         throw new Error('Endpoint must start with /');
     }
@@ -32,7 +34,7 @@ export async function callMossyApi({ endpoint, data }: FetchOptions): Promise<an
     }
 
     const fetchOptions: RequestInit = {
-        method: 'POST',
+        method: method,
         headers: headers,
         body: JSON.stringify(data)
     };

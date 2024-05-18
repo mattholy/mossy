@@ -118,12 +118,11 @@ class ErrorLog(Base):
     error_stack = Column(Text)
 
 
-class UserRegProcess(Base):
-    __tablename__ = 'auth_user_register_process'
+class ServerRules(Base):
+    __tablename__ = 'rules'
 
     id = Column(BigInteger, primary_key=True, autoincrement=True)
-    username = Column(String(50), unique=True, nullable=False)
-    finished_register = Column(Boolean, default=False)
+    content = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), default=func.now())
     updated_at = Column(DateTime(timezone=True),
                         default=func.now(), onupdate=func.now())

@@ -39,7 +39,7 @@
                 "settings": "设置"
             },
             "loginandreg": {
-                "desc": "立即注册或者登录，来关注用户和话题，喜欢、分享和评论。此外您还能与联邦宇宙中，支持ActivityPUB的任何服务器上的用户进行互动。",
+                "desc": "由Mossy驱动的分布式社交网络平台，你可以在这里发布微博，长文，影集，提问箱等。立即注册或者登录，来关注用户和话题，喜欢、分享和评论。",
                 "saftyfirst": "Mossy不会记录你的任何个人信息，注册只需要提供用户名。"
             }
         },
@@ -113,12 +113,13 @@
         },
         "pages": {
             "about": {
-                "mossyDesc": "Mossy是一个开源的联邦社交网络平台，支持ActivityPub协议。Mossy的目标是为用户提供一个安全、隐私、自由的社交网络平台，让用户可以自由地分享、交流、互动。",
+                "mossyDesc": "由Mossy驱动的分布式社交网络平台，你可以在这里发布微博，长文，影集，提问箱等",
                 "serverAdmin": "服务器管理员：",
                 "serverContact": "联系方式：",
-                "serverContactBtn": "联系服务器管理员",
+                "serverContactBtn": "联系管理员",
                 "serverAboutSection": "关于服务器",
-                "serverRuleSection": "服务器规则"
+                "serverRuleSection": "服务器规则",
+                "updated_at": "最后更新于："
             }
         }
     },
