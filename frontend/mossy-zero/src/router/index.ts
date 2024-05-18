@@ -7,7 +7,6 @@ type ExtendedRoute = RouteRecordRaw & {
   children?: ExtendedRoute[];
 };
 const viewModules = import.meta.glob('../views/**/*.vue');
-// const baseUrl = import.meta.env.VITE_BASE_URL || '';
 
 function pathToRoute(path: string): ExtendedRoute {
   const segments = path.replace(/^.*[\\\\/]views[\\\\/](.*)\.vue$/, '$1').split('/');
