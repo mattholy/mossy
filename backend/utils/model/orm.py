@@ -16,8 +16,9 @@ import enum
 import uuid
 import secrets
 import string
+from typing import List
 from sqlalchemy import UniqueConstraint, create_engine, Column, Integer, String, DateTime, Boolean, Text, BigInteger, Float
-from sqlalchemy.dialects.postgresql import UUID, BYTEA, BIT, JSONB
+from sqlalchemy.dialects.postgresql import UUID, BYTEA, BIT, JSONB, ARRAY
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.sql import func
 from sqlalchemy.types import Enum
@@ -224,3 +225,64 @@ class OAuthAccessToken(Base):
     note = Column(String)
     expires_at = Column(DateTime(timezone=True), nullable=False)
     created_at = Column(DateTime(timezone=True), default=func.now())
+
+
+class MossyUser(Base):
+    __tablename__ = 'mossy_users'
+
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    identifier = Column(UUID(as_uuid=True), default=uuid.uuid4,
+                        nullable=False, unique=True)
+    fedi_account_id = Column(BigInteger, unique=True, index=True)
+    username = Column(String, nullable=False, unique=True)
+    created_at = Column(DateTime(timezone=True),
+                        server_default=func.now(), nullable=False)
+    preferred_language = Column(String)
+    supported_languages = Column(ARRAY(String))
+    registration_source = Column(String)
+    recovery_key = Column(String, nullable=False, default='NO_RECOVERY_KEY')
+
+
+class FediAccounts(Base):
+    __tablename__ = 'fedi_accounts'
+
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    username = Column(String, nullable=False, index=True)
+    domain = Column(String, index=True)
+    private_key = Column(String)
+    public_key = Column(String, nullable=False)
+    create_at = Column(DateTime(timezone=True), server_default=func.now())
+    update_at = Column(DateTime(timezone=True),
+                       server_default=func.now(), onupdate=func.now())
+    description = Column(String, index=True)
+    description_in_markdown = Column(String)
+    display_name = Column(String, index=True)
+    uri = Column(String, index=True)
+    url = Column(String, index=True)
+    avatar_file_content = Column(String)
+    avatar_file_type = Column(String)
+    avatar_file_size = Column(BigInteger)
+    avatar_update_at = Column(DateTime(timezone=True))
+    header_file_content = Column(String)
+    header_file_type = Column(String)
+    header_file_size = Column(BigInteger)
+    header_update_at = Column(DateTime(timezone=True))
+    locked = Column(Boolean, default=False)
+    last_webfingered_at = Column(DateTime(timezone=True))
+    inbox_url = Column(String)
+    outbox_url = Column(String)
+    shared_inbox_url = Column(String)
+    followers_url = Column(String)
+    memorial = Column(Boolean, default=False)
+    moved_to_account_id = Column(BigInteger)
+    fields = Column(JSONB)
+    actor_type = Column(String, index=True, nullable=False, default='Person')
+    discoverable = Column(Boolean, default=True)
+    also_known_as = Column(ARRAY(String))
+    silenced_at = Column(DateTime(timezone=True))
+    suspended_at = Column(DateTime(timezone=True))
+    hide_collections = Column(Boolean, default=False)
+    devices_url = Column(String)
+    sensitized_at = Column(DateTime(timezone=True))
+    trendable = Column(Boolean, default=True)
+    indexable = Column(Boolean, default=True)

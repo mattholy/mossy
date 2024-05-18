@@ -26,9 +26,11 @@ from typing import Optional
 
 from utils.model.api_schemas import ApiServiceSetupStatus, BaseApiResp, WebauthnReg
 from utils.db import get_db
-from utils.model.orm import SystemConfig
+from utils.model.orm import SystemConfig, FediAccounts, MossyUser
 from utils.init import init_node, ready
 from utils.logger import logger, async_log_error_to_db
+from utils.system.security import generate_ecc_key_pair
+from env import RP_ID
 from routers.api.m1.authentication.endpoint import start_registration
 
 router = APIRouter(prefix='/setup', tags=['Mossy Setup'])
@@ -105,6 +107,30 @@ async def setup_status(basic_info: SetupForm, request: Request, db: AsyncSession
                 continue
             db.add(SystemConfig(key=key, value=str(getattr(basic_info, key))))
         db.add(SystemConfig(key='init_flag', value='AllDone'))
+
+        # add server account
+        private_key_pem, public_key_pem = generate_ecc_key_pair()
+        root_actor = FediAccounts(
+            id=0,
+            username=RP_ID,
+            private_key=private_key_pem,
+            public_key=public_key_pem,
+            locked=True,
+            actor_type='Application',
+            discoverable=False,
+            trendable=False,
+            indexable=False,
+        )
+
+        root_user = MossyUser(
+            id=0,
+            identifier='00000000-0000-0000-0000-000000000000',
+            fedi_account_id=0,
+            username='**MOSSY_ROOT**',
+            recovery_key='NO_RECOVERY_KEY',
+        )
+        db.add(root_user)
+        db.add(root_actor)
         await db.commit()
     except Exception as e:
         raise e

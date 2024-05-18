@@ -1,8 +1,8 @@
 """dev
 
-Revision ID: 5bb72258ff92
+Revision ID: dd7db6634529
 Revises: 
-Create Date: 2024-05-17 22:05:24.130856
+Create Date: 2024-05-19 01:25:45.766408
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = '5bb72258ff92'
+revision: str = 'dd7db6634529'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -76,15 +76,55 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_auth_sessions_user'), 'auth_sessions', ['user'], unique=False)
-    op.create_table('auth_user_register_process',
+    op.create_table('fedi_accounts',
     sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
-    sa.Column('username', sa.String(length=50), nullable=False),
-    sa.Column('finished_register', sa.Boolean(), nullable=True),
-    sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
-    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('username')
+    sa.Column('username', sa.String(), nullable=False),
+    sa.Column('domain', sa.String(), nullable=True),
+    sa.Column('private_key', sa.String(), nullable=True),
+    sa.Column('public_key', sa.String(), nullable=False),
+    sa.Column('create_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('update_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('description', sa.String(), nullable=True),
+    sa.Column('description_in_markdown', sa.String(), nullable=True),
+    sa.Column('display_name', sa.String(), nullable=True),
+    sa.Column('uri', sa.String(), nullable=True),
+    sa.Column('url', sa.String(), nullable=True),
+    sa.Column('avatar_file_content', sa.String(), nullable=True),
+    sa.Column('avatar_file_type', sa.String(), nullable=True),
+    sa.Column('avatar_file_size', sa.BigInteger(), nullable=True),
+    sa.Column('avatar_update_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('header_file_content', sa.String(), nullable=True),
+    sa.Column('header_file_type', sa.String(), nullable=True),
+    sa.Column('header_file_size', sa.BigInteger(), nullable=True),
+    sa.Column('header_update_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('locked', sa.Boolean(), nullable=True),
+    sa.Column('last_webfingered_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('inbox_url', sa.String(), nullable=True),
+    sa.Column('outbox_url', sa.String(), nullable=True),
+    sa.Column('shared_inbox_url', sa.String(), nullable=True),
+    sa.Column('followers_url', sa.String(), nullable=True),
+    sa.Column('memorial', sa.Boolean(), nullable=True),
+    sa.Column('moved_to_account_id', sa.BigInteger(), nullable=True),
+    sa.Column('fields', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
+    sa.Column('actor_type', sa.String(), nullable=False),
+    sa.Column('discoverable', sa.Boolean(), nullable=True),
+    sa.Column('also_known_as', postgresql.ARRAY(sa.String()), nullable=True),
+    sa.Column('silenced_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('suspended_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('hide_collections', sa.Boolean(), nullable=True),
+    sa.Column('devices_url', sa.String(), nullable=True),
+    sa.Column('sensitized_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('trendable', sa.Boolean(), nullable=True),
+    sa.Column('indexable', sa.Boolean(), nullable=True),
+    sa.PrimaryKeyConstraint('id')
     )
+    op.create_index(op.f('ix_fedi_accounts_actor_type'), 'fedi_accounts', ['actor_type'], unique=False)
+    op.create_index(op.f('ix_fedi_accounts_description'), 'fedi_accounts', ['description'], unique=False)
+    op.create_index(op.f('ix_fedi_accounts_display_name'), 'fedi_accounts', ['display_name'], unique=False)
+    op.create_index(op.f('ix_fedi_accounts_domain'), 'fedi_accounts', ['domain'], unique=False)
+    op.create_index(op.f('ix_fedi_accounts_uri'), 'fedi_accounts', ['uri'], unique=False)
+    op.create_index(op.f('ix_fedi_accounts_url'), 'fedi_accounts', ['url'], unique=False)
+    op.create_index(op.f('ix_fedi_accounts_username'), 'fedi_accounts', ['username'], unique=False)
     op.create_table('log_exceptions',
     sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('node_id', sa.UUID(), nullable=True),
@@ -112,6 +152,21 @@ def upgrade() -> None:
     op.create_index(op.f('ix_log_operations_operation_time'), 'log_operations', ['operation_time'], unique=False)
     op.create_index(op.f('ix_log_operations_related_session'), 'log_operations', ['related_session'], unique=False)
     op.create_index(op.f('ix_log_operations_user'), 'log_operations', ['user'], unique=False)
+    op.create_table('mossy_users',
+    sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
+    sa.Column('identifier', sa.UUID(), nullable=False),
+    sa.Column('fedi_account_id', sa.BigInteger(), nullable=True),
+    sa.Column('username', sa.String(), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.Column('preferred_language', sa.String(), nullable=True),
+    sa.Column('supported_languages', postgresql.ARRAY(sa.String()), nullable=True),
+    sa.Column('registration_source', sa.String(), nullable=True),
+    sa.Column('recovery_key', sa.String(), nullable=False),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('identifier'),
+    sa.UniqueConstraint('username')
+    )
+    op.create_index(op.f('ix_mossy_users_fedi_account_id'), 'mossy_users', ['fedi_account_id'], unique=True)
     op.create_table('node_info',
     sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
     sa.Column('node_id', sa.UUID(), nullable=True),
@@ -167,6 +222,13 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('code')
     )
+    op.create_table('rules',
+    sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
+    sa.Column('content', sa.String(), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('system_config',
     sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
     sa.Column('key', sa.String(), nullable=False),
@@ -197,11 +259,14 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_user_config_key'), table_name='user_config')
     op.drop_table('user_config')
     op.drop_table('system_config')
+    op.drop_table('rules')
     op.drop_table('oauth_authorization_codes')
     op.drop_table('oauth_apps')
     op.drop_table('oauth_access_tokens')
     op.drop_index(op.f('ix_node_info_node_id'), table_name='node_info')
     op.drop_table('node_info')
+    op.drop_index(op.f('ix_mossy_users_fedi_account_id'), table_name='mossy_users')
+    op.drop_table('mossy_users')
     op.drop_index(op.f('ix_log_operations_user'), table_name='log_operations')
     op.drop_index(op.f('ix_log_operations_related_session'), table_name='log_operations')
     op.drop_index(op.f('ix_log_operations_operation_time'), table_name='log_operations')
@@ -212,7 +277,14 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_log_exceptions_error_type'), table_name='log_exceptions')
     op.drop_index(op.f('ix_log_exceptions_error_message'), table_name='log_exceptions')
     op.drop_table('log_exceptions')
-    op.drop_table('auth_user_register_process')
+    op.drop_index(op.f('ix_fedi_accounts_username'), table_name='fedi_accounts')
+    op.drop_index(op.f('ix_fedi_accounts_url'), table_name='fedi_accounts')
+    op.drop_index(op.f('ix_fedi_accounts_uri'), table_name='fedi_accounts')
+    op.drop_index(op.f('ix_fedi_accounts_domain'), table_name='fedi_accounts')
+    op.drop_index(op.f('ix_fedi_accounts_display_name'), table_name='fedi_accounts')
+    op.drop_index(op.f('ix_fedi_accounts_description'), table_name='fedi_accounts')
+    op.drop_index(op.f('ix_fedi_accounts_actor_type'), table_name='fedi_accounts')
+    op.drop_table('fedi_accounts')
     op.drop_index(op.f('ix_auth_sessions_user'), table_name='auth_sessions')
     op.drop_table('auth_sessions')
     op.drop_index(op.f('ix_auth_registration_attempts_user'), table_name='auth_registration_attempts')
