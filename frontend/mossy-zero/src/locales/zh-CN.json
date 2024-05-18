@@ -180,6 +180,11 @@
                 "title": "无效的令牌",
                 "content": "令牌无效，可能是过期或者被篡改",
                 "notification": "登录失效，请重新登录"
+            },
+            "WebauthnNotReady": {
+                "title": "Webauthn不可用",
+                "content": "你的浏览器目前禁止了Webauthn功能，请检查浏览器设置",
+                "notification": "你的浏览器目前禁止了Webauthn功能，请检查浏览器设置"
             }
         }
     }

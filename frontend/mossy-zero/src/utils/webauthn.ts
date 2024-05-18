@@ -22,7 +22,14 @@ export async function webauthnRegister(uid: string): Promise<void> {
     try {
         registrationData = await startRegistration(regOptions);
     } catch (error: any) {
-        throw new Error(error.name as string)
+        if (isErrorWithMessage(error)) {
+            if (error.message.startsWith('WebAuthn is not supported')) {
+                throw new Error('WebauthnNotReady');
+            }
+            throw new Error(error.name);
+        } else {
+            throw new Error('UnknownError');
+        }
     }
 
     try {
@@ -61,6 +68,9 @@ export async function webauthnAuthentication(): Promise<string> {
         authData = await startAuthentication(authOptions);
     } catch (error: unknown) {
         if (isErrorWithMessage(error)) {
+            if (error.message.startsWith('WebAuthn is not supported')) {
+                throw new Error('WebauthnNotReady');
+            }
             throw new Error(error.name);
         } else {
             throw new Error('UnknownError');
@@ -86,6 +96,6 @@ export async function webauthnAuthentication(): Promise<string> {
     return authResp.token
 }
 
-function isErrorWithMessage(error: any): error is { name: string } {
-    return error && typeof error.name === 'string';
+function isErrorWithMessage(error: any): error is { name: string, message: string } {
+    return error && typeof error.name === 'string' && typeof error.message === 'string'
 }
