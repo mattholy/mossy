@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { onBeforeUnmount, ref, h } from 'vue'
-    import { useMessage } from 'naive-ui'
-    import { NButton, NCard, NForm, NFormItem, NInput, NInputGroup, NInputGroupLabel, NUpload, NSwitch, NUploadDragger, NIcon } from 'naive-ui'
+    import { NFlex, useMessage } from 'naive-ui'
+    import { NButton, NCard, NForm, NFormItem, NInput, NInputGroup, NInputGroupLabel, NUpload, NSwitch, NUploadDragger, NIcon, NTag } from 'naive-ui'
     import type { FormInst, FormRules, FormItemRule, UploadOnChange, MessageReactive } from 'naive-ui'
     import { useDialog } from 'naive-ui'
     import { useI18n } from 'vue-i18n'
@@ -88,11 +88,13 @@
                             title: t('ui.common_desc.registerFinish'),
                             content: () => h('div', {}, [
                                 h('p', t('ui.common_desc.save_key')),
-                                h('code', { class: 'text-xl' }, r_key)
+                                h(NFlex, { justify: 'center' }, [
+                                    h(NTag, { type: 'info', class: 'font-mono', size: 'large' }, r_key.toString())
+                                ])
                             ]),
                             positiveText: t('ui.common_desc.done'),
                             onPositiveClick: () => {
-                                window.location.href = '/';
+                                window.location.href = '/'
                                 return true
                             }
                         })
