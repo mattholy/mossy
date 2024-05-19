@@ -10,8 +10,6 @@
     } from 'naive-ui'
     import { notyf } from '@/utils/notyf';
 
-    type ImageType = 'avatar' | 'header'
-
     const { t } = useI18n()
     const form_data = ref({
         "display_name": "John Doe",
@@ -95,6 +93,10 @@
 
             reader.readAsDataURL(file);
         }
+    }
+
+    const onCreate = () => {
+        return { name: '', value: '' }
     }
 </script>
 <template>
@@ -190,10 +192,15 @@
                     }}</p>
                 <p class="p-0 m-0">{{ t('ui.pages.settings.personal.basic_info.fields.instruction') }}</p>
             </template>
-            <n-dynamic-input v-model:value="form_data.fields" :max="6" preset="pair"
-                :key-placeholder="t('ui.pages.settings.personal.basic_info.fields.placeholder_left')"
-                :value-placeholder="t('ui.pages.settings.personal.basic_info.fields.placeholder_right')" />
+            <n-dynamic-input v-model:value="form_data.fields" :max="6" :on-create="onCreate">
+                <template #default="{ value }">
+                    <n-input v-model:value="value.name" type="text"
+                        :placeholder="t('ui.pages.settings.personal.basic_info.fields.placeholder_left')" />
+                    <n-input v-model:value="value.value" type="text"
+                        :placeholder="t('ui.pages.settings.personal.basic_info.fields.placeholder_right')" />
+                </template>
+            </n-dynamic-input>
         </n-form-item>
-
+        {{ form_data }}
     </n-form>
 </template>
