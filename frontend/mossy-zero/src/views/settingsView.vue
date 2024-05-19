@@ -14,7 +14,7 @@
     })
 </script>
 <template>
-    <n-tabs class="sticky top-12 backdrop-blur-md px-4" v-model:value="tab_name" type="line"
+    <n-tabs class="sticky top-12 backdrop-blur-md px-4 z-40" v-model:value="tab_name" type="line"
         @click="router.push(`/settings/${tab_name}`)">
         <n-tab name="personal">
             {{ t('ui.pages.settings.header.personal') }}
@@ -23,5 +23,9 @@
             {{ t('ui.pages.settings.header.system') }}
         </n-tab>
     </n-tabs>
-    <RouterView />
+    <div class="p-4">
+        <RouterView />
+    </div>
+
+
 </template>

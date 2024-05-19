@@ -18,7 +18,8 @@
       "usernameAllow": "用户名只能包含字母、数字、下划线和连字符，且长度在3到32个字符之间",
       "registerFinish": "注册完成",
       "save_key": "请将下方的账户恢复密钥保存到安全的地方，这个密钥只会在这里展示一次。如果你失去了账户访问能力，可以用这个恢复密钥来恢复控制权。",
-      "done": "完成"
+      "done": "完成",
+      "drag_to_upload": "点击或者拖拽文件到此处来上传"
     },
     "header": {
       "actions": {
@@ -188,6 +189,40 @@
         "header": {
           "personal": "个人资料",
           "system": "系统设置"
+        },
+        "personal": {
+          "basic_info": {
+            "display_name": {
+              "label": "昵称",
+              "placeholder": "支持任意字符，长度在1到30个字符之间",
+              "instruction": "联邦宇宙中的人要如何称呼你"
+            },
+            "desc": {
+              "label": "简介",
+              "placeholder": "支持任意字符，不长于500字。",
+              "instruction": "您可以提及 {user} 或 {tag}。"
+            },
+            "avatar": {
+              "label": "头像",
+              "placeholder": "支持任意不大于5MB图片格式，尺寸过大的图片会被压缩至512x512像素",
+              "instruction": "向他人展示你的形象",
+              "instruction_for_replace": "这是你现在头像的预览，点击或者拖拽文件到此处来替换头像",
+              "file_too_large": "图片文件大小不可以超过5MB"
+            },
+            "header": {
+              "label": "个人资料页横幅图片",
+              "placeholder": "支持任意不大于10MB图片格式，尺寸过大的图片会被压缩至1500x500像素",
+              "instruction": "人皆有背景",
+              "instruction_for_replace": "这是你现在横幅的预览，点击或者拖拽文件到此处来替换横幅",
+              "file_too_large": "图片文件大小不可以超过10MB"
+            },
+            "fields": {
+              "label": "个人资料附加信息",
+              "instruction": "你的主页、人称代词、年龄，或者任何你想要添加的内容。我们提供最多6个资料栏",
+              "placeholder_left": "标签",
+              "placeholder_right": "内容"
+            }
+          }
         }
       },
       "actor_detail": {

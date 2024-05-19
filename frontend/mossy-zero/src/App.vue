@@ -88,7 +88,8 @@
 
 <template>
   <div class="h-dvh">
-    <n-config-provider :theme="theme">
+    <n-config-provider :theme="theme" :locale="localizationStore.currentNaiveUILanguage"
+      :date-locale="localizationStore.currentNaiveDateLanguage">
       <n-global-style />
       <NScrollbar trigger="hover" class="h-dvh">
         <n-dialog-provider>
