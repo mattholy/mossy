@@ -57,7 +57,7 @@
         }
     }
     const createMessage = () => {
-        messageReactive = message.loading(t('ui.setup_page.onProcessing'), {
+        messageReactive = message.loading(t('ui.setup_page.on_processing'), {
             duration: 0
         })
     }

@@ -49,7 +49,7 @@
                         title: t('ui.common_desc.registerFinish'),
                         content: () => h('div', {}, [
                             h('p', t('ui.common_desc.save_key')),
-                            h('code', { class: 'text-xl' }, r_key)
+                            h('code', { class: 'text-xl' }, r_key.toString())
                         ]),
                         positiveText: t('ui.common_desc.done'),
                         onPositiveClick: () => {
@@ -77,7 +77,7 @@
         }
     }
     const createMessage = () => {
-        messageReactive = message.loading(t('ui.setup_page.onProcessing'), {
+        messageReactive = message.loading(t('ui.setup_page.on_processing'), {
             duration: 0
         })
     }
