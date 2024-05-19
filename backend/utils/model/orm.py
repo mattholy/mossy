@@ -228,7 +228,7 @@ class OAuthAccessToken(Base):
 
 
 class MossyUser(Base):
-    __tablename__ = 'mossy_users'
+    __tablename__ = 'users'
 
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     identifier = Column(UUID(as_uuid=True), default=uuid.uuid4,
