@@ -1,6 +1,7 @@
 <script setup lang="ts">
     import { ref, onMounted } from 'vue'
-    import { NForm, NFormItem, NImage, NFlex, NInput, NUpload, NUploadDragger, NIcon, NDynamicInput } from 'naive-ui';
+    import { NForm, NFormItem, NImage, NFlex, NInput, NUpload, NUploadDragger, NIcon, NDynamicInput, NSkeleton } from 'naive-ui';
+    import { useLoadingBar } from 'naive-ui'
     import { FileTray } from '@vicons/ionicons5'
     import { useI18n } from 'vue-i18n';
     import type {
@@ -9,10 +10,12 @@
         UploadFileInfo
     } from 'naive-ui'
     import { notyf } from '@/utils/notyf';
+    import { callMossyApi, type MossyApiError } from '@/utils/apiCall';
 
     const { t } = useI18n()
+    const loadingBar = useLoadingBar()
     const form_data = ref({
-        "display_name": "John Doe",
+        "display_name": "",
         "desc": "",
         "avatar": {
             "file_content": "",
@@ -28,6 +31,8 @@
     })
 
     const rules: FormRules = {}
+    const loading = ref(true)
+    const formDisabled = ref(false)
 
     const handleAvatar: UploadOnChange = (payload) => {
         if (payload.fileList.length != 0) {
@@ -50,8 +55,6 @@
                     "file_type": file.type,
                     "file_size": file.size
                 };
-
-                console.log(form_data.value.avatar);
             };
 
             reader.onerror = (error) => {
@@ -70,7 +73,7 @@
             }
             const file = listedFile.file as File
             if (file.size > 10 * 1024 * 1024) {
-                console.log(t('ui.pages.settings.personal.basic_info.header.file_too_large'));
+                notyf.error(t('ui.pages.settings.personal.basic_info.header.file_too_large'));
                 return;
             }
 
@@ -83,8 +86,6 @@
                     "file_type": file.type,
                     "file_size": file.size
                 };
-
-                console.log(form_data.value.avatar);
             };
 
             reader.onerror = (error) => {
@@ -98,16 +99,64 @@
     const onCreate = () => {
         return { name: '', value: '' }
     }
+
+    function debounce<T extends (...args: any[]) => void>(func: T, wait: number): (...args: Parameters<T>) => void {
+        let timeout: ReturnType<typeof setTimeout> | undefined;
+        return (...args: Parameters<T>): void => {
+            if (timeout !== undefined) {
+                clearTimeout(timeout);
+            }
+            loadingBar.start()
+            timeout = setTimeout(() => {
+                func(...args);
+            }, wait);
+        };
+    }
+
+
+    const submit = async () => {
+        formDisabled.value = true
+        await callMossyApi({
+            method: 'POST',
+            endpoint: '/api/m1/user/profile',
+            data: form_data.value
+        }).then((response) => {
+            form_data.value = response
+            notyf.success(t('ui.pages.settings.personal.basic_info.submit_success'))
+            loadingBar.finish()
+        }).catch(() => {
+            notyf.error(t('ui.pages.settings.personal.basic_info.submit_failed'))
+            loadingBar.error()
+        }).finally(() => {
+            formDisabled.value = false
+        })
+    }
+
+    const debouncedSubmit = debounce(submit, 3000);
+
+    onMounted(() => {
+        callMossyApi({
+            method: 'GET',
+            endpoint: '/api/m1/user/profile'
+        }).then((response) => {
+            form_data.value = response
+            loading.value = false
+        }).catch((error: MossyApiError) => {
+            console.error(error);
+        })
+    })
 </script>
 <template>
-    <n-form :model="form_data" size="large">
+    <p>{{ t('ui.pages.settings.personal.basic_info.note') }}</p>
+    <n-form :model="form_data" size="large" @change="debouncedSubmit" :disabled="formDisabled">
         <n-form-item path="display_name">
             <template #label>
                 <p class="p-0 m-0 font-bold text-base">{{ t('ui.pages.settings.personal.basic_info.display_name.label')
                     }}</p>
                 <p class="p-0 m-0">{{ t('ui.pages.settings.personal.basic_info.display_name.instruction') }}</p>
             </template>
-            <n-input v-model:value="form_data.display_name"
+            <n-skeleton v-if="loading" :sharp="false" size="large" />
+            <n-input v-else v-model:value="form_data.display_name"
                 :placeholder="t('ui.pages.settings.personal.basic_info.display_name.placeholder')" show-count
                 :maxlength="30" clearable />
         </n-form-item>
@@ -120,7 +169,8 @@
                         '#标签'
                 }) }}</p>
             </template>
-            <n-input v-model:value="form_data.desc"
+            <n-skeleton v-if="loading" :sharp="false" size="large" />
+            <n-input v-else v-model:value="form_data.desc"
                 :placeholder="t('ui.pages.settings.personal.basic_info.desc.placeholder')" type="textarea"
                 :autosize="{ minRows: 3 }" show-count :maxlength="500" clearable />
         </n-form-item>
@@ -130,8 +180,9 @@
                     }}</p>
                 <p class="p-0 m-0">{{ t('ui.pages.settings.personal.basic_info.avatar.instruction') }}</p>
             </template>
-            <n-upload :show-preview-button="true" :default-upload="false" list-type="image" :max="1" accept="image/*"
-                v-model:value="form_data.avatar" @change="handleAvatar" name='qqqqqqqqqqqqqq'>
+            <n-skeleton v-if="loading" :sharp="false" size="large" />
+            <n-upload v-else :show-preview-button="true" :default-upload="false" list-type="image" :max="1"
+                accept="image/*" v-model:value="form_data.avatar" @change="handleAvatar">
                 <n-upload-dragger>
                     <div v-if="form_data.avatar.file_content == ''">
                         <n-icon size="32">
@@ -141,7 +192,7 @@
                         <p class="p-0 m-0">{{ t('ui.pages.settings.personal.basic_info.avatar.placeholder') }}</p>
                     </div>
                     <div v-else>
-                        <n-image :height="200" preview-disabled
+                        <n-image :width="300" preview-disabled
                             :src="`data:${form_data.avatar.file_type};base64,${form_data.avatar.file_content}`" />
                         <div>
                             <p class="p-0 m-0 font-bold text-base">
@@ -161,8 +212,9 @@
                     }}</p>
                 <p class="p-0 m-0">{{ t('ui.pages.settings.personal.basic_info.header.instruction') }}</p>
             </template>
-            <n-upload :show-preview-button="true" :default-upload="false" list-type="image" :max="2" accept="image/*"
-                v-model:value="form_data.avatar" @change="handleHeader">
+            <n-skeleton v-if="loading" :sharp="false" size="large" />
+            <n-upload v-else :show-preview-button="true" :default-upload="false" list-type="image" :max="2"
+                accept="image/*" v-model:value="form_data.avatar" @change="handleHeader">
                 <n-upload-dragger>
                     <div v-if="form_data.header.file_content == ''">
                         <n-icon size="32">
@@ -172,7 +224,7 @@
                         <p class="p-0 m-0">{{ t('ui.pages.settings.personal.basic_info.header.placeholder') }}</p>
                     </div>
                     <div v-else>
-                        <n-image :height="200" preview-disabled
+                        <n-image :width="300" preview-disabled
                             :src="`data:${form_data.header.file_type};base64,${form_data.header.file_content}`" />
                         <div>
                             <p class="p-0 m-0 font-bold text-base">
@@ -192,7 +244,8 @@
                     }}</p>
                 <p class="p-0 m-0">{{ t('ui.pages.settings.personal.basic_info.fields.instruction') }}</p>
             </template>
-            <n-dynamic-input v-model:value="form_data.fields" :max="6" :on-create="onCreate">
+            <n-skeleton v-if="loading" :sharp="false" size="large" />
+            <n-dynamic-input v-else v-model:value="form_data.fields" :max="6" :on-create="onCreate">
                 <template #default="{ value }">
                     <n-input v-model:value="value.name" type="text"
                         :placeholder="t('ui.pages.settings.personal.basic_info.fields.placeholder_left')" />
@@ -201,6 +254,5 @@
                 </template>
             </n-dynamic-input>
         </n-form-item>
-        {{ form_data }}
     </n-form>
 </template>

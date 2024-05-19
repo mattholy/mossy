@@ -221,7 +221,10 @@
               "instruction": "你的主页、人称代词、年龄，或者任何你想要添加的内容。我们提供最多6个资料栏",
               "placeholder_left": "标签",
               "placeholder_right": "内容"
-            }
+            },
+            "submit_success": "你的资料已经保存",
+            "submit_failed": "保存资料的时候出现问题，请稍后再试",
+            "note": "你的更改会在空闲时候自动保存并更新，不用担心"
           }
         }
       },

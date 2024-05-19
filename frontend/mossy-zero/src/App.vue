@@ -8,7 +8,7 @@
   import MossyFooter from '@/components/MossyFooter.vue'
   import LeftSider from '@/components/LeftSider.vue'
   import RightSider from '@/components/RightSider.vue'
-  import { NScrollbar, NMessageProvider, NFlex, NCard, NAlert, NDialogProvider } from 'naive-ui';
+  import { NScrollbar, NMessageProvider, NFlex, NCard, NAlert, NDialogProvider, NLoadingBarProvider } from 'naive-ui';
   import { useRouter, useRoute } from 'vue-router'
   import { useThemeStore } from '@/stores/themeStore'
   import { useUserStateStore } from '@/stores/userStateStore'
@@ -91,40 +91,42 @@
     <n-config-provider :theme="theme" :locale="localizationStore.currentNaiveUILanguage"
       :date-locale="localizationStore.currentNaiveDateLanguage">
       <n-global-style />
-      <NScrollbar trigger="hover" class="h-dvh">
-        <n-dialog-provider>
-          <n-message-provider>
-            <MossyHeader />
-            <setupSever v-if="showSetupPage" />
-            <n-flex v-else-if="showRouterPage" justify="center" class="flex absolute top-0 w-full h-dvh"
-              style="gap: 0;">
-              <div v-if="!small_device"
-                class="hidden md:flex 2xl:border-l flex-none h-dvh w-1/5 md:w-64 xl:w-72 m-0 p-0 border-gray-500 border-solid border-0">
-                <n-scrollbar trigger="hover" content-class="pt-12">
-                  <LeftSider />
-                </n-scrollbar>
-              </div>
-              <div
-                class="grow h-dvh max-w-5xl w-2/5 m-0 p-0 z-30 lg:border-r md:border-l border-gray-500 border-solid border-0">
-                <NScrollbar trigger="hover" class="h-dvh" content-class="flex flex-col pt-12 min-h-full">
-                  <RouterView />
-                  <MossyFooter v-if="small_device" class="mt-auto min-h-14 max-h-14" />
-                </NScrollbar>
+      <n-loading-bar-provider>
+        <NScrollbar trigger="hover" class="h-dvh">
+          <n-dialog-provider>
+            <n-message-provider>
+              <MossyHeader />
+              <setupSever v-if="showSetupPage" />
+              <n-flex v-else-if="showRouterPage" justify="center" class="flex absolute top-0 w-full h-dvh"
+                style="gap: 0;">
+                <div v-if="!small_device"
+                  class="hidden md:flex 2xl:border-l flex-none h-dvh w-1/5 md:w-64 xl:w-72 m-0 p-0 border-gray-500 border-solid border-0">
+                  <n-scrollbar trigger="hover" content-class="pt-12">
+                    <LeftSider />
+                  </n-scrollbar>
+                </div>
+                <div
+                  class="grow h-dvh max-w-5xl w-2/5 m-0 p-0 z-30 lg:border-r md:border-l border-gray-500 border-solid border-0">
+                  <NScrollbar trigger="hover" class="h-dvh" content-class="flex flex-col pt-12 min-h-full">
+                    <RouterView />
+                    <MossyFooter v-if="small_device" class="mt-auto min-h-14 max-h-14" />
+                  </NScrollbar>
 
 
-              </div>
-              <div v-if="!medium_device"
-                class="hidden lg:flex 2xl:border-r flex-none h-dvh w-1/5 md:w-64 xl:w-72 m-0 p-0 border-gray-500 border-solid border-0">
-                <NScrollbar trigger="hover" content-class="pt-12">
-                  <RightSider />
-                </NScrollbar>
-              </div>
-            </n-flex>
-            <ErrorView v-else-if="showErrorPage" :msg="errorPageMsg" />
-            <OathPage v-else-if="showOauthPage" />
-          </n-message-provider>
-        </n-dialog-provider>
-      </NScrollbar>
+                </div>
+                <div v-if="!medium_device"
+                  class="hidden lg:flex 2xl:border-r flex-none h-dvh w-1/5 md:w-64 xl:w-72 m-0 p-0 border-gray-500 border-solid border-0">
+                  <NScrollbar trigger="hover" content-class="pt-12">
+                    <RightSider />
+                  </NScrollbar>
+                </div>
+              </n-flex>
+              <ErrorView v-else-if="showErrorPage" :msg="errorPageMsg" />
+              <OathPage v-else-if="showOauthPage" />
+            </n-message-provider>
+          </n-dialog-provider>
+        </NScrollbar>
+      </n-loading-bar-provider>
     </n-config-provider>
   </div>
 </template>
