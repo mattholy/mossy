@@ -38,6 +38,7 @@ from utils.model.orm import NodeType
 
 # 其它
 import uuid
+import time
 from sqlalchemy.exc import ProgrammingError
 
 
@@ -162,6 +163,15 @@ async def http_exception_handler(request, exc):
 
 
 @app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    process_time = (time.time() - start_time) * 1000
+    response.headers["X-Process-Time"] = f"{process_time:.2f} ms"
+    return response
+
+
+@app.middleware("http")
 async def internal_error_handler(request: Request, call_next):
     try:
         response = await call_next(request)
@@ -208,8 +218,11 @@ async def check_server_ready(request: Request, call_next):
 
 @app.middleware("http")
 async def add_worker_info(request: Request, call_next):
+    start_time = time.time()
     logger.debug('Incoming request with header: ' + str({key: value for key, value in request.headers.items()}) + ' body: ' + str(await request.body()))
     response = await call_next(request)
+    process_time = (time.time() - start_time) * 1000
+    response.headers["X-Total-Time"] = f"{process_time:.2f} ms"
     response.headers["X-Worker-ID"] = request.app.state.worker_id
     response.headers["X-Node-ID"] = request.app.state.node_id
     return response
