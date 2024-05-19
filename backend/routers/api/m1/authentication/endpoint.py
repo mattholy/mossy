@@ -42,7 +42,7 @@ from utils.db import get_db
 from utils.model.api_schemas import WebauthnReg
 from utils.model.orm import generate_secret, Passkeys, RegistrationAttempt, AuthSession, MossyUser
 from utils.system.security import generate_jwt, verify_jwt, get_current_user_session
-from utils.logger import logger
+from utils.logger import logger, async_operation_log_to_db
 
 from env import RP_ID, RP_NAME, RP_SOURCE, DATABASE_URL
 
@@ -107,6 +107,8 @@ async def after_registration(request_data: dict, db: AsyncSession = Depends(get_
     result = await db.execute(select(RegistrationAttempt).filter_by(challenge=challenge))
     att = result.scalars().first()
 
+    user_request = att.user
+
     if att is None or att.created_at < datetime.now(timezone.utc) - timedelta(minutes=3):
         await db.delete(att)
         await db.commit()
@@ -149,6 +151,13 @@ async def after_registration(request_data: dict, db: AsyncSession = Depends(get_
         db.add(new_key)
         db.delete(att)
         await db.commit()
+        await async_operation_log_to_db(
+            'auth',
+            {
+                'operation': 'register',
+                'user': user_request,
+            }
+        )
         if r_key:
             return WebauthnReg(status='OK', msg='AllDone', payload={'recovery_key': r_key})
         return WebauthnReg(status='OK', msg='AllDone', payload=None)

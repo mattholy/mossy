@@ -8,7 +8,7 @@
     import { useRoute, useRouter } from 'vue-router'
     import {
         Home, HomeOutline,
-        Compass, CompassOutline,
+        Planet, PlanetOutline,
         Notifications, NotificationsOutline,
         Mail, MailOutline,
         Bookmark, BookmarkOutline,
@@ -39,16 +39,16 @@
         class="flex z-40 sticky bottom-0 backdrop-blur-lg h-14 items-center justify-center border-gray-500 border-solid border-t border-b-0 border-l-0 border-r-0"
         :class="bgcolor">
         <div class="h-14 px-4 flex items-center justify-center" v-if="userStateStore.isLoggedIn"
-            @click="router.push('home')">
+            @click="router.push('/home')">
             <n-icon :size="32">
                 <Home v-if="selectedValue == 'home'" />
                 <HomeOutline v-else />
             </n-icon>
         </div>
-        <div class="h-14 px-4 flex items-center justify-center" @click="router.push('explore')">
+        <div class="h-14 px-4 flex items-center justify-center" @click="router.push('/explore')">
             <n-icon :size="32">
-                <Compass v-if="selectedValue == 'explore'" />
-                <CompassOutline v-else />
+                <Planet v-if="selectedValue == 'explore'" />
+                <PlanetOutline v-else />
             </n-icon>
         </div>
         <n-button v-if="userStateStore.isLoggedIn" circle size="large" type="primary">
@@ -57,21 +57,21 @@
             </template>
         </n-button>
         <div class="h-14 px-4 flex items-center justify-center" v-if="userStateStore.isLoggedIn"
-            @click="router.push('conversations')">
+            @click="router.push('/conversations')">
             <n-icon :size="32">
                 <Mail v-if="selectedValue == 'conversations'" />
                 <MailOutline v-else />
             </n-icon>
         </div>
         <div class="h-14 px-4 flex items-center justify-center" v-if="userStateStore.isLoggedIn"
-            @click="router.push('collections')">
+            @click="router.push('/collections')">
             <n-icon :size="32">
                 <Bookmark v-if="selectedValue == 'collections'" />
                 <BookmarkOutline v-else />
             </n-icon>
         </div>
         <div class="h-14 px-4 flex flex-col gap-0 items-center justify-center" v-if="!userStateStore.isLoggedIn"
-            @click="router.push('about')">
+            @click="router.push('/about')">
             <n-icon :size="32">
                 <InformationCircle v-if="selectedValue == 'about'" />
                 <InformationCircleOutline v-else />

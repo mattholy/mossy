@@ -11,7 +11,8 @@
         Notifications, NotificationsOutline,
         Mail, MailOutline,
         Bookmark, BookmarkOutline,
-        Cog, CogOutline
+        Cog, CogOutline,
+        Planet, PlanetOutline
     } from '@vicons/ionicons5'
     import { useRoute } from 'vue-router'
     import { useUserStateStore } from '@/stores/userStateStore'
@@ -51,7 +52,7 @@
                     { default: () => t('ui.leftsider.navigator.explore') }
                 ),
             key: 'explore',
-            icon: renderIcon('explore', Compass, CompassOutline),
+            icon: renderIcon('explore', Planet, PlanetOutline),
             show: true
         },
         {

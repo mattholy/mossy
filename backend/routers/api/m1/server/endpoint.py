@@ -39,7 +39,7 @@ from webauthn.helpers.structs import PublicKeyCredentialCreationOptions
 
 from utils.db import get_db
 from utils.model.api_schemas import BaseApiResp
-from utils.model.orm import Passkeys, RegistrationAttempt, AuthSession, SystemConfig, ServerRules
+from utils.model.orm import Passkeys, RegistrationAttempt, AuthSession, SystemConfig, ServerRules, MossyUser, FediAccounts
 from utils.system.security import generate_jwt, verify_jwt, get_current_user_session
 from utils.logger import logger
 
@@ -97,28 +97,35 @@ async def fetch_server_info(db: AsyncSession = Depends(get_db)):
                   for rule in rules]
     logger.debug(rules_list)
 
-    users_count_query = select(func.count(func.distinct(Passkeys.user))).where(
-        Passkeys.is_deleted == False)
+    users_count_query = select(func.count(func.distinct(MossyUser.id))).where(
+        MossyUser.id > 0)
     users_count_result = await db.execute(users_count_query)
     unique_user_count = users_count_result.scalar()
+    logger.debug(unique_user_count)
 
     thirty_days_ago = datetime.now() - timedelta(days=30)
     users_of_30_query = select(func.count(func.distinct(AuthSession.user))).where(
         AuthSession.created_at >= thirty_days_ago)
     users_of_30_result = await db.execute(users_of_30_query)
-    unique_user_count = users_of_30_result.scalar()
+    users_of_30_count = users_of_30_result.scalar()
+
+    admin_query = select(FediAccounts).where(
+        FediAccounts.username == config_dict['server_admin'])
+    admin_result = await db.execute(admin_query)
+    admin = admin_result.scalars().first()
 
     return ServerInfoResp(
         payload=ServerInfo(
             title=config_dict['server_name'],
             admin_id=config_dict['server_admin'],
-            admin_name='Administrator',  # 查询管理员名称
-            admin_avatar='data:image/png;base64,xxx',  # 查询管理员头像
+            admin_name=admin.display_name if admin else '',
+            admin_avatar=f'data:{admin.avatar_file_type};base64,{
+                admin.avatar_file_content}' if admin else '',
             server_banner=f'data:{config_dict["server_banner_mime"]};base64,{
                 config_dict["server_banner"]}' if config_dict["server_banner"] else '',
             contact=config_dict['server_service'],
             users=unique_user_count,
-            users_of_30=unique_user_count,
+            users_of_30=users_of_30_count,
             description=config_dict['server_desc'],
             about=config_dict['server_about'],
             rules=rules_list

@@ -22,9 +22,12 @@
     },
     "header": {
       "actions": {
-        "more": "快捷设置",
+        "more": "快捷操作",
         "localization": "切换语言",
-        "darkmode": "暗色模式"
+        "darkmode": "暗色模式",
+        "notification": "通知与提醒",
+        "settings": "更多设置",
+        "logout": "登出"
       },
       "statusmsg": {
         "shareFail": "分享失败",
@@ -180,6 +183,19 @@
           "admin:write:email_domain_blocks": "管理电子邮件域名屏蔽列表",
           "admin:write:canonical_email_blocks": "管理标准电子邮件屏蔽列表"
         }
+      },
+      "settings": {
+        "header": {
+          "personal": "个人资料",
+          "system": "系统设置"
+        }
+      },
+      "actor_detail": {
+        "change_profile": "修改资料",
+        "reg_time": "注册时间",
+        "activities_count": "动态",
+        "following_count": "关注",
+        "follower_count": "粉丝"
       }
     }
   },

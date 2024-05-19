@@ -1,22 +1,28 @@
 <script setup lang="ts">
+    import { computed } from 'vue'
     import { NFlex, NButton, NIcon, NPopover, NDivider } from 'naive-ui'
     import { useRoute, useRouter } from 'vue-router'
     import { ChevronBack, ShareSocial, EllipsisHorizontal, HandRight, Warning } from '@vicons/ionicons5'
     import { useI18n } from 'vue-i18n'
     import { notyf } from '@/utils/notyf'
     import { useUserStateStore } from '@/stores/userStateStore'
+    import { useThemeStore } from '@/stores/themeStore'
+
 
     interface Props {
-        pageCategory: 'user' | 'activity'
-        resourceUri: string;
+        pageCategory: 'user' | 'activity' | 'tag'
     }
 
     const userStateStore = useUserStateStore()
     const props = defineProps<Props>();
     const route = useRoute()
     const router = useRouter()
+    const theme = useThemeStore()
     const { t } = useI18n()
     const uri = route.params.id
+    const bgcolor = computed(() => {
+        return theme.isDarkMode ? "bg-neutral-700/70" : "bg-neutral-50/70"
+    })
 
     const handleShare = async () => {
         if (navigator.share) {
@@ -54,7 +60,8 @@
 
 <template>
     <n-flex justify="space-between"
-        class="z-40 px-2 sticky top-0 font-bold bg-opacity-30 backdrop-filter backdrop-blur-md h-12 items-center border-solid border-0 border-b border-gray-500">
+        class="z-40 px-2 sticky top-12 font-bold bg-opacity-30 backdrop-filter backdrop-blur-md h-12 items-center border-solid border-0 border-b border-gray-500"
+        :class="bgcolor">
         <div class="w-2/12 text-left">
             <n-button icon-placement="left" circle :bordered="false" @click="router.back()">
                 <template #icon>

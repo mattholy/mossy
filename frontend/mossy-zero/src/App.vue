@@ -105,10 +105,12 @@
               </div>
               <div
                 class="grow h-dvh max-w-5xl w-2/5 m-0 p-0 z-30 lg:border-r md:border-l border-gray-500 border-solid border-0">
-                <NScrollbar trigger="hover" class="h-dvh" content-class="h-dvh flex flex-col pt-12">
+                <NScrollbar trigger="hover" class="h-dvh" content-class="flex flex-col pt-12 min-h-full">
                   <RouterView />
                   <MossyFooter v-if="small_device" class="mt-auto min-h-14 max-h-14" />
                 </NScrollbar>
+
+
               </div>
               <div v-if="!medium_device"
                 class="hidden lg:flex 2xl:border-r flex-none h-dvh w-1/5 md:w-64 xl:w-72 m-0 p-0 border-gray-500 border-solid border-0">

@@ -7,6 +7,8 @@ import pinia from '@/stores'
 import VMdPreview from '@kangc/v-md-editor/lib/preview';
 import '@kangc/v-md-editor/lib/style/preview.css';
 import vuePressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js';
+import VMdPreviewHtml from '@kangc/v-md-editor/lib/preview-html';
+import '@kangc/v-md-editor/lib/style/preview-html.css';
 import '@kangc/v-md-editor/lib/theme/style/github.css';
 import '@/assets/main.css';
 import 'notyf/notyf.min.css';
@@ -21,6 +23,7 @@ VMdPreview.use(vuePressTheme, {
     Hljs: hljs,
 });
 app.use(VMdPreview);
+app.use(VMdPreviewHtml);
 
 async function init() {
     await setI18nLanguage('zh-CN');
