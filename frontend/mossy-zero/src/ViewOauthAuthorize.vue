@@ -1,10 +1,11 @@
 <script setup lang="ts">
+    import { ref } from 'vue'
     import { useRouter, useRoute } from 'vue-router'
     import { callMossyApi, MossyApiError } from './utils/apiCall'
     import { useThemeStore } from '@/stores/themeStore'
     import { useUserStateStore } from '@/stores/userStateStore'
     import { useI18n } from 'vue-i18n'
-    import { NFlex, NResult, NButton, NThing, NAvatar, NListItem, NList, NIcon, NCard } from 'naive-ui'
+    import { NFlex, NResult, NButton, NThing, NAvatar, NListItem, NList, NIcon, NCard, NModal } from 'naive-ui'
     import { ArrowForward, Close } from '@vicons/ionicons5'
     import parseOAuthScopes from '@/utils/scopeParse'
     import { webauthnAuthentication } from '@/utils/webauthn'
@@ -17,6 +18,7 @@
     const { t, te } = useI18n()
     const login = () => {
         webauthnAuthentication()
+            .then((res) => { })
             .catch((err) => {
                 notyf.error(t(`api.statusmsg.${err.message}.notification`))
             })

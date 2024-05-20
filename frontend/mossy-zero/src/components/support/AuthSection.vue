@@ -1,8 +1,8 @@
 <script setup lang="ts">
-    import { onBeforeUnmount, ref, computed, watchEffect, h } from 'vue'
+    import { onBeforeUnmount, ref, computed, watchEffect, h, provide } from 'vue'
     import { useI18n } from 'vue-i18n'
     import { useMessage } from 'naive-ui'
-    import { NButton, NFlex, NIcon, NModal, NInput, NInputGroup, NInputGroupLabel, NTag } from 'naive-ui'
+    import { NButton, NFlex, NIcon, NModal, NInput, NInputGroup, NInputGroupLabel, NTag, NCard } from 'naive-ui'
     import { useDialog } from 'naive-ui'
     import type { MessageReactive } from 'naive-ui'
     import { FingerPrint } from '@vicons/ionicons5'
@@ -12,8 +12,9 @@
     import { MossyApiError } from '@/utils/apiCall'
     import { useWindowSize } from '@vueuse/core'
     import { useRouter, useRoute } from 'vue-router'
+    import PersonalDataUpdater from '@/components/support/PersonalDataUpdater.vue';
 
-
+    const loading = ref(false)
     const userStateStore = useUserStateStore()
     const { width } = useWindowSize()
     const small_device = computed(() => width.value < 768)
@@ -26,8 +27,31 @@
     const { t } = useI18n()
     const login = async () => {
         await webauthnAuthentication()
-            .then(() => {
-                router.push('/home')
+            .then((res) => {
+                if (res.green) {
+                    dialog.success({
+                        title: t('ui.setup_page.green.title'),
+                        content: t('ui.setup_page.green.content'),
+                        closable: false,
+                        bordered: true,
+                        closeOnEsc: false,
+                        maskClosable: false,
+                        showIcon: false,
+                        transformOrigin: 'center',
+                        negativeText: t('ui.setup_page.green.no'),
+                        positiveText: t('ui.setup_page.green.yes'),
+                        onNegativeClick: () => {
+                            router.push('/home')
+                            return true
+                        },
+                        onPositiveClick: () => {
+                            router.push('/settings/personal')
+                            return true
+                        }
+                    })
+                } else {
+                    router.push('/home')
+                }
             })
             .catch((err) => {
                 notyf.error(t(`api.statusmsg.${err.message}.notification`))
@@ -40,7 +64,7 @@
     const register = async () => {
         usernameInputDisable.value = true
         createMessage()
-        await webauthnRegister(username.value)
+        await webauthnRegister(username.value, route)
             .then((r_key) => {
                 notyf.success(t('ui.setup_page.AllDone'))
                 showReg.value = false

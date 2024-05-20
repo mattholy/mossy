@@ -24,6 +24,7 @@ export async function webauthnRegister(uid: string, route?: RouteLocationNormali
     try {
         registrationData = await startRegistration(regOptions);
     } catch (error: any) {
+        console.log(error)
         if (isErrorWithMessage(error)) {
             if (error.message.startsWith('WebAuthn is not supported')) {
                 throw new Error('WebauthnNotReady');
@@ -58,7 +59,7 @@ export async function webauthnRegister(uid: string, route?: RouteLocationNormali
     return recovery_key
 }
 
-export async function webauthnAuthentication(): Promise<string> {
+export async function webauthnAuthentication(): Promise<any> {
     let authOptions: PublicKeyCredentialRequestOptionsJSON
     let authData: AuthenticationResponseJSON
     let authResp: any
@@ -102,7 +103,7 @@ export async function webauthnAuthentication(): Promise<string> {
     }
     const userStateStore = useUserStateStore(pinia);
     userStateStore.setToken(authResp.token)
-    return authResp.token
+    return authResp
 }
 
 function isErrorWithMessage(error: any): error is { name: string, message: string } {

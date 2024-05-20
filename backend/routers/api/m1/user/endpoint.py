@@ -92,6 +92,14 @@ class UserProfile(BaseModel):
     fields: List[Optional[dict]] = Field(
         default_factory=list, description="List of additional fields")
 
+    @validator('desc', pre=True, always=True)
+    def set_empty_string_if_none(cls, v):
+        return v or ""
+
+    @validator('fields', pre=True, always=True)
+    def set_empty_string_if_none(cls, v):
+        return v or []
+
 
 class UserProfilesResp(BaseApiResp):
     status: str = 'OK'
@@ -147,35 +155,17 @@ async def fetch_user_profile(profile_data: UserProfile, user_session: UserSessio
         FediAccounts.username == user_session.user and FediAccounts.domain == RP_ID).limit(1)
     fedi_user_res = await db.execute(fedi_user_query)
     fedi_user = fedi_user_res.scalars().first()
-    if fedi_user is not None:
-        fedi_user.display_name = profile_data.display_name
-        fedi_user.description_in_markdown = profile_data.desc  # TODO: update this to html
-        fedi_user.avatar_file_content = profile_data.avatar.file_content
-        fedi_user.avatar_file_size = profile_data.avatar.file_size
-        fedi_user.avatar_file_type = profile_data.avatar.file_type
-        fedi_user.header_file_content = profile_data.header.file_content
-        fedi_user.header_file_size = profile_data.header.file_size
-        fedi_user.header_file_type = profile_data.header.file_type
-        fedi_user.fields = profile_data.fields
-    else:
-        private_key_pem, public_key_pem = generate_ecc_key_pair()
-        fedi_user = FediAccounts(
-            username=user_session.user,
-            domain=RP_ID,
-            display_name=profile_data.display_name,
-            description_in_markdown=profile_data.desc,
-            avatar_file_content=profile_data.avatar.file_content,
-            avatar_file_size=profile_data.avatar.file_size,
-            avatar_file_type=profile_data.avatar.file_type,
-            header_file_content=profile_data.header.file_content,
-            header_file_size=profile_data.header.file_size,
-            header_file_type=profile_data.header.file_type,
-            fields=profile_data.fields,
-            private_key=private_key_pem,
-            public_key=public_key_pem,
-            actor_type='Person'
-        )
-        db.add(fedi_user)
+    if fedi_user is None:
+        raise HTTPException(status_code=401, detail='UserNotFound')
+    fedi_user.display_name = profile_data.display_name
+    fedi_user.description_in_markdown = profile_data.desc  # TODO: update this to html
+    fedi_user.avatar_file_content = profile_data.avatar.file_content
+    fedi_user.avatar_file_size = profile_data.avatar.file_size
+    fedi_user.avatar_file_type = profile_data.avatar.file_type
+    fedi_user.header_file_content = profile_data.header.file_content
+    fedi_user.header_file_size = profile_data.header.file_size
+    fedi_user.header_file_type = profile_data.header.file_type
+    fedi_user.fields = profile_data.fields
     user_profile = UserProfile(
         display_name=fedi_user.display_name,
         desc=fedi_user.description_in_markdown,

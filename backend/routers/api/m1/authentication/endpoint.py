@@ -40,8 +40,8 @@ from webauthn.helpers.structs import PublicKeyCredentialCreationOptions
 
 from utils.db import get_db
 from utils.model.api_schemas import WebauthnReg
-from utils.model.orm import generate_secret, Passkeys, RegistrationAttempt, AuthSession, MossyUser
-from utils.system.security import generate_jwt, verify_jwt, get_current_user_session
+from utils.model.orm import generate_secret, Passkeys, RegistrationAttempt, AuthSession, MossyUser, FediAccounts
+from utils.system.security import generate_jwt, verify_jwt, get_current_user_session, generate_ecc_key_pair
 from utils.logger import logger, async_operation_log_to_db
 
 from env import RP_ID, RP_NAME, RP_SOURCE, DATABASE_URL
@@ -205,8 +205,26 @@ async def after_authentication(response: dict, request: Request, db: AsyncSessio
             related_passkey=passkey.id
         )
         db.add(new_session)
+        # check if need to setup profile
+        fedi_acc_result = await db.execute(select(FediAccounts).filter_by(username=passkey.user).limit(1))
+        fedi_acc_result = fedi_acc_result.scalars().first()
+        green = False
+        if not fedi_acc_result:
+            private_key_pem, public_key_pem = generate_ecc_key_pair()
+            fedi_acc_result = FediAccounts(
+                username=passkey.user,
+                public_key=public_key_pem,
+                private_key=private_key_pem,
+                display_name='Mossy Momo',
+                description_in_markdown='A New Mossy Momo User',
+            )
+            green = True
+            db.add(fedi_acc_result)
         await db.commit()
-        return WebauthnReg(status='OK', msg='AllDone', payload={'token': token})
+        return WebauthnReg(status='OK', msg='AllDone', payload={
+            'token': token,
+            'green': green
+        })
     except InvalidAuthenticationResponse as e:
         if str(e).startswith("Unexpected client data origin"):
             raise HTTPException(status_code=401, detail='InvalidOrigin')

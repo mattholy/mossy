@@ -116,7 +116,13 @@
       "AllDone": "初始化设置已完成，您可以开始使用Mossy了",
       "BannerImageAspectError": "Banner图片比例不正确，请重新选择",
       "BannerImageFormatError": "Banner图片格式无法识别，请确认它是一张图片",
-      "on_processing": "正在处理中，请稍候。在此期间，请根据屏幕提示操作。"
+      "on_processing": "正在处理中，请稍候。在此期间，请根据屏幕提示操作。",
+      "green": {
+        "title": "欢迎使用Mossy",
+        "content": "你已经注册成功了，在开始之前，要现在就去设置你的个人基本资料吗？",
+        "yes": "走吧",
+        "no": "我先看看再说"
+      }
     },
     "pages": {
       "about": {
