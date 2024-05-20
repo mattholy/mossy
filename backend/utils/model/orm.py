@@ -58,11 +58,12 @@ class Passkeys(Base):
     deleted_by = Column(String)
 
 
-class RegistrationAttempt(Base):
-    __tablename__ = 'auth_registration_attempts'
+class AuthChallenges(Base):
+    __tablename__ = 'auth_challenges'
 
-    challenge = Column(BYTEA, primary_key=True)
-    user = Column(String, nullable=False, index=True)
+    uuid = Column(UUID, default=uuid.uuid4, primary_key=True)
+    user = Column(String, index=True)
+    challenge = Column(BYTEA, nullable=False)
     user_agent = Column(String, nullable=False)
     access_address = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())

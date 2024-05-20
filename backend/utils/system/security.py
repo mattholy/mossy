@@ -27,7 +27,7 @@ from pydantic import BaseModel
 
 from utils.db import get_db
 from env import RP_ID
-from utils.model.orm import Passkeys, RegistrationAttempt, AuthSession, Permission
+from utils.model.orm import Passkeys, AuthSession, Permission
 import cryptography
 from cryptography.hazmat.primitives.asymmetric import ec
 from utils.logger import logger

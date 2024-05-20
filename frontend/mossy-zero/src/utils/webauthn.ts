@@ -5,8 +5,18 @@ import { useUserStateStore } from '@/stores/userStateStore';
 import type { PublicKeyCredentialCreationOptionsJSON, PublicKeyCredentialRequestOptionsJSON, RegistrationResponseJSON, AuthenticationResponseJSON } from '@simplewebauthn/types'
 import type { RouteLocationNormalizedLoaded } from 'vue-router';
 
+interface webauthnRegisterResponse {
+    mossy_id: string,
+    webauthn: PublicKeyCredentialCreationOptionsJSON
+}
+
+interface webauthnAuthncationResponse {
+    mossy_id: string,
+    webauthn: PublicKeyCredentialRequestOptionsJSON
+}
+
 export async function webauthnRegister(uid: string, route?: RouteLocationNormalizedLoaded): Promise<String> {
-    let regOptions: PublicKeyCredentialCreationOptionsJSON
+    let regOptions: webauthnRegisterResponse
     let registrationData: RegistrationResponseJSON
     let recovery_key: String
     try {
@@ -22,7 +32,7 @@ export async function webauthnRegister(uid: string, route?: RouteLocationNormali
     }
 
     try {
-        registrationData = await startRegistration(regOptions);
+        registrationData = await startRegistration(regOptions.webauthn);
     } catch (error: any) {
         console.log(error)
         if (isErrorWithMessage(error)) {
@@ -40,7 +50,7 @@ export async function webauthnRegister(uid: string, route?: RouteLocationNormali
             endpoint: '/api/m1/auth/verify-registration',
             data: {
                 payload: registrationData,
-                challenge: regOptions.challenge,
+                mossy_id: regOptions.mossy_id,
                 register_from: (route && route.query.client_name) ? route.query.client_name.toString() : 'MossyWebApp'
             }
         }).then((res) => {
@@ -60,7 +70,7 @@ export async function webauthnRegister(uid: string, route?: RouteLocationNormali
 }
 
 export async function webauthnAuthentication(): Promise<any> {
-    let authOptions: PublicKeyCredentialRequestOptionsJSON
+    let authOptions: webauthnAuthncationResponse
     let authData: AuthenticationResponseJSON
     let authResp: any
     try {
@@ -75,7 +85,7 @@ export async function webauthnAuthentication(): Promise<any> {
     }
 
     try {
-        authData = await startAuthentication(authOptions);
+        authData = await startAuthentication(authOptions.webauthn);
     } catch (error: unknown) {
         if (isErrorWithMessage(error)) {
             if (error.message.startsWith('WebAuthn is not supported')) {
@@ -92,7 +102,7 @@ export async function webauthnAuthentication(): Promise<any> {
             endpoint: '/api/m1/auth/verify-authentication',
             data: {
                 payload: authData,
-                challenge: authOptions.challenge
+                mossy_id: authOptions.mossy_id
             }
         });
     } catch (error) {

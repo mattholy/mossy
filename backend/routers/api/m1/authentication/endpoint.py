@@ -36,11 +36,11 @@ from webauthn import (
 from webauthn.helpers.exceptions import InvalidRegistrationResponse, InvalidAuthenticationResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from webauthn.helpers.structs import PublicKeyCredentialCreationOptions
+from webauthn.helpers.structs import PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions
 
 from utils.db import get_db
 from utils.model.api_schemas import WebauthnReg
-from utils.model.orm import generate_secret, Passkeys, RegistrationAttempt, AuthSession, MossyUser, FediAccounts
+from utils.model.orm import generate_secret, Passkeys, AuthChallenges, AuthSession, MossyUser, FediAccounts
 from utils.system.security import generate_jwt, verify_jwt, get_current_user_session, generate_ecc_key_pair
 from utils.logger import logger, async_operation_log_to_db
 
@@ -63,7 +63,7 @@ async def start_registration(user: User, request: Request, db: AsyncSession = De
     user_agent = request.headers.get('user-agent', 'unknown')
     access_address = request.client.host
     # Check if there is a registration process of the user
-    result = await db.execute(select(RegistrationAttempt).filter_by(user=user.username))
+    result = await db.execute(select(AuthChallenges).filter_by(user=user.username))
     go_find_user = result.scalars().first()
     # Check if user already exists
     if_exists = await db.execute(select(Passkeys).filter_by(user=user.username))
@@ -85,31 +85,35 @@ async def start_registration(user: User, request: Request, db: AsyncSession = De
         user_id=user.username.encode('utf-8')
     )
 
-    new_attempt = RegistrationAttempt(
-        user=user.username,
+    new_challenge = AuthChallenges(
         challenge=simple_registration_options.challenge,
         user_agent=user_agent,
-        access_address=access_address
+        access_address=access_address,
+        user=user.username
     )
-    db.add(new_attempt)
+    db.add(new_challenge)
     await db.commit()
-
-    return WebauthnReg(status='OK', msg='AllDone', payload=json.loads(options_to_json(simple_registration_options)))
+    await db.refresh(new_challenge)
+    return WebauthnReg(status='OK', msg='AllDone', payload={
+        'mossy_id': new_challenge.uuid,
+        'webauthn': json.loads(options_to_json(simple_registration_options))
+    })
 
 
 @router.post('/verify-registration', response_class=JSONResponse, response_model=WebauthnReg)
-async def after_registration(request_data: dict, db: AsyncSession = Depends(get_db)):
-    try:
-        challenge = base64url_to_bytes(request_data["challenge"])
-    except KeyError:
-        raise HTTPException(status_code=406, detail='ChallengeNotProvided')
+async def after_registration(request_data: dict, request: Request, db: AsyncSession = Depends(get_db)):
+    user_agent = request.headers.get('user-agent', 'unknown')
+    access_address = request.client.host
 
-    result = await db.execute(select(RegistrationAttempt).filter_by(challenge=challenge))
+    result = await db.execute(select(AuthChallenges).filter_by(uuid=request_data['mossy_id']))
     att = result.scalars().first()
-
+    if not att:
+        raise HTTPException(status_code=401, detail='NoChallenge')
+    if not att.user:
+        raise HTTPException(status_code=401, detail='NoUser')
     user_request = att.user
 
-    if att is None or att.created_at < datetime.now(timezone.utc) - timedelta(minutes=3):
+    if att.created_at < datetime.now(timezone.utc) - timedelta(minutes=3):
         await db.delete(att)
         await db.commit()
         raise HTTPException(status_code=406, detail='RegistrationTimeOut')
@@ -119,13 +123,13 @@ async def after_registration(request_data: dict, db: AsyncSession = Depends(get_
     try:
         registration_verification = verify_registration_response(
             credential=request_data['payload'],
-            expected_challenge=challenge,
+            expected_challenge=att.challenge,
             expected_origin=RP_SOURCE,
             expected_rp_id=RP_ID,
             require_user_verification=True
         )
         new_key = Passkeys(
-            user=att.user,
+            user=user_request,
             credential_id=registration_verification.credential_id,
             public_key=registration_verification.credential_public_key,
             device_type=registration_verification.credential_device_type.name,
@@ -141,9 +145,9 @@ async def after_registration(request_data: dict, db: AsyncSession = Depends(get_
             r_key = '-'.join([''.join(random.choices(string.ascii_lowercase, k=6))
                              for _ in range(4)])
             ag = hashlib.sha256()
-            ag.update((r_key+'@'+att.user).encode('utf-8'))
+            ag.update((r_key+'@'+user_request).encode('utf-8'))
             mossy_user = MossyUser(
-                username=att.user,
+                username=user_request,
                 registration_source=request_data['register_from'],
                 recovery_key=ag.hexdigest()
             )
@@ -170,23 +174,40 @@ async def after_registration(request_data: dict, db: AsyncSession = Depends(get_
 
 
 @router.post('/generate-authentication-options', response_class=JSONResponse, response_model=WebauthnReg)
-async def start_authentication(db: AsyncSession = Depends(get_db)):
-    simple_authentication_options = generate_authentication_options(
-        rp_id=RP_ID)
-    return WebauthnReg(status='OK', msg='AllDone', payload=json.loads(options_to_json(simple_authentication_options)))
+async def start_authentication(request: Request, db: AsyncSession = Depends(get_db)):
+    user_agent = request.headers.get('user-agent', 'unknown')
+    access_address = request.client.host
+    simple_authentication_options: PublicKeyCredentialRequestOptions = generate_authentication_options(
+        rp_id=RP_ID,
+    )
+    new_challenge = AuthChallenges(
+        challenge=simple_authentication_options.challenge,
+        user_agent=user_agent,
+        access_address=access_address,
+    )
+    db.add(new_challenge)
+    await db.commit()
+    await db.refresh(new_challenge)
+    return WebauthnReg(status='OK', msg='AllDone', payload={
+        'mossy_id': new_challenge.uuid,
+        'webauthn': json.loads(options_to_json(simple_authentication_options))
+    })
 
 
 @router.post('/verify-authentication', response_class=JSONResponse, response_model=WebauthnReg)
-async def after_authentication(response: dict, request: Request, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(Passkeys).filter_by(raw_id=response['payload']['rawId']))
-    passkey = result.scalars().first()
+async def after_authentication(req_data: dict, request: Request, db: AsyncSession = Depends(get_db)):
+    passkey_result = await db.execute(select(Passkeys).filter_by(raw_id=req_data['payload']['rawId']))
+    passkey = passkey_result.scalars().first()
     if passkey is None:
         raise HTTPException(status_code=401, detail='NoPublicKey')
-
+    challenge_result = await db.execute(select(AuthChallenges).filter_by(uuid=req_data['mossy_id']))
+    challenge = challenge_result.scalars().first()
+    if challenge is None:
+        raise HTTPException(status_code=401, detail='NoChallenge')
     try:
         authentication_verification = verify_authentication_response(
-            credential=response['payload'],
-            expected_challenge=base64url_to_bytes(response["challenge"]),
+            credential=req_data['payload'],
+            expected_challenge=challenge.challenge,
             expected_rp_id=RP_ID,
             expected_origin=RP_SOURCE,
             credential_public_key=passkey.public_key,

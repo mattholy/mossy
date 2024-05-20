@@ -39,7 +39,7 @@ from webauthn.helpers.structs import PublicKeyCredentialCreationOptions
 
 from utils.db import get_db
 from utils.model.api_schemas import BaseApiResp
-from utils.model.orm import Passkeys, RegistrationAttempt, AuthSession, SystemConfig, ServerRules, MossyUser, FediAccounts
+from utils.model.orm import Passkeys, AuthSession, SystemConfig, ServerRules, MossyUser, FediAccounts
 from utils.system.security import generate_jwt, verify_jwt, get_current_user_session, generate_ecc_key_pair
 from utils.system.security import UserSession
 from utils.logger import logger
