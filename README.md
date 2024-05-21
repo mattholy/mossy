@@ -12,11 +12,12 @@
   [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmattholy%2Fmossy.svg?type=small)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmattholy%2Fmossy?ref=badge_small)
 
 ----
+Read this in other languages:
 
-  [![Static Badge](https://img.shields.io/badge/%E9%98%85%E8%AF%BB%E6%96%87%E6%A1%A3-%E4%B8%AD%E6%96%87-blue?style=for-the-badge&logo=googledocs&logoColor=white)
-](docs/readme.zh-cn.md)
+[简体中文](docs/readme.zh-cn.md) | [English](docs/readme.en-us.md) | [བོད་སྐད](docs/readme.bo-cn.md) | [বাংলা](docs/readme.bn-cn.md) | [繁體中文](docs/readme.zh-tw.md) | [हिन्दी](docs/readme.hi-cn.md) | [日本語](docs/readme.ja-cn.md) | [한국어](docs/readme.ko-cn.md)
 
 </div>
+
 <div>
 
 # What is Mossy
@@ -97,7 +98,7 @@ For cluster deployment and other deploy information, please refer to [Deployment
 
 ## Using CDN
 
-You may want to use CDN to accelerate access. The frontend of Mossy is a SPA, so you can deploy it separately.
+You may want to use CDN to accelerate access. The frontend of Mossy is a SPA, so you can deploy it separately. But should you be aware of there is a CORS issue when you use a different domain for frontend and backend.
 
 Navigate to `frontend`, edit `.env.production`, set the correct `VITE_BASE_URL` to point to your backend server, load balancer or proxy. Then run `npm run build`. After that you can find everything you need in `frontend/dist`.
 
@@ -139,6 +140,7 @@ Everything else will be managed by `poetry` or `npm`
 
 - Run frontend development server: `npm run dev:frontend`
 - Run backend development server: `npm run dev:backend`
+- Just build the frontend into backend static folder: `npm run dev:build:frontend`
 - Pack it up and start a production like server: `npm run dev`
 - Prepare a database for development only: `docker compose up -d`, to clean them up `docker compose down`
 
