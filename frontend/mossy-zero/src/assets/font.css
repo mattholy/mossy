@@ -1,0 +1,47 @@
+/* 基本汉字和扩展汉字（L1 和 L2 字符） */
+@font-face {
+    font-family: 'MiSans';
+    src: url('/fonts/MiSans VF.ttf') format('truetype-variations');
+    font-weight: 100 900;
+    font-style: normal;
+    unicode-range: U+4E00-9FFF,
+        U+3400-4DBF,
+        U+20000-2A6DF,
+        U+2A700-2B73F,
+        U+2B740-2B81F,
+        U+2B820-2CEAF,
+        U+2CEB0-2EBEF;
+}
+
+
+/* 生僻汉字（L3 字符） */
+@font-face {
+    font-family: 'MiSans';
+    src: url('/fonts/MiSans L3.ttf') format('ttf');
+    font-weight: 100 900;
+    font-style: normal;
+    unicode-range: U+3400-4DBF,
+        U+20000-2A6DF,
+        U+2A700-2B73F,
+        U+2B740-2B81F,
+        U+2B820-2CEAF,
+        U+2CEB0-2EBEF;
+}
+
+/* 藏文字符 */
+@font-face {
+    font-family: 'MiSansTibetan';
+    src: url('/fonts/MiSans Tibetan VF.ttf') format('truetype-variations');
+    font-weight: 100 900;
+    font-style: normal;
+    unicode-range: U+0F00-0FFF;
+}
+
+/* 拉丁语系 */
+@font-face {
+    font-family: 'MiSans';
+    src: url('/fonts/MiSans Latin VF') format('truetype-variations');
+    font-weight: 100 900;
+    font-style: normal;
+    unicode-range: U+0000-00FF;
+}
