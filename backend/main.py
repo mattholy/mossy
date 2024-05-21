@@ -30,6 +30,7 @@ from routers.wellknown.router import router as wellknown_router
 from routers.nodeinfo.router import router as nodeinfo_router
 from routers.setup.router import router as setup_router
 from routers.oauth.router import router as oauth_router
+from routers.public.router import router as public_router
 from utils.logger import async_log_error_to_db, logger
 from env import NODE_ID, BACKEND_URL, ALLOWED_ORIGINS
 from utils.system.security import async_load_key_pair
@@ -84,6 +85,7 @@ app.include_router(wellknown_router)
 app.include_router(nodeinfo_router)
 app.include_router(setup_router)
 app.include_router(oauth_router)
+app.include_router(public_router)
 
 # 静态文件服务
 app.mount("/", StaticFiles(directory="static"), name="Frontend Pages")

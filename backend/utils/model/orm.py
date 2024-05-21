@@ -305,11 +305,13 @@ class UserAssets(Base):
                      comment="如果资源存储在数据库中，这里保存其二进制数据")
     uploaded_at = Column(DateTime(timezone=True),
                          server_default=func.now(), comment="资源上传时间，默认值为当前时间")
-    is_deleted = Column(Boolean, default=False,
-                        nullable=False, comment="标记记录是否被删除，软删除标志")
+    deleted = Column(Boolean, default=False,
+                     nullable=False, comment="标记记录是否被删除，软删除标志")
     tags = Column(ARRAY(String), nullable=True,
                   comment="标签字段，存储字符串数组，用于标记资源内容")
     checksum = Column(String, nullable=False, comment="文件内容的校验和，用于验证文件完整性")
+    public = Column(Boolean, default=True, nullable=False,
+                    comment="标记资源是否公开，公开资源可以被所有用户访问")
 
     def __repr__(self):
         return (
