@@ -183,3 +183,27 @@ async def fetch_user_profile(profile_data: UserProfile, user_session: UserSessio
     )
     await db.commit()
     return UserProfilesResp(payload=user_profile)
+
+
+@router.get('/asset/{res_id: uuid.UUID}', tags=['Assets'])
+async def fetch_user_asset(res_id: uuid.UUID, user_session: UserSession = Depends(get_current_user_session), db: AsyncSession = Depends(get_db)):
+    '''Get the asset of the user'''
+    pass
+
+
+@router.get('/asset', tags=['Assets'])
+async def fetch_user_asset(res_id: uuid.UUID, user_session: UserSession = Depends(get_current_user_session), db: AsyncSession = Depends(get_db)):
+    '''Get the assets list of the user'''
+    pass
+
+
+@router.post('/asset/{res_id: uuid.UUID}', tags=['Assets'])
+async def update_user_asset(res_id: uuid.UUID, user_session: UserSession = Depends(get_current_user_session), db: AsyncSession = Depends(get_db)):
+    '''Post any binary here to update the asset, post nothing to delete the asset'''
+    pass
+
+
+@router.post('/asset', tags=['Assets'])
+async def upload_user_asset(user_session: UserSession = Depends(get_current_user_session), db: AsyncSession = Depends(get_db)):
+    '''Post any binary here to upload user asset'''
+    pass

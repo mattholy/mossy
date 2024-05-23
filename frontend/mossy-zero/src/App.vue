@@ -9,6 +9,7 @@
   import LeftSider from '@/components/LeftSider.vue'
   import RightSider from '@/components/RightSider.vue'
   import { NScrollbar, NMessageProvider, NFlex, NCard, NAlert, NDialogProvider, NLoadingBarProvider } from 'naive-ui';
+  import type { GlobalThemeOverrides } from 'naive-ui'
   import { useRouter, useRoute } from 'vue-router'
   import { useThemeStore } from '@/stores/themeStore'
   import { useUserStateStore } from '@/stores/userStateStore'
@@ -38,6 +39,11 @@
   const errorPageMsg = ref('UnknownError')
   const showOauthPage = ref(false)
   const { width } = useWindowSize()
+  const themeOverrides: GlobalThemeOverrides = {
+    "common": {
+      "fontFamily": "MiSans"
+    }
+  }
   const small_device = computed(() => {
     return width.value < 768
   })
@@ -89,7 +95,7 @@
 <template>
   <div class="h-dvh">
     <n-config-provider :theme="theme" :locale="localizationStore.currentNaiveUILanguage"
-      :date-locale="localizationStore.currentNaiveDateLanguage">
+      :date-locale="localizationStore.currentNaiveDateLanguage" :theme-overrides="themeOverrides">
       <n-global-style />
       <n-loading-bar-provider>
         <NScrollbar trigger="hover" class="h-dvh">

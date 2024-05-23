@@ -17,7 +17,7 @@ import uuid
 import secrets
 import string
 from typing import List
-from sqlalchemy import UniqueConstraint, create_engine, Column, Integer, String, DateTime, Boolean, Text, BigInteger, Float
+from sqlalchemy import UniqueConstraint, create_engine, Column, Integer, String, DateTime, Boolean, Text, BigInteger, Float, LargeBinary
 from sqlalchemy.dialects.postgresql import UUID, BYTEA, BIT, JSONB, ARRAY
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.sql import func
@@ -287,3 +287,34 @@ class FediAccounts(Base):
     sensitized_at = Column(DateTime(timezone=True))
     trendable = Column(Boolean, default=True)
     indexable = Column(Boolean, default=True)
+
+
+class UserAssets(Base):
+    __tablename__ = 'user_assets'
+
+    id = Column(BigInteger, primary_key=True,
+                autoincrement=True, comment="自增主键，唯一标识每个资源")
+    resource_uuid = Column(UUID(as_uuid=True), default=uuid.uuid4,
+                           unique=True, nullable=False, comment="资源的唯一标识符（UUID），确保每个资源唯一且不变")
+    username = Column(Integer, nullable=False, comment="用户名或用户ID，用于标识资源所属用户")
+    mime_type = Column(String, nullable=False,
+                       comment="资源的 MIME 类型，如 'image/png', 'video/mp4' 等")
+    content_length = Column(BigInteger, nullable=False, comment="资源大小，单位字节")
+    s3_url = Column(String, nullable=True, comment="如果资源存储在 S3 中，这里保存其 URL")
+    content = Column(LargeBinary, nullable=True,
+                     comment="如果资源存储在数据库中，这里保存其二进制数据")
+    uploaded_at = Column(DateTime(timezone=True),
+                         server_default=func.now(), comment="资源上传时间，默认值为当前时间")
+    deleted = Column(Boolean, default=False,
+                     nullable=False, comment="标记记录是否被删除，软删除标志")
+    tags = Column(ARRAY(String), nullable=True,
+                  comment="标签字段，存储字符串数组，用于标记资源内容")
+    checksum = Column(String, nullable=False, comment="文件内容的校验和，用于验证文件完整性")
+    public = Column(Boolean, default=True, nullable=False,
+                    comment="标记资源是否公开，公开资源可以被所有用户访问")
+
+    def __repr__(self):
+        return (
+            f"<UserAssets(resource_uuid={self.resource_uuid}, mime_type={
+                self.mime_type}, content_length={self.content_length}, tags={self.tags}>"
+        )
