@@ -48,5 +48,8 @@
   "i18n-ally.extract.autoDetect": true,
   "i18n-ally.keystyle": "nested",
   "i18n-ally.sourceLanguage": "zh-CN",
+  "i18n-ally.annotations": true,
+  "i18n-ally.annotationInPlace": true,
+  "i18n-ally.autoDetection": true,
 
 }

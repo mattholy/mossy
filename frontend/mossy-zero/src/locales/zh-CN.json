@@ -48,6 +48,13 @@
       "loginandreg": {
         "desc": "由Mossy驱动的分布式社交网络平台，你可以在这里发布微博，长文，影集，提问箱等。立即注册或者登录，来关注用户和话题，喜欢、分享和评论。",
         "saftyfirst": "Mossy不会记录你的任何个人信息，注册只需要提供用户名。"
+      },
+      "footer": {
+        "about": "关于",
+        "privacy": "隐私政策",
+        "terms": "服务条款",
+        "contact": "联系我们",
+        "sourcecode": "查看源代码"
       }
     },
     "setup_page": {

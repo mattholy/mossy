@@ -8,9 +8,41 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import path from 'path';
 import { mergeConfig } from 'vite';
 import vitestConfig from './vitest.config';
+import { execSync } from 'child_process';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+function getGitTag() {
+  try {
+    // 获取最新的 tag
+    const tag = execSync('git describe --tags --abbrev=0').toString().trim();
+    return tag;
+  } catch (error) {
+    console.error('Error getting git tag:', error);
+    return null;
+  }
+}
+
+function getGitCommit() {
+  try {
+    // 获取当前的 commit hash
+    const commit = execSync('git rev-parse --short HEAD').toString().trim();
+    return commit;
+  } catch (error) {
+    console.error('Error getting git commit:', error);
+    return null;
+  }
+}
 
 export default defineConfig(({ mode }) => {
   const isDev = mode === 'development';
+  const tagOrCommit = isDev ? getGitCommit() : getGitTag();
+
+  if (tagOrCommit) {
+    process.env.VITE_MOSSY_VERSION = tagOrCommit;
+  }
+  process.env.VITE_ENV = isDev ? 'development' : 'production';
 
   const baseConfig = {
     plugins: [
@@ -25,6 +57,9 @@ export default defineConfig(({ mode }) => {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url))
       }
+    },
+    define: {
+      __GIT_INFO__: JSON.stringify(process.env.VITE_GIT_INFO),
     },
     build: {
       target: 'esnext',

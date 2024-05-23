@@ -117,8 +117,6 @@
                     <RouterView />
                     <MossyFooter v-if="small_device" class="mt-auto min-h-14 max-h-14" />
                   </NScrollbar>
-
-
                 </div>
                 <div v-if="!medium_device"
                   class="hidden lg:flex 2xl:border-r flex-none h-dvh w-1/5 md:w-64 xl:w-72 m-0 p-0 border-gray-500 border-solid border-0">
