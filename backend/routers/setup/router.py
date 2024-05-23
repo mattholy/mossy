@@ -100,8 +100,7 @@ async def setup_status(basic_info: SetupForm, request: Request, db: AsyncSession
             raise HTTPException(status_code=400, detail='AdminNameError')
         for key in basic_info.model_fields.keys():
             if key == 'server_banner':
-                db.add(SystemConfig(key='server_banner',
-                       value=basic_info.server_banner.file_content))
+                db.add(SystemConfig(key='server_banner', value=img_base64))
                 db.add(SystemConfig(key='server_banner_mime',
                        value=basic_info.server_banner.file_type))
                 continue
