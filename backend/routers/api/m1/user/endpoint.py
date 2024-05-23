@@ -97,7 +97,7 @@ class UserProfile(BaseModel):
         return v or ""
 
     @validator('fields', pre=True, always=True)
-    def set_empty_string_if_none(cls, v):
+    def set_empty_list_if_none(cls, v):
         return v or []
 
 
