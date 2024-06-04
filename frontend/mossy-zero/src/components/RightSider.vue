@@ -9,5 +9,6 @@
     <n-flex vertical>
         <UserProfileCard />
         <NormalStatusEditor />
+
     </n-flex>
 </template>
