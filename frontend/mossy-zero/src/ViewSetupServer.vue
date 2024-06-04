@@ -190,7 +190,9 @@
                 trigger: ['input', 'blur']
             }
         ],
-        server_desc: [],
+        server_desc: [
+            { required: true, }
+        ],
         server_admin: [
             {
                 required: true,
@@ -233,6 +235,7 @@
         server_about: [],
         server_banner: [
             {
+                required: true,
                 validator(rule: FormItemRule, value: FileDetails) {
                     if (value.file_count > 0) {
                         if (value.file_count != 1) {

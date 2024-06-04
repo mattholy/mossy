@@ -117,6 +117,7 @@
       "ua": "《最终用户协议》",
       "privacy": "《隐私政策》",
       "formError": "请检查表单是否填写正确",
+      "UnknownError": "未知错误，需要检查服务器日志",
       "NotAllowedError": "您取消了认证或者认证超时",
       "UserAlreadyExist": "用户已存在, 请尝试重置数据库",
       "AlreadyInit": "服务器已经完成了初始化，不可以重复初始化。若要重置，请清除数据库。",
