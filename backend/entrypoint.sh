@@ -22,7 +22,7 @@ export LOG_LEVEL
 case $SERVICE_MODE in
   web)
     # 仅启动 FastAPI 应用
-    exec poetry run gunicorn -w $WORKERS -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:8000 --log-level=$LOG_LEVEL --access-logfile - --access-logformat "%(h)s %(l)s %(u)s %(t)s '%(r)s' %(s)s %(b)s '%(f)s' '%(a)s'"
+    exec poetry run fastapi run --workers=$WORKERS
     ;;
   backgrounder)
     # 仅启动 Celery Worker

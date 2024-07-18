@@ -4,6 +4,11 @@
   "python.analysis.inlayHints.variableTypes": true,
   "python.analysis.inlayHints.pytestParameters": true,
   "python.analysis.inlayHints.functionReturnTypes": true,
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnType": true,
+    "editor.formatOnSave": true
+  },
   "prettier.requireConfig": false,
   "editor.quickSuggestions": {
     "strings": "on"

@@ -7,7 +7,7 @@ ENV VITE_RUN_ENV=container
 RUN npm run build
 
 
-FROM python:3.12
+FROM python:3.12 as app-builder
 WORKDIR /app
 ARG RELEASE_TAG
 ENV RELEASE_TAG=${RELEASE_TAG}
