@@ -90,7 +90,11 @@ async def setup_status(basic_info: SetupForm, request: Request, db: AsyncSession
             except UnidentifiedImageError as e:
                 raise HTTPException(
                     status_code=400, detail='BannerImageFormatError')
+            except HTTPException as e:
+                raise HTTPException(
+                    status_code=400, detail=e.detail)
             except Exception as e:
+                logger.error(f'BannerImageError: {e}', exc_info=True)
                 await async_log_error_to_db(
                     e, request.app.state.node_id, request.app.state.worker_id)
                 raise HTTPException(status_code=400, detail='UnknownError')
@@ -98,8 +102,10 @@ async def setup_status(basic_info: SetupForm, request: Request, db: AsyncSession
         pattern = re.compile(r'^[a-zA-Z0-9_-]{3,32}$')
         if not pattern.match(basic_info.server_admin):
             raise HTTPException(status_code=400, detail='AdminNameError')
+
+        # setup node
         for key in basic_info.model_fields.keys():
-            if key == 'server_banner':
+            if key == 'server_banner' and basic_info.server_banner.file_size > 0:
                 db.add(SystemConfig(key='server_banner', value=img_base64))
                 db.add(SystemConfig(key='server_banner_mime',
                        value=basic_info.server_banner.file_type))
