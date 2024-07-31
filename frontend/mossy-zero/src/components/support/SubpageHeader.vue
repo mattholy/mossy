@@ -29,9 +29,9 @@
             try {
                 // TODO: Add shareable content
                 await navigator.share({
-                    title: '',
-                    text: '',
-                    url: ''
+                    title: '11111',
+                    text: '11111',
+                    url: `#${route.fullPath}`
                 })
             } catch (error) {
                 notyf.error(t('ui.header.statusmsg.shareFail'))
