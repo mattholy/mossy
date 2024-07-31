@@ -52,7 +52,7 @@ class Passkeys(Base):
     annotate = Column(String)
     backed_up = Column(Boolean, default=False)
     transports = Column(String)
-    registed_user_agent = Column(String)
+    registered_user_agent = Column(String)
     user_secret = Column(String, default=generate_secret(48))
     is_deleted = Column(Boolean, default=False)
     deleted_by = Column(String)

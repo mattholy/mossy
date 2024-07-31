@@ -9,7 +9,6 @@
 
     const toggleCW = () => {
         showCW.value = !showCW.value
-        console.log(inputInstRef.value)
         if (showCW.value) {
             nextTick(() => inputInstRef.value?.focus())
         } else {
@@ -26,13 +25,6 @@
         <n-input type="textarea" placeholder="想说些什么？输入@来提及别人，输入#来引用Tag，输入:来使用表情" show-count :maxlength="5000"
             :autosize="{ minRows: 4, maxRows: 12 }" />
         <n-flex class="px-2">
-            <n-button text>
-                <template #icon>
-                    <n-icon>
-                        <EarthOutline />
-                    </n-icon>
-                </template>
-            </n-button>
             <n-button text @click="toggleCW">
                 <template #icon>
                     <n-icon v-if="!showCW">
@@ -46,10 +38,17 @@
             <n-button text>
                 <template #icon>
                     <n-icon>
-                        <LocationOutline />
+                        <EarthOutline />
                     </n-icon>
                 </template>
             </n-button>
+            <!-- <n-button text>
+                <template #icon>
+                    <n-icon>
+                        <LocationOutline />
+                    </n-icon>
+                </template>
+            </n-button> -->
             <n-button text>
                 <template #icon>
                     <n-icon>
