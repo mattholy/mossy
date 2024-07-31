@@ -1,16 +1,17 @@
 <script setup lang="ts">
-    import { ref } from 'vue'
+    import { ref, nextTick } from 'vue'
     import { NButton, NInput, NFlex, NUpload, NCollapseItem, NCollapse, NIcon, NIconWrapper, NCollapseTransition } from 'naive-ui';
     import { ImageOutline, LockOpen, LockClosed, AtCircle, LocationOutline, Location, LanguageOutline, WarningOutline, EarthOutline, Warning } from '@vicons/ionicons5'
     import type { InputInst } from 'naive-ui'
 
     const showCW = ref<boolean>(false)
-    const inputInstRef = ref<InputInst | null>(null)
+    const inputInstRef = ref<InputInst | undefined>(undefined)
 
     const toggleCW = () => {
         showCW.value = !showCW.value
+        console.log(inputInstRef.value)
         if (showCW.value) {
-            inputInstRef.value?.focus()
+            nextTick(() => inputInstRef.value?.focus())
         } else {
             inputInstRef.value?.blur()
         }
