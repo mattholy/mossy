@@ -252,6 +252,13 @@
     }
   },
   "api": {
+    "error_msg": {
+      "SERVER_ERROR": {
+        "UnknownError": {
+          "Error": "出现未知的错误"
+        }
+      }
+    },
     "statusmsg": {
       "UnknownError": {
         "title": "未知错误",

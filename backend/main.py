@@ -187,10 +187,7 @@ async def internal_error_handler(request: Request, call_next):
             content={
                 "status": "SERVER_ERROR",
                 "msg": "UnknownError",
-                "payload": {
-                    "exception_id": exception_id,
-                    "instruction": 'Please contact the administrator with the exception_id.'
-                }
+                "payload": "Error"
             },
             status_code=500,
             headers={"X-Error": exception_id},
